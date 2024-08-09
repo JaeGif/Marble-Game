@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { RigidBody, useRapier } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { useKeyboardControls } from '@react-three/drei';
+import * as THREE from 'three';
 
 const BALLSIZE = 0.3;
 
@@ -9,6 +10,9 @@ function Player(props) {
   const [subscribeKeys, getKeys] = useKeyboardControls();
 
   const { rapier, world } = useRapier();
+
+  const [smoothedCameraPosition] = useState(() => new THREE.Vector3());
+  const [smoothedCameraTarget] = useState(() => new THREE.Vector3());
 
   const bodyRef = useRef();
   const jump = () => {
@@ -26,7 +30,7 @@ function Player(props) {
     }
   };
   useEffect(() => {
-    subscribeKeys(
+    const unsubscribeJump = subscribeKeys(
       // listen to just the jump
       // selector
       (state) => state.jump,
@@ -35,10 +39,16 @@ function Player(props) {
         if (value) jump();
       }
     );
+
+    return () => {
+      unsubscribeJump();
+    };
   }, []);
 
   useFrame((state, delta) => {
     // instructions per frame
+
+    // Controls
     const { forward, backward, leftward, rightward } = getKeys();
 
     const impulse = { x: 0, y: 0, z: 0 };
@@ -66,6 +76,26 @@ function Player(props) {
 
     bodyRef.current.applyImpulse(impulse);
     bodyRef.current.applyTorqueImpulse(torque);
+
+    // Camera
+
+    const bodyPosition = bodyRef.current.translation();
+
+    const cameraPosition = new THREE.Vector3();
+    cameraPosition.copy(bodyPosition);
+
+    cameraPosition.z += 3.25;
+    cameraPosition.y += 0.65;
+
+    const cameraTarget = new THREE.Vector3();
+    cameraTarget.copy(bodyPosition);
+    cameraTarget.y += 0.25;
+
+    smoothedCameraPosition.lerp(cameraPosition, 0.1);
+    smoothedCameraTarget.lerp(cameraTarget, 0.1);
+
+    state.camera.position.copy(smoothedCameraPosition);
+    state.camera.lookAt(smoothedCameraTarget);
   });
 
   return (
@@ -84,7 +114,6 @@ function Player(props) {
         <meshStandardMaterial
           map={props.map}
           metalnessMap={props.metalnessMap}
-          normalMap={props.normalMap}
           roughnessMap={props.roughnessMap}
           aoMap={props.aoMap}
         />
