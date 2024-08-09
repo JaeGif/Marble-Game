@@ -1,13 +1,29 @@
 import React, { useEffect, useRef } from 'react';
-import { RigidBody } from '@react-three/rapier';
+import { RigidBody, useRapier } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { useKeyboardControls } from '@react-three/drei';
 
+const BALLSIZE = 0.3;
+
 function Player(props) {
   const [subscribeKeys, getKeys] = useKeyboardControls();
+
+  const { rapier, world } = useRapier();
+
   const bodyRef = useRef();
   const jump = () => {
-    bodyRef.current.applyImpulse({ x: 0, y: 0.5, z: 0 });
+    const origin = bodyRef.current.translation();
+    origin.y -= BALLSIZE + 0.01;
+
+    const direction = { x: 0, y: -1, z: 0 };
+
+    const ray = new rapier.Ray(origin, direction);
+    const hit = world.castRay(ray, 10, true);
+
+    if (hit.timeOfImpact < 0.15) {
+      // allow for jumping during slight bounce
+      bodyRef.current.applyImpulse({ x: 0, y: 0.5, z: 0 });
+    }
   };
   useEffect(() => {
     subscribeKeys(
@@ -64,7 +80,7 @@ function Player(props) {
       ref={bodyRef}
     >
       <mesh castShadow>
-        <icosahedronGeometry args={[0.3, 1]} />
+        <icosahedronGeometry args={[BALLSIZE, 1]} />
         <meshStandardMaterial
           map={props.map}
           metalnessMap={props.metalnessMap}
