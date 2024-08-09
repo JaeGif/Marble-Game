@@ -1,6 +1,6 @@
 import React, { useRef, useState, useMemo } from 'react';
 import * as THREE from 'three';
-import { RigidBody } from '@react-three/rapier';
+import { RigidBody, CuboidCollider } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { Float, useGLTF } from '@react-three/drei';
 
@@ -193,7 +193,42 @@ export function BlockAxe({ position = [0, 0, 0] }) {
     </group>
   );
 }
-
+function Bounds({ length = 1 }) {
+  return (
+    <>
+      <RigidBody type='fixed' restitution={0.2} friction={0}>
+        <mesh
+          position={[2.15, 0.75, -(length * 2) + 2]}
+          scale={[0.3, 1.5, 4 * length]}
+          geometry={boxGeometry}
+          material={wallMaterial}
+          castShadow
+        />
+        <mesh
+          position={[-2.15, 0.75, -(length * 2) + 2]}
+          scale={[0.3, 1.5, 4 * length]}
+          geometry={boxGeometry}
+          material={wallMaterial}
+          receiveShadow
+        />
+        <mesh
+          position={[0, 0.75, -(length * 4) + 2]}
+          scale={[4, 1.5, 0.3]}
+          geometry={boxGeometry}
+          material={wallMaterial}
+          castShadow
+        />
+        <CuboidCollider
+          restitution={0.2}
+          friction={1}
+          // friction so the ball can roll
+          args={[2, 0.1, 2 * length]}
+          position={[0, -0.1, -(length * 2) + 2]}
+        />
+      </RigidBody>
+    </>
+  );
+}
 function Level({
   obstacleCount = 5,
   types = [BlockSpinner, BlockAxe, BlockLimbo],
@@ -212,6 +247,12 @@ function Level({
   return (
     <>
       <BlockStart position={[0, 0, 0]} />
+      {blocks.map((Block, i) => (
+        <Block key={i} position={[0, 0, -(i + 1) * 4]} />
+      ))}
+      <BlockEnd position={[0, 0, -(obstacleCount + 1) * 4]} />
+
+      <Bounds length={obstacleCount + 2} />
     </>
   );
 }
