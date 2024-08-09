@@ -14,7 +14,7 @@ export function BlockStart({ position = [0, 0, 0] }) {
   return (
     <group position={position}>
       <mesh
-        scale={[4, 0.1, 4]}
+        scale={[4, 0.2, 4]}
         geometry={boxGeometry}
         material={floor1Material}
         position={[0, -0.1, 0]}

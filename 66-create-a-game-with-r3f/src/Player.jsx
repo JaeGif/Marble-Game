@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { RigidBody } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { useKeyboardControls } from '@react-three/drei';
@@ -6,6 +6,21 @@ import { useKeyboardControls } from '@react-three/drei';
 function Player(props) {
   const [subscribeKeys, getKeys] = useKeyboardControls();
   const bodyRef = useRef();
+  const jump = () => {
+    bodyRef.current.applyImpulse({ x: 0, y: 0.5, z: 0 });
+  };
+  useEffect(() => {
+    subscribeKeys(
+      // listen to just the jump
+      // selector
+      (state) => state.jump,
+      // instructions when selector trips
+      (value) => {
+        if (value) jump();
+      }
+    );
+  }, []);
+
   useFrame((state, delta) => {
     // instructions per frame
     const { forward, backward, leftward, rightward } = getKeys();
@@ -36,6 +51,7 @@ function Player(props) {
     bodyRef.current.applyImpulse(impulse);
     bodyRef.current.applyTorqueImpulse(torque);
   });
+
   return (
     <RigidBody
       canSleep={false}
