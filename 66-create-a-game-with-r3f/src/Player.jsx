@@ -4,6 +4,7 @@ import { RigidBody } from '@react-three/rapier';
 function Player() {
   return (
     <RigidBody
+      canSleep={false}
       restitution={0.2}
       friction={1}
       colliders='hull'
