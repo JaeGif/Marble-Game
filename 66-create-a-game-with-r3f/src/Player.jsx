@@ -3,6 +3,7 @@ import { RigidBody, useRapier } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { useKeyboardControls } from '@react-three/drei';
 import * as THREE from 'three';
+import useGame from './stores/useGame';
 
 const BALLSIZE = 0.3;
 
@@ -17,6 +18,11 @@ function Player(props) {
   const [smoothedCameraTarget] = useState(() => new THREE.Vector3());
 
   const bodyRef = useRef();
+
+  const start = useGame((state) => state.start);
+  const end = useGame((state) => state.end);
+  const obstacleCount = useGame((state) => state.obstacleCount);
+
   const jump = () => {
     const origin = bodyRef.current.translation();
     origin.y -= BALLSIZE + 0.01;
@@ -41,9 +47,12 @@ function Player(props) {
         if (value) jump();
       }
     );
-
+    const unsubscribeAny = subscribeKeys(() => {
+      start();
+    });
     return () => {
       unsubscribeJump();
+      unsubscribeAny();
     };
   }, []);
 
@@ -98,6 +107,11 @@ function Player(props) {
 
     state.camera.position.copy(smoothedCameraPosition);
     state.camera.lookAt(smoothedCameraTarget);
+
+    // phases
+    if (bodyPosition.z < -(obstacleCount * 4 + 2)) {
+      end();
+    }
   });
 
   return (
