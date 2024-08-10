@@ -1,25 +1,37 @@
 import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
 
-export default create((set) => {
-  return {
-    obstacleCount: 3,
-    // ready | playing | complete
-    phase: 'ready',
+export default create(
+  subscribeWithSelector((set) => {
+    return {
+      obstacleCount: 3,
+      // ready | playing | complete
+      phase: 'ready',
 
-    start: () => {
-      set(() => {
-        return { phase: 'playing' };
-      });
-    },
-    restart: () => {
-      set(() => {
-        return { phase: 'ready' };
-      });
-    },
-    end: () => {
-      set(() => {
-        return { phase: 'complete' };
-      });
-    },
-  };
-});
+      start: () => {
+        set((state) => {
+          if (state.phase === 'ready') {
+            return { phase: 'playing' };
+          }
+          return {};
+        });
+      },
+      restart: () => {
+        set((state) => {
+          if (state.phase === 'playing' || state.phase === 'complete') {
+            return { phase: 'ready' };
+          }
+          return {};
+        });
+      },
+      end: () => {
+        set((state) => {
+          if (state.phase === 'playing') {
+            return { phase: 'complete' };
+          }
+          return {};
+        });
+      },
+    };
+  })
+);

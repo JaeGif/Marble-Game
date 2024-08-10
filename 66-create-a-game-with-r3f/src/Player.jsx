@@ -21,6 +21,8 @@ function Player(props) {
 
   const start = useGame((state) => state.start);
   const end = useGame((state) => state.end);
+  const restart = useGame((state) => state.restart);
+
   const obstacleCount = useGame((state) => state.obstacleCount);
 
   const jump = () => {
@@ -37,7 +39,22 @@ function Player(props) {
       bodyRef.current.applyImpulse({ x: 0, y: 0.5, z: 0 });
     }
   };
+
+  const reset = () => {
+    // when phase changes to ready we need to reset
+    bodyRef.current.setTranslation({ x: 0, y: 1, z: 0 });
+    bodyRef.current.setLinvel({ x: 0, y: 0, z: 0 });
+    bodyRef.current.setAngvel({ x: 0, y: 1, z: 0 });
+  };
   useEffect(() => {
+    const unsubscribeReset = useGame.subscribe(
+      (state) => state.phase,
+      (phase) => {
+        if (phase === 'complete') {
+          reset();
+        }
+      }
+    );
     const unsubscribeJump = subscribeKeys(
       // listen to just the jump
       // selector
@@ -53,6 +70,7 @@ function Player(props) {
     return () => {
       unsubscribeJump();
       unsubscribeAny();
+      unsubscribeReset();
     };
   }, []);
 
@@ -111,6 +129,10 @@ function Player(props) {
     // phases
     if (bodyPosition.z < -(obstacleCount * 4 + 2)) {
       end();
+    }
+    // out of bounds
+    if (bodyPosition.y < -4) {
+      restart();
     }
   });
 
