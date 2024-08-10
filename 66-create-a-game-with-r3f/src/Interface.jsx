@@ -9,6 +9,7 @@ function Interface() {
   const leftward = useKeyboardControls((state) => state.leftward);
   const rightward = useKeyboardControls((state) => state.rightward);
   const jump = useKeyboardControls((state) => state.jump);
+
   return (
     <div className='interface'>
       <div className='time'>0.00</div>
