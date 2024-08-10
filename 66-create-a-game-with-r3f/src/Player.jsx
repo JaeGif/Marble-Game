@@ -11,7 +11,9 @@ function Player(props) {
 
   const { rapier, world } = useRapier();
 
-  const [smoothedCameraPosition] = useState(() => new THREE.Vector3());
+  const [smoothedCameraPosition] = useState(
+    () => new THREE.Vector3(10, 10, 10)
+  );
   const [smoothedCameraTarget] = useState(() => new THREE.Vector3());
 
   const bodyRef = useRef();
@@ -54,8 +56,8 @@ function Player(props) {
     const impulse = { x: 0, y: 0, z: 0 };
     const torque = { x: 0, y: 0, z: 0 };
 
-    const impulseStrength = 1 * delta;
-    const torqueStrength = 1 * delta;
+    const impulseStrength = 0.6 * delta;
+    const torqueStrength = 0.2 * delta;
 
     if (forward) {
       impulse.z -= impulseStrength;
@@ -91,8 +93,8 @@ function Player(props) {
     cameraTarget.copy(bodyPosition);
     cameraTarget.y += 0.25;
 
-    smoothedCameraPosition.lerp(cameraPosition, 0.1);
-    smoothedCameraTarget.lerp(cameraTarget, 0.1);
+    smoothedCameraPosition.lerp(cameraPosition, 5 * delta);
+    smoothedCameraTarget.lerp(cameraTarget, 5 * delta);
 
     state.camera.position.copy(smoothedCameraPosition);
     state.camera.lookAt(smoothedCameraTarget);
