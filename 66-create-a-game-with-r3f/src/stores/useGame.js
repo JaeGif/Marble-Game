@@ -7,11 +7,12 @@ export default create(
       obstacleCount: 3,
       // ready | playing | complete
       phase: 'ready',
-
+      startTime: 0,
+      endTime: 0,
       start: () => {
         set((state) => {
           if (state.phase === 'ready') {
-            return { phase: 'playing' };
+            return { phase: 'playing', startTime: Date.now() };
           }
           return {};
         });
@@ -27,7 +28,7 @@ export default create(
       end: () => {
         set((state) => {
           if (state.phase === 'playing') {
-            return { phase: 'complete' };
+            return { phase: 'complete', endTime: Date.now() };
           }
           return {};
         });

@@ -44,13 +44,13 @@ function Player(props) {
     // when phase changes to ready we need to reset
     bodyRef.current.setTranslation({ x: 0, y: 1, z: 0 });
     bodyRef.current.setLinvel({ x: 0, y: 0, z: 0 });
-    bodyRef.current.setAngvel({ x: 0, y: 1, z: 0 });
+    bodyRef.current.setAngvel({ x: 0, y: 0, z: 0 });
   };
   useEffect(() => {
     const unsubscribeReset = useGame.subscribe(
       (state) => state.phase,
       (phase) => {
-        if (phase === 'complete') {
+        if (phase === 'ready') {
           reset();
         }
       }
@@ -76,7 +76,6 @@ function Player(props) {
 
   useFrame((state, delta) => {
     // instructions per frame
-
     // Controls
     const { forward, backward, leftward, rightward } = getKeys();
 
@@ -126,12 +125,12 @@ function Player(props) {
     state.camera.position.copy(smoothedCameraPosition);
     state.camera.lookAt(smoothedCameraTarget);
 
-    // phases
+    // Phases
     if (bodyPosition.z < -(obstacleCount * 4 + 2)) {
       end();
     }
     // out of bounds
-    if (bodyPosition.y < -4) {
+    if (bodyPosition.y < -8) {
       restart();
     }
   });
