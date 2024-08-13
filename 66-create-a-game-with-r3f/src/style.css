@@ -45,7 +45,7 @@ body,
 .controls {
   position: absolute;
   bottom: 10%;
-  left: 0;
+  left: -40%;
   width: 100%;
 }
 
