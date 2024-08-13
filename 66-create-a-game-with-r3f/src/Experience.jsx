@@ -17,11 +17,13 @@ export default function Experience() {
   });
 
   const obstacleCount = useGame((state) => state.obstacleCount);
+  const obstacleSeed = useGame((state) => state.obstacleSeed);
   return (
     <>
+      <color args={['#bdedfc']} attach='background' />
       <Physics>
         <Lights />
-        <Level obstacleCount={obstacleCount} />
+        <Level obstacleCount={obstacleCount} seed={obstacleSeed} />
         <Player {...props} />
       </Physics>
     </>

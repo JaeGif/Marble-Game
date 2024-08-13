@@ -2,7 +2,7 @@ import React, { useRef, useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { RigidBody, CuboidCollider } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
-import { Float, useGLTF } from '@react-three/drei';
+import { Float, Text, useGLTF } from '@react-three/drei';
 
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 const floor1Material = new THREE.MeshStandardMaterial({ color: 'limegreen' });
@@ -20,6 +20,20 @@ export function BlockStart({ position = [0, 0, 0] }) {
         position={[0, -0.1, 0]}
         receiveShadow
       />
+      <Float floatIntensity={0.25} rotationIntensity={0.25}>
+        <Text
+          font='./bebas-neue-v9-latin-regular.woff'
+          scale={0.5}
+          maxWidth={0.25}
+          lineHeight={0.75}
+          textAlign='right'
+          position={[0.75, 0.65, 0]}
+          rotation-y={-0.25}
+        >
+          Marble Run
+          <meshBasicMaterial toneMapped={false} />
+        </Text>
+      </Float>
     </group>
   );
 }
@@ -37,6 +51,14 @@ export function BlockEnd({ position = [0, 0, 0] }) {
   });
   return (
     <group position={position}>
+      <Text
+        font='./bebas-neue-v9-latin-regular.woff'
+        scale={5}
+        position={[0, 3, 2]}
+      >
+        FINISH
+        <meshBasicMaterial toneMapped={false} />
+      </Text>
       <mesh
         scale={[4, 0.3, 4]}
         geometry={boxGeometry}
@@ -229,9 +251,11 @@ function Bounds({ length = 1 }) {
     </>
   );
 }
+
 function Level({
   obstacleCount = 5,
   types = [BlockSpinner, BlockAxe, BlockLimbo],
+  seed = 0,
 }) {
   // useMemo to generate the array only once
   const blocks = useMemo(() => {
@@ -243,7 +267,8 @@ function Level({
       blocks.push(type);
     }
     return blocks;
-  }, [obstacleCount, types]);
+  }, [obstacleCount, types, seed]);
+
   return (
     <>
       <BlockStart position={[0, 0, 0]} />
