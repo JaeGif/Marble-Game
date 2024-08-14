@@ -8,6 +8,8 @@ const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 const floor1Material = new THREE.MeshStandardMaterial({ color: 'limegreen' });
 const floor2Material = new THREE.MeshStandardMaterial({ color: 'greenyellow' });
 const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 'orangered' });
+const speedMaterial = new THREE.MeshStandardMaterial({ color: 'blue' });
+
 const wallMaterial = new THREE.MeshStandardMaterial({ color: 'slategrey' });
 
 export function BlockStart({ position = [0, 0, 0] }) {
@@ -170,6 +172,25 @@ export function BlockLimbo({ position = [0, 0, 0] }) {
   );
 }
 
+export function BlockSpeed({ position = [0, 0, 0] }) {
+  // when player crosses this block they get a temporary acceleration
+  const obstacleRef = useRef();
+  useFrame((state) => {
+    const time = state.clock.getElapsedTime();
+  });
+
+  return (
+    <group position={position}>
+      <mesh
+        scale={[4, 0.2, 4]}
+        geometry={boxGeometry}
+        material={speedMaterial}
+        position={[0, -0.1, 0]}
+        receiveShadow
+      />
+    </group>
+  );
+}
 export function BlockAxe({ position = [0, 0, 0] }) {
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
@@ -255,8 +276,7 @@ function Bounds({ length = 1 }) {
 
 function Level({
   obstacleCount = 5,
-  types = [BlockSpinner, BlockAxe, BlockLimbo],
-  seed = 0,
+  types = [BlockSpinner, BlockAxe, BlockLimbo, BlockSpeed],
   level = 1,
 }) {
   const levelObstacles = obstacleCount + level * 2;
@@ -271,7 +291,7 @@ function Level({
       blocks.push(type);
     }
     return blocks;
-  }, [obstacleCount, types, seed, level]);
+  }, [obstacleCount, types, level]);
 
   return (
     <>

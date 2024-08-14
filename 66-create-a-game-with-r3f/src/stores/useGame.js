@@ -5,7 +5,7 @@ export default create(
   subscribeWithSelector((set) => {
     return {
       obstacleCount: 8,
-      obstacleSeed: 0,
+      jumps: 2,
       level: 1,
       // ready | playing | complete
       phase: 'ready',
