@@ -150,8 +150,8 @@ function Player(props) {
       position={[0, 1, 0]}
       ref={bodyRef}
     >
-      <mesh castShadow>
-        <icosahedronGeometry args={[BALLSIZE, 1]} />
+      <mesh castShadow receiveShadow>
+        <icosahedronGeometry args={[BALLSIZE, 4]} />
         <meshStandardMaterial
           map={props.map}
           metalnessMap={props.metalnessMap}
