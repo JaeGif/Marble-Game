@@ -6,6 +6,7 @@ export default create(
     return {
       obstacleCount: 10,
       obstacleSeed: 0,
+      level: 1,
       // ready | playing | complete
       phase: 'ready',
       startTime: 0,
@@ -30,6 +31,18 @@ export default create(
         set((state) => {
           if (state.phase === 'playing') {
             return { phase: 'complete', endTime: Date.now() };
+          }
+          return {};
+        });
+      },
+      next: () => {
+        set((state) => {
+          if (state.phase === 'complete') {
+            return {
+              phase: 'ready',
+              obstacleSeed: Math.random(),
+              level: state.level + 1,
+            };
           }
           return {};
         });

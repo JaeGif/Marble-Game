@@ -69,3 +69,11 @@ body,
 .controls .key.active {
   background: #ffffff99;
 }
+.level {
+  position: absolute;
+  bottom: 10%;
+  right: 5%;
+}
+.level > p {
+  font-size: xx-large;
+}

@@ -22,8 +22,12 @@ function Player(props) {
   const start = useGame((state) => state.start);
   const end = useGame((state) => state.end);
   const restart = useGame((state) => state.restart);
+  const phase = useGame((state) => state.phase);
 
   const obstacleCount = useGame((state) => state.obstacleCount);
+  const level = useGame((state) => state.level);
+
+  const distance = obstacleCount + level * 2;
 
   const jump = () => {
     const origin = bodyRef.current.translation();
@@ -126,11 +130,11 @@ function Player(props) {
     state.camera.lookAt(smoothedCameraTarget);
 
     // Phases
-    if (bodyPosition.z < -(obstacleCount * 4 + 2)) {
+    if (bodyPosition.z < -(distance * 4 + 2) && bodyPosition.y >= 0) {
       end();
     }
     // out of bounds
-    if (bodyPosition.y < -8) {
+    if (bodyPosition.y < -8 && phase !== 'complete') {
       restart();
     }
   });

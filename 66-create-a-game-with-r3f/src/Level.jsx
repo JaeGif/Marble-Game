@@ -45,6 +45,7 @@ export function BlockEnd({ position = [0, 0, 0] }) {
     mesh.castShadow = true;
   });
   const goalRef = useRef();
+  console.log(position);
 
   useFrame((state) => {
     goalRef.current.rotation.y = state.clock.getElapsedTime() * 0.25;
@@ -216,10 +217,12 @@ export function BlockAxe({ position = [0, 0, 0] }) {
   );
 }
 function Bounds({ length = 1 }) {
+  console.log(length);
   return (
     <>
       <RigidBody type='fixed' restitution={0.2} friction={0}>
-        <mesh
+        {/* // remove walls way more fun */}
+        {/*        <mesh
           position={[2.15, 0.75, -(length * 2) + 2]}
           scale={[0.3, 1.5, 4 * length]}
           geometry={boxGeometry}
@@ -239,7 +242,7 @@ function Bounds({ length = 1 }) {
           geometry={boxGeometry}
           material={wallMaterial}
           castShadow
-        />
+        /> */}
         <CuboidCollider
           restitution={0.2}
           friction={1}
@@ -256,18 +259,21 @@ function Level({
   obstacleCount = 5,
   types = [BlockSpinner, BlockAxe, BlockLimbo],
   seed = 0,
+  level = 1,
 }) {
-  // useMemo to generate the array only once
+  const levelObstacles = obstacleCount + level * 2;
+
   const blocks = useMemo(() => {
     // scoped out :)
     const blocks = [];
     const OFFSET = 0.0001;
-    for (let i = 0; i < obstacleCount; i++) {
+
+    for (let i = 0; i < levelObstacles; i++) {
       const type = types[Math.floor(Math.random() * types.length - OFFSET)];
       blocks.push(type);
     }
     return blocks;
-  }, [obstacleCount, types, seed]);
+  }, [obstacleCount, types, seed, level]);
 
   return (
     <>
@@ -275,9 +281,9 @@ function Level({
       {blocks.map((Block, i) => (
         <Block key={i} position={[0, 0, -(i + 1) * 4]} />
       ))}
-      <BlockEnd position={[0, 0, -(obstacleCount + 1) * 4]} />
+      <BlockEnd position={[0, 0, -(levelObstacles + 1) * 4]} />
 
-      <Bounds length={obstacleCount + 2} />
+      <Bounds length={levelObstacles + 2} />
     </>
   );
 }

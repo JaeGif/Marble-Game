@@ -8,7 +8,9 @@ function Interface() {
   const timeRef = useRef();
 
   const restart = useGame((state) => state.restart);
+  const next = useGame((state) => state.next);
   const phase = useGame((state) => state.phase);
+  const level = useGame((state) => state.level);
 
   const forward = useKeyboardControls((state) => state.forward);
   const backward = useKeyboardControls((state) => state.backward);
@@ -43,7 +45,7 @@ function Interface() {
         0.00
       </div>
       {phase === 'complete' && (
-        <div className='restart' onClick={restart}>
+        <div className='restart' onClick={next}>
           Next
         </div>
       )}
@@ -60,6 +62,9 @@ function Interface() {
         <div className='raw'>
           <div className={`key large ${jump ? 'active' : ''}`}></div>
         </div>
+      </div>
+      <div className='level'>
+        <p>LEVEL {level}</p>
       </div>
     </div>
   );
