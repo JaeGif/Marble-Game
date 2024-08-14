@@ -45,7 +45,6 @@ export function BlockEnd({ position = [0, 0, 0] }) {
     mesh.castShadow = true;
   });
   const goalRef = useRef();
-  console.log(position);
 
   useFrame((state) => {
     goalRef.current.rotation.y = state.clock.getElapsedTime() * 0.25;
@@ -217,7 +216,6 @@ export function BlockAxe({ position = [0, 0, 0] }) {
   );
 }
 function Bounds({ length = 1 }) {
-  console.log(length);
   return (
     <>
       <RigidBody type='fixed' restitution={0.2} friction={0}>
