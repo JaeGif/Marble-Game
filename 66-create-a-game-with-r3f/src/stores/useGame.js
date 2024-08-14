@@ -4,7 +4,7 @@ import { subscribeWithSelector } from 'zustand/middleware';
 export default create(
   subscribeWithSelector((set) => {
     return {
-      obstacleCount: 10,
+      obstacleCount: 8,
       obstacleSeed: 0,
       level: 1,
       // ready | playing | complete
