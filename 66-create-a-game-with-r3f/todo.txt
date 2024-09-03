@@ -1,0 +1,4 @@
+- make a simple highscore DB 
+- scoring system using time to complete each level, and the level difficulty
+- more diverse obstacles
+- change the map so it isn't only linear and is randomly generated
