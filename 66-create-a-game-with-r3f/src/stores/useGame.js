@@ -7,6 +7,8 @@ export default create(
       obstacleCount: 8,
       jumps: 2,
       level: 1,
+      mode: 'hardcore' | 'casual',
+      lives: 3,
       // ready | playing | complete
       phase: 'ready',
       startTime: 0,
