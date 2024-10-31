@@ -11,7 +11,7 @@ function useApi() {
     const sendPost = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(API_STRING, {
+        const res = await fetch(`${API_STRING}/scores`, {
           method: 'POST',
           body: JSON.stringify(jsonData),
           headers: {
