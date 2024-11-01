@@ -9,6 +9,7 @@ export default create(
       level: 1,
       mode: 'hardcore' | 'casual',
       lives: 3,
+      score: 0,
       // ready | playing | complete
       phase: 'ready',
       startTime: 0,
@@ -32,7 +33,13 @@ export default create(
       end: () => {
         set((state) => {
           if (state.phase === 'playing') {
-            return { phase: 'complete', endTime: Date.now() };
+            return {
+              phase: 'complete',
+              endTime: Date.now(),
+              score:
+                state.score +
+                (1 / (state.startTime - state.endTime)) * state.level * 0.2,
+            };
           }
           return {};
         });
@@ -45,6 +52,14 @@ export default create(
               obstacleSeed: Math.random(),
               level: state.level + 1,
             };
+          }
+          return {};
+        });
+      },
+      gameOver: () => {
+        set((state) => {
+          if (state.phase === 'playing') {
+            return { phase: 'gameOver', endTime: Date.now() };
           }
           return {};
         });
