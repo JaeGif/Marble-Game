@@ -64,6 +64,14 @@ export default create(
           return {};
         });
       },
+      startOver: () => {
+        set((state) => {
+          if (state.phase === 'gameOver') {
+            return { phase: 'ready', obstacleSeed: Math.random(), level: 1 };
+          }
+          return {};
+        });
+      },
     };
   })
 );

@@ -7,7 +7,6 @@ function Interface() {
 
   const timeRef = useRef();
 
-  const restart = useGame((state) => state.restart);
   const next = useGame((state) => state.next);
   const phase = useGame((state) => state.phase);
   const level = useGame((state) => state.level);
@@ -47,6 +46,11 @@ function Interface() {
       {phase === 'complete' && (
         <div className='restart' onClick={next}>
           Next
+        </div>
+      )}
+      {phase === 'gameOver' && (
+        <div className='restart' onClick={next}>
+          Add Highscore
         </div>
       )}
 
