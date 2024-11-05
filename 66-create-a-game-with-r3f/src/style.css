@@ -17,6 +17,16 @@ body,
   pointer-events: none;
   font-family: 'Bebas Neue', cursive;
 }
+.livesContainer {
+  position: absolute;
+  top: 10%;
+  left: 5%;
+  display: flex;
+  gap: 5px;
+}
+.livesContainer > img {
+  height: 40px;
+}
 .time {
   position: absolute;
   top: 0%;

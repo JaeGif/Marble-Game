@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useKeyboardControls } from '@react-three/drei';
 import useGame from './stores/useGame';
 import { addEffect } from '@react-three/fiber';
@@ -10,6 +10,7 @@ function Interface() {
   const next = useGame((state) => state.next);
   const phase = useGame((state) => state.phase);
   const level = useGame((state) => state.level);
+  const lives = useGame((state) => state.lives);
 
   const forward = useKeyboardControls((state) => state.forward);
   const backward = useKeyboardControls((state) => state.backward);
@@ -42,6 +43,15 @@ function Interface() {
     <div className='interface'>
       <div ref={timeRef} className='time'>
         0.00
+      </div>
+      <div className='livesContainer'>
+        {lives.map((life) =>
+          life ? (
+            <img src='assets/heart.svg' alt='heart' />
+          ) : (
+            <img src='assets/emptyHeart.svg' alt='empty heart' />
+          )
+        )}
       </div>
       {phase === 'complete' && (
         <div className='restart' onClick={next}>
