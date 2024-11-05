@@ -23,13 +23,11 @@ export default create(
           let x = count;
           while (x !== 0) {
             // when x is 0, we've terminated loop
-
-            if ()
+            //            if ()
           }
         }
         if (count > 0) {
           // gain count num of lives added to current arr
-
         }
         set((state) => {
           return { lives: newLives };
