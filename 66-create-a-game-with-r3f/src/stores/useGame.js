@@ -14,6 +14,27 @@ export default create(
       phase: 'ready',
       startTime: 0,
       endTime: 0,
+      adjustLives: (count) => {
+        // count can be an integer + or -
+        //   count simply references the value to add or remove from lives
+        if (count === 0) return;
+        if (count < 0) {
+          // lose lives from current arr
+          let x = count;
+          while (x !== 0) {
+            // when x is 0, we've terminated loop
+
+            if ()
+          }
+        }
+        if (count > 0) {
+          // gain count num of lives added to current arr
+
+        }
+        set((state) => {
+          return { lives: newLives };
+        });
+      },
       start: () => {
         set((state) => {
           if (state.phase === 'ready') {
