@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useKeyboardControls } from '@react-three/drei';
 import useGame from './stores/useGame';
 import { addEffect } from '@react-three/fiber';
+import uniqid from 'uniqid';
 function Interface() {
   const controls = useKeyboardControls((state) => state);
 
@@ -11,6 +12,7 @@ function Interface() {
   const phase = useGame((state) => state.phase);
   const level = useGame((state) => state.level);
   const lives = useGame((state) => state.lives);
+  const [liveState, setLiveState] = useState(lives);
 
   const forward = useKeyboardControls((state) => state.forward);
   const backward = useKeyboardControls((state) => state.backward);
@@ -33,9 +35,16 @@ function Interface() {
 
       if (timeRef.current) timeRef.current.textContent = elapsedTime;
     });
-
+    const unsubscribeLives = useGame.subscribe(
+      (state) => state.lives,
+      (lives) => {
+        console.log(lives);
+        setLiveState(lives);
+      }
+    );
     return () => {
       unsubscribeEffect();
+      unsubscribeLives();
     };
   }, []);
 
@@ -45,13 +54,18 @@ function Interface() {
         0.00
       </div>
       <div className='livesContainer'>
-        {lives.map((life) =>
-          life ? (
-            <img src='assets/heart.svg' alt='heart' />
-          ) : (
-            <img src='assets/emptyHeart.svg' alt='empty heart' />
-          )
-        )}
+        {liveState &&
+          liveState.map((life) =>
+            life ? (
+              <img key={uniqid()} src='assets/heart.svg' alt='heart' />
+            ) : (
+              <img
+                key={uniqid()}
+                src='assets/emptyHeart.svg'
+                alt='empty heart'
+              />
+            )
+          )}
       </div>
       {phase === 'complete' && (
         <div className='restart' onClick={next}>

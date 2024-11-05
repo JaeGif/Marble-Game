@@ -18,7 +18,10 @@ export default create(
       endTime: 0,
       adjustLives: (count) => {
         set((state) => {
-          return { lives: adjustLivesArray(lives, count, maxLives) };
+          console.log('adjusting,', count);
+          return {
+            lives: adjustLivesArray(state.lives, count, state.maxLives),
+          };
         });
       },
       start: () => {
@@ -32,6 +35,7 @@ export default create(
       restart: () => {
         set((state) => {
           if (state.phase === 'playing' || state.phase === 'complete') {
+            state.adjustLives(-1);
             return { phase: 'ready', obstacleSeed: Math.random() };
           }
           return {};
