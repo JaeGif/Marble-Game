@@ -4,6 +4,7 @@
 - change the map so it isn't only linear and is randomly generated
 - Modes: Hardcore 1 death is game over
     Casual, 3 respawns
+- Need to integrate the backend/frontend with a highscores section, and a way to submit your own highscore
 
 Changelog:
 - Convert to monorepo with backend
