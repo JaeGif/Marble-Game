@@ -9,7 +9,7 @@ export default create(
       jumps: 2,
       level: 1,
       mode: 'hardcore' | 'casual',
-      lives: [true, true, true],
+      lives: [true, true, true, true],
       score: 0,
       maxLives: 3,
       // ready | playing | complete

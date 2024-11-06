@@ -12,13 +12,15 @@ function Interface() {
   const phase = useGame((state) => state.phase);
   const level = useGame((state) => state.level);
   const lives = useGame((state) => state.lives);
-  const [liveState, setLiveState] = useState(lives);
+  const maxLives = useGame((state) => state.maxLives);
 
   const forward = useKeyboardControls((state) => state.forward);
   const backward = useKeyboardControls((state) => state.backward);
   const leftward = useKeyboardControls((state) => state.leftward);
   const rightward = useKeyboardControls((state) => state.rightward);
   const jump = useKeyboardControls((state) => state.jump);
+
+  const [liveState, setLiveState] = useState(lives);
 
   useEffect(() => {
     const unsubscribeEffect = addEffect(() => {
@@ -55,9 +57,13 @@ function Interface() {
       </div>
       <div className='livesContainer'>
         {liveState &&
-          liveState.map((life) =>
+          liveState.map((life, i) =>
             life ? (
-              <img key={uniqid()} src='assets/heart.svg' alt='heart' />
+              i > maxLives - 1 ? (
+                <img key={uniqid()} src='assets/blueHeart.svg' alt='heart' />
+              ) : (
+                <img key={uniqid()} src='assets/heart.svg' alt='heart' />
+              )
             ) : (
               <img
                 key={uniqid()}

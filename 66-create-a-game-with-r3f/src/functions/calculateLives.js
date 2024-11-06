@@ -23,9 +23,6 @@ export default function adjustLivesArray(lives, count, maxLives) {
         tempLives.pop();
       }
 
-      // case for player lost all lives
-      if (!tempLives[0]) return 'dead placeholder';
-
       x++;
     }
   } else if (count > 0) {
