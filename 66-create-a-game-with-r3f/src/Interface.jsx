@@ -13,7 +13,7 @@ function Interface() {
   const level = useGame((state) => state.level);
   const lives = useGame((state) => state.lives);
   const maxLives = useGame((state) => state.maxLives);
-
+  const score = useGame((state) => state.score);
   const forward = useKeyboardControls((state) => state.forward);
   const backward = useKeyboardControls((state) => state.backward);
   const leftward = useKeyboardControls((state) => state.leftward);
@@ -52,8 +52,9 @@ function Interface() {
 
   return (
     <div className='interface'>
-      <div ref={timeRef} className='time'>
-        0.00
+      <div className='time'>
+        <p ref={timeRef}>00.0</p>
+        <p>Score {score}</p>
       </div>
       <div className='livesContainer'>
         {liveState &&
@@ -98,7 +99,7 @@ function Interface() {
         </div>
       </div>
       <div className='level'>
-        <p>LEVEL {level}</p>
+        <p>Stage {level}</p>
       </div>
     </div>
   );

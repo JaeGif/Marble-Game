@@ -34,9 +34,14 @@ body,
   width: 100%;
   color: #ffffff;
   font-size: 6vh;
-  background: #00000033;
   padding-top: 5px;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+}
+.time > p {
+  line-height: 0;
+  padding-left: 5%;
+  padding-right: 4%;
 }
 .restart {
   display: flex;
@@ -84,6 +89,6 @@ body,
   bottom: 10%;
   right: 5%;
 }
-.level > p {
+.level :first-child {
   font-size: xx-large;
 }
