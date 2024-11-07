@@ -3,6 +3,10 @@ import { useKeyboardControls } from '@react-three/drei';
 import useGame from './stores/useGame';
 import { addEffect } from '@react-three/fiber';
 import uniqid from 'uniqid';
+import Api from './classes/Api';
+
+const API_STRING = import.meta.env.VITE_API_STRING;
+
 function Interface() {
   const controls = useKeyboardControls((state) => state);
 
@@ -23,6 +27,15 @@ function Interface() {
   const jump = useKeyboardControls((state) => state.jump);
 
   const [liveState, setLiveState] = useState(lives);
+
+  const [formAvailable, setFormAvailable] = useState(false);
+  const [username, setUsername] = useState('');
+
+  const post = new Api(API_STRING).post;
+
+  const updateUsername = (e) => {
+    setUsername(e.target.value);
+  };
 
   useEffect(() => {
     const unsubscribeEffect = addEffect(() => {
@@ -83,8 +96,37 @@ function Interface() {
       )}
       {phase === 'gameOver' && (
         <div className='restart'>
-          <p onClick={next}>Record Highscore</p>
-          <p onClick={startOver}>Restart</p>
+          {!formAvailable ? (
+            <>
+              <p onClick={() => setFormAvailable(true)}>Record Highscore</p>
+              <p onClick={startOver}>Restart</p>
+            </>
+          ) : (
+            <form>
+              <input
+                required
+                onChange={updateUsername}
+                type='text'
+                placeholder='username'
+              />
+              <button
+                onClick={() => {
+                  if (username === '') return;
+
+                  const { data, isLoading, isSuccess, err } = post({
+                    user_name: username,
+                    score: score,
+                  });
+
+                  if (err) console.log(err);
+                  if (isSuccess) startOver();
+                }}
+                type='button'
+              >
+                Submit Score
+              </button>
+            </form>
+          )}
         </div>
       )}
 
