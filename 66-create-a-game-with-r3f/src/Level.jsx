@@ -256,32 +256,44 @@ export function BlockBlueHealth({ position = [0, 0, 0] }) {
   );
   const [timeOffset] = useState(() => Math.random() * Math.PI * 2);
  */
+
+  const [isUncollected, setIsUncollected] = useState(true);
+
   const healthRef = useRef();
   const adjustLives = useGame((state) => state.adjustLives);
 
   const handleCollisionEnter = (foreignCollider) => {
     // up hearts
     adjustLives(1);
+    setIsUncollected(false);
   };
 
   return (
-    <RigidBody
-      type='kinematicPosition'
-      ref={healthRef}
-      onCollisionEnter={handleCollisionEnter}
-      position={position}
-    >
-      <MeshCollider
-        args={[2, 2, 2]}
-        //   args={[nodes.YourMesh.geometry]} // Use geometry from the GLTF model
-        sensor
-      >
-        <mesh>
-          <boxGeometry args={[2, 2, 2]} />
-          <meshStandardMaterial color='blue' opacity={0.3} transparent />{' '}
-        </mesh>
-      </MeshCollider>
-    </RigidBody>
+    <>
+      {isUncollected && (
+        <RigidBody
+          type='kinematicPosition'
+          ref={healthRef}
+          onCollisionEnter={handleCollisionEnter}
+          position={position}
+        >
+          <MeshCollider
+            args={[2, 2, 2]}
+            //   args={[nodes.YourMesh.geometry]} // Use geometry from the GLTF model
+            sensor
+          >
+            <mesh>
+              <boxGeometry args={[2, 2, 2]} />
+              <meshStandardMaterial
+                color='blue'
+                opacity={0.3}
+                transparent
+              />{' '}
+            </mesh>
+          </MeshCollider>
+        </RigidBody>
+      )}
+    </>
   );
 }
 function Bounds({ length = 1 }) {
