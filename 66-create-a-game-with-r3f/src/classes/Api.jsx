@@ -1,37 +1,36 @@
 export default class Api {
   constructor(url) {
     this.url = url;
+    Api.instanceCount += 1;
   }
+  static instanceCount = 0;
   isLoading = false;
   isSuccess = false;
   data = null;
   err = null;
 
-  post(path, jsonData, headers, options) {
-    const sendPost = async () => {
-      this.isLoading = true;
-      this.isSuccess = false;
+  post = async (path, jsonData, headers, options) => {
+    this.isLoading = true;
+    this.isSuccess = false;
 
-      try {
-        const res = await fetch(`${API_STRING}${path}`, {
-          method: 'POST',
-          body: JSON.stringify(jsonData),
-          headers: {
-            'Content-Type': 'application/json',
-            ...headers,
-          },
-          ...options,
-        });
+    try {
+      const res = await fetch(`${this.url}${path}`, {
+        method: 'POST',
+        body: JSON.stringify(jsonData),
+        headers: {
+          'Content-Type': 'application/json',
+          ...headers,
+        },
+        ...options,
+      });
 
-        const resData = await res.json();
-        this.data = resData;
-      } catch (err) {
-        this.err = err;
-      }
-      this.isLoading = false;
-      if (!err) this.isSuccess = true;
-    };
-    sendPost();
+      const resData = await res.json();
+      this.data = resData;
+    } catch (err) {
+      this.err = err;
+    }
+    this.isLoading = false;
+    if (!this.err) this.isSuccess = true;
 
     return {
       data: this.data,
@@ -39,33 +38,30 @@ export default class Api {
       isSuccess: this.isSuccess,
       err: this.err,
     };
-  }
+  };
 
-  get(path, headers, options) {
-    const sendGet = async () => {
-      this.isLoading = true;
-      this.isSuccess = false;
+  get = async (path, headers, options) => {
+    this.isLoading = true;
+    this.isSuccess = false;
 
-      try {
-        const res = await fetch(`${API_STRING}${path}`, {
-          method: 'GET',
-          body: JSON.stringify(jsonData),
-          headers: {
-            'Content-Type': 'application/json',
-            ...headers,
-          },
-          ...options,
-        });
+    try {
+      const res = await fetch(`${this.url}${path}`, {
+        method: 'GET',
+        body: JSON.stringify(jsonData),
+        headers: {
+          'Content-Type': 'application/json',
+          ...headers,
+        },
+        ...options,
+      });
 
-        const resData = await res.json();
-        this.data = resData;
-      } catch (err) {
-        this.err = err;
-      }
-      this.isLoading = false;
-      if (!err) this.isSuccess = true;
-    };
-    sendGet();
+      const resData = await res.json();
+      this.data = resData;
+    } catch (err) {
+      this.err = err;
+    }
+    this.isLoading = false;
+    if (!this.err) this.isSuccess = true;
 
     return {
       data: this.data,
@@ -73,33 +69,30 @@ export default class Api {
       isSuccess: this.isSuccess,
       err: this.err,
     };
-  }
+  };
 
-  put(path, jsonData, id, headers, options) {
-    const sendPut = async () => {
-      this.isLoading = true;
-      this.isSuccess = false;
+  put = async (path, jsonData, id, headers, options) => {
+    this.isLoading = true;
+    this.isSuccess = false;
 
-      try {
-        const res = await fetch(`${API_STRING}${path}`, {
-          method: 'PUT',
-          body: JSON.stringify(jsonData),
-          headers: {
-            'Content-Type': 'application/json',
-            ...headers,
-          },
-          ...options,
-        });
+    try {
+      const res = await fetch(`${this.url}${path}`, {
+        method: 'PUT',
+        body: JSON.stringify(jsonData),
+        headers: {
+          'Content-Type': 'application/json',
+          ...headers,
+        },
+        ...options,
+      });
 
-        const resData = await res.json();
-        this.data = resData;
-      } catch (err) {
-        this.err = err;
-      }
-      this.isLoading = false;
-      if (!err) this.isSuccess = true;
-    };
-    sendPut();
+      const resData = await res.json();
+      this.data = resData;
+    } catch (err) {
+      this.err = err;
+    }
+    this.isLoading = false;
+    if (!this.err) this.isSuccess = true;
 
     return {
       data: this.data,
@@ -107,32 +100,29 @@ export default class Api {
       isSuccess: this.isSuccess,
       err: this.err,
     };
-  }
+  };
 
-  del(path, headers, options) {
-    const sendDel = async () => {
-      this.isLoading = true;
-      this.isSuccess = false;
+  del = async (path, headers, options) => {
+    this.isLoading = true;
+    this.isSuccess = false;
 
-      try {
-        const res = await fetch(`${API_STRING}${path}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            ...headers,
-          },
-          ...options,
-        });
+    try {
+      const res = await fetch(`${this.url}${path}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          ...headers,
+        },
+        ...options,
+      });
 
-        const resData = await res.json();
-        this.data = resData;
-      } catch (err) {
-        this.err = err;
-      }
-      this.isLoading = false;
-      if (!err) this.isSuccess = true;
-    };
-    sendDel();
+      const resData = await res.json();
+      this.data = resData;
+    } catch (err) {
+      this.err = err;
+    }
+    this.isLoading = false;
+    if (!this.err) this.isSuccess = true;
 
     return {
       data: this.data,
@@ -140,5 +130,5 @@ export default class Api {
       isSuccess: this.isSuccess,
       err: this.err,
     };
-  }
+  };
 }

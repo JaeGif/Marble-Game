@@ -4,7 +4,6 @@ import useGame from './stores/useGame';
 import { addEffect } from '@react-three/fiber';
 import uniqid from 'uniqid';
 import Api from './classes/Api';
-
 const API_STRING = import.meta.env.VITE_API_STRING;
 
 function Interface() {
@@ -102,7 +101,7 @@ function Interface() {
               <p onClick={startOver}>Restart</p>
             </>
           ) : (
-            <form>
+            <form className='submit-highscore'>
               <input
                 required
                 onChange={updateUsername}
@@ -113,7 +112,7 @@ function Interface() {
                 onClick={() => {
                   if (username === '') return;
 
-                  const { data, isLoading, isSuccess, err } = post({
+                  const { data, isLoading, isSuccess, err } = post('/scores', {
                     user_name: username,
                     score: score,
                   });

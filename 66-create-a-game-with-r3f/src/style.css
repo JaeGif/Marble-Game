@@ -66,6 +66,35 @@ body,
 .restart :last-child:hover {
   color: red;
 }
+.submit-highscore {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+}
+.submit-highscore > input {
+  height: 50px;
+  width: 300px;
+  text-align: center;
+  font-size: xx-large;
+  border-radius: 8px;
+  border: none;
+}
+.submit-highscore > :first-child:hover {
+  color: black;
+}
+.submit-highscore > :last-child:hover {
+  color: black;
+  cursor: pointer;
+}
+.submit-highscore > button {
+  height: 40px;
+  width: 300px;
+  border-radius: 8px;
+  border: none;
+  font-size: x-large;
+}
 .controls {
   position: absolute;
   bottom: 10%;
