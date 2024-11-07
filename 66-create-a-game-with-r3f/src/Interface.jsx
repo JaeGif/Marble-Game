@@ -40,10 +40,10 @@ function Interface() {
     const unsubscribeLives = useGame.subscribe(
       (state) => state.lives,
       (lives) => {
-        console.log(lives);
         setLiveState(lives);
       }
     );
+
     return () => {
       unsubscribeEffect();
       unsubscribeLives();

@@ -2,13 +2,13 @@ export default function adjustLivesArray(lives, count, maxLives) {
   let x = count;
 
   let tempLives = [...lives];
-
+  if (!tempLives[0] && count < 0) return [false, false, false];
   if (count === 0) return tempLives;
   else if (count < 0) {
     // lose lives from current arr
     let pointer = tempLives.length - 1;
 
-    while (x !== 0) {
+    while (x < 0) {
       //    if false and i is greater than 3, make blue
       //    if false and i less than 3, make hollow
       if (tempLives.length > maxLives && tempLives[pointer]) {
