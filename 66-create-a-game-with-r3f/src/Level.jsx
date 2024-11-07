@@ -251,25 +251,17 @@ export function BlockAxe({ position = [0, 0, 0] }) {
   );
 }
 export function BlockBlueHealth({ position = [0, 0, 0] }) {
-  const globalPlayerHandle = useGame((state) => state.globalPlayerHandle);
-
-  const [speed] = useState(
+  /*   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
   );
   const [timeOffset] = useState(() => Math.random() * Math.PI * 2);
-
+ */
   const healthRef = useRef();
+  const adjustLives = useGame((state) => state.adjustLives);
 
-  // Set up a sensor collider
-
-  const handleCollisionEnter = (otherCollider) => {
-    // Do something when another collider enters the sensor
-    console.log('Collision enter:', otherCollider);
-  };
-
-  const handleCollisionExit = (otherCollider) => {
-    // Do something when another collider exits the sensor
-    console.log('Collision exit:', otherCollider);
+  const handleCollisionEnter = (foreignCollider) => {
+    // up hearts
+    adjustLives(1);
   };
 
   return (
@@ -277,13 +269,12 @@ export function BlockBlueHealth({ position = [0, 0, 0] }) {
       type='kinematicPosition'
       ref={healthRef}
       onCollisionEnter={handleCollisionEnter}
-      onCollisionExit={handleCollisionExit}
       position={position}
     >
       <MeshCollider
         args={[2, 2, 2]}
         //   args={[nodes.YourMesh.geometry]} // Use geometry from the GLTF model
-        sensor // Mark it as a sensor collider
+        sensor
       >
         <mesh>
           <boxGeometry args={[2, 2, 2]} />
