@@ -12,13 +12,18 @@ export default create(
       lives: [true, true, true, true],
       score: 0,
       maxLives: 3,
-      // ready | playing | complete
+      globalPlayerHandle: null,
+      // ready | playing | complete | gameOver
       phase: 'ready',
       startTime: 0,
       endTime: 0,
+      setGlobalPlayerHandle: (handle) => {
+        set((state) => {
+          return { globalPlayerHandle: handle };
+        });
+      },
       adjustLives: (count) => {
         set((state) => {
-          console.log('adjusting,', count);
           return {
             lives: adjustLivesArray(state.lives, count, state.maxLives),
           };

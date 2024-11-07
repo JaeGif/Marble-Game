@@ -19,6 +19,9 @@ function Player(props) {
 
   const bodyRef = useRef();
 
+  const setGlobalPlayerHandle = useGame((state) => state.setGlobalPlayerHandle);
+  const globalPlayerHandle = useGame((state) => state.playerHandle);
+
   const start = useGame((state) => state.start);
   const end = useGame((state) => state.end);
   const restart = useGame((state) => state.restart);
@@ -71,16 +74,23 @@ function Player(props) {
     const unsubscribeAny = subscribeKeys(() => {
       start();
     });
+
+    const unsubscribePlayerHandle = useGame.subscribe(
+      (state) => state.playerHandle
+    );
+
     return () => {
       unsubscribeJump();
       unsubscribeAny();
       unsubscribeReset();
+      unsubscribePlayerHandle();
     };
   }, []);
 
   useFrame((state, delta) => {
     // instructions per frame
     // Controls
+    if (!bodyRef.current) return;
     const { forward, backward, leftward, rightward } = getKeys();
 
     const impulse = { x: 0, y: 0, z: 0 };
@@ -138,6 +148,13 @@ function Player(props) {
       restart();
     }
   });
+
+  useEffect(() => {
+    // set handle to state management
+    if (bodyRef.current && globalPlayerHandle !== bodyRef.current.handle) {
+      setGlobalPlayerHandle(bodyRef.current.handle);
+    }
+  }, [bodyRef.current]);
 
   return (
     <RigidBody

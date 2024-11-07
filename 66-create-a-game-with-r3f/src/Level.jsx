@@ -1,8 +1,14 @@
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo, useEffect } from 'react';
 import * as THREE from 'three';
-import { RigidBody, CuboidCollider } from '@react-three/rapier';
+import {
+  RigidBody,
+  CuboidCollider,
+  useRapier,
+  MeshCollider,
+} from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { Float, Text, useGLTF } from '@react-three/drei';
+import useGame from './stores/useGame';
 
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 const floor1Material = new THREE.MeshStandardMaterial({ color: 'limegreen' });
@@ -49,6 +55,8 @@ export function BlockEnd({ position = [0, 0, 0] }) {
   const goalRef = useRef();
 
   useFrame((state) => {
+    if (!goalRef.current) return;
+
     goalRef.current.rotation.y = state.clock.getElapsedTime() * 0.25;
   });
   return (
@@ -92,6 +100,8 @@ export function BlockSpinner({ position = [0, 0, 0] }) {
 
   const obstacleRef = useRef();
   useFrame((state) => {
+    if (!obstacleRef.current) return;
+
     const time = state.clock.getElapsedTime();
     const rotation = new THREE.Quaternion();
     rotation.setFromEuler(new THREE.Euler(0, time * speed, 0));
@@ -134,6 +144,8 @@ export function BlockLimbo({ position = [0, 0, 0] }) {
 
   const obstacleRef = useRef();
   useFrame((state) => {
+    if (!obstacleRef.current) return;
+
     const time = state.clock.getElapsedTime();
 
     const y = Math.sin(time + timeOffset) + 1.15;
@@ -199,6 +211,8 @@ export function BlockAxe({ position = [0, 0, 0] }) {
 
   const obstacleRef = useRef();
   useFrame((state) => {
+    if (!obstacleRef.current) return;
+
     const time = state.clock.getElapsedTime();
 
     const x = Math.sin(time + timeOffset) * 1.25;
@@ -234,6 +248,49 @@ export function BlockAxe({ position = [0, 0, 0] }) {
         />
       </RigidBody>
     </group>
+  );
+}
+export function BlockBlueHealth({ position = [0, 0, 0] }) {
+  const globalPlayerHandle = useGame((state) => state.globalPlayerHandle);
+
+  const [speed] = useState(
+    () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
+  );
+  const [timeOffset] = useState(() => Math.random() * Math.PI * 2);
+
+  const healthRef = useRef();
+
+  // Set up a sensor collider
+
+  const handleCollisionEnter = (otherCollider) => {
+    // Do something when another collider enters the sensor
+    console.log('Collision enter:', otherCollider);
+  };
+
+  const handleCollisionExit = (otherCollider) => {
+    // Do something when another collider exits the sensor
+    console.log('Collision exit:', otherCollider);
+  };
+
+  return (
+    <RigidBody
+      type='kinematicPosition'
+      ref={healthRef}
+      onCollisionEnter={handleCollisionEnter}
+      onCollisionExit={handleCollisionExit}
+      position={position}
+    >
+      <MeshCollider
+        args={[2, 2, 2]}
+        //   args={[nodes.YourMesh.geometry]} // Use geometry from the GLTF model
+        sensor // Mark it as a sensor collider
+      >
+        <mesh>
+          <boxGeometry args={[2, 2, 2]} />
+          <meshStandardMaterial color='blue' opacity={0.3} transparent />{' '}
+        </mesh>
+      </MeshCollider>
+    </RigidBody>
   );
 }
 function Bounds({ length = 1 }) {
@@ -276,7 +333,7 @@ function Bounds({ length = 1 }) {
 
 function Level({
   obstacleCount = 5,
-  types = [BlockSpinner, BlockAxe, BlockLimbo, BlockSpeed],
+  types = [BlockSpinner, BlockAxe, BlockLimbo, BlockSpeed, BlockBlueHealth],
   level = 1,
 }) {
   const levelObstacles = obstacleCount + level * 2;
