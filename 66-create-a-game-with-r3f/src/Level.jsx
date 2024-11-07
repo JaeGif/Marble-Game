@@ -261,10 +261,11 @@ export function BlockBlueHealth({ position = [0, 0, 0] }) {
 
   const healthRef = useRef();
   const adjustLives = useGame((state) => state.adjustLives);
-
+  const adjustScore = useGame((state) => state.adjustScore);
   const handleCollisionEnter = (foreignCollider) => {
-    // up hearts
+    // up hearts and score
     adjustLives(1);
+    adjustScore(1000);
     setIsUncollected(false);
   };
 
