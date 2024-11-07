@@ -9,11 +9,13 @@ function Interface() {
   const timeRef = useRef();
 
   const next = useGame((state) => state.next);
+  const startOver = useGame((state) => state.startOver);
   const phase = useGame((state) => state.phase);
   const level = useGame((state) => state.level);
   const lives = useGame((state) => state.lives);
   const maxLives = useGame((state) => state.maxLives);
   const score = useGame((state) => state.score);
+
   const forward = useKeyboardControls((state) => state.forward);
   const backward = useKeyboardControls((state) => state.backward);
   const leftward = useKeyboardControls((state) => state.leftward);
@@ -80,8 +82,9 @@ function Interface() {
         </div>
       )}
       {phase === 'gameOver' && (
-        <div className='restart' onClick={next}>
-          Add Highscore
+        <div className='restart'>
+          <p onClick={next}>Record Highscore</p>
+          <p onClick={startOver}>Restart</p>
         </div>
       )}
 

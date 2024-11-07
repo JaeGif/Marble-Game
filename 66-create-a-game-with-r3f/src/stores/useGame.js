@@ -42,7 +42,7 @@ export default create(
           if (state.phase === 'playing' || state.phase === 'complete') {
             state.adjustLives(-1);
             // game over when the last hp is lost
-            if (!state.lives[1] && state.lives[0]) return state.gameOver();
+            if (!state.lives[1] && state.lives[0]) state.gameOver();
             else return { phase: 'ready', obstacleSeed: Math.random() };
           }
           return {};
