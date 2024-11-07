@@ -39,7 +39,7 @@ export default function adjustLivesArray(lives, count, maxLives) {
 
     while (x !== 0) {
       // start from pointer, which is the first false
-      if (!tempLives[pointer]) {
+      if (pointer > tempLives.length - 1) {
         tempLives.push(true);
       } else tempLives[pointer] = true;
       pointer++;

@@ -1,4 +1,4 @@
-const lives = [true, true, true];
+const lives = [true, true, false];
 const maxLives = 3;
 const test = (count) => {
   let x = count;
@@ -41,7 +41,7 @@ const test = (count) => {
 
     while (x !== 0) {
       // start from pointer, which is the first false
-      if (!tempLives[pointer]) {
+      if (pointer > tempLives.length - 1) {
         tempLives.push(true);
       } else tempLives[pointer] = true;
       pointer++;
@@ -51,4 +51,4 @@ const test = (count) => {
   return tempLives;
 };
 
-console.log(test(-1));
+console.log(test(2));
