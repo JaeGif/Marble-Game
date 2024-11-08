@@ -190,16 +190,33 @@ export function BlockSpeed({ position = [0, 0, 0] }) {
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
   });
+  // use position and players position to determine if get benefit
+  const speedMultiplier = useGame((state) => state.speedBlockMultiplier);
+  const playerHandle = useGame((state) => state.globalPlayerHandle);
+  const { world } = useRapier();
+  const handleAddingSpeedToPlayer = (collision) => {
+    const player = world.getRigidBody(collision.rigidBody.handle);
+    console.log(collision, playerHandle);
 
+    if (player.handle.toString() == playerHandle.toString()) {
+      player.applyImpulse({ x: 0, y: 0, z: -speedMultiplier });
+      console.log('match');
+    }
+  };
   return (
     <group position={position}>
-      <mesh
-        scale={[4, 0.2, 4]}
-        geometry={boxGeometry}
-        material={speedMaterial}
-        position={[0, -0.1, 0]}
-        receiveShadow
-      />
+      <RigidBody
+        onCollisionEnter={handleAddingSpeedToPlayer}
+        colliders={'cuboid'}
+      >
+        <mesh
+          scale={[4, 0.2, 4]}
+          geometry={boxGeometry}
+          material={speedMaterial}
+          position={[0, -0.1, 0]}
+          receiveShadow
+        />
+      </RigidBody>
     </group>
   );
 }

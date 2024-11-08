@@ -14,6 +14,7 @@ export default create(
       score: 0,
       maxLives: 3,
       globalPlayerHandle: null,
+      speedBlockMultiplier: 2,
       // ready | playing | complete | gameOver
       phase: 'ready',
       startTime: 0,
