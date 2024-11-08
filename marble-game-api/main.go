@@ -24,10 +24,9 @@ func main() {
 	e.POST("/scores", handlers.CreateScore)
 	e.GET("/scores", handlers.GetScores)
 	e.Use(handlers.LogRequest)
-	/* e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000"},
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{AllowOrigins: []string{"http://localhost:5173"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
-	  })) */
+	}))
 	// start server or log fatal
 	e.Logger.Fatal(e.Start(":8080"))
 
