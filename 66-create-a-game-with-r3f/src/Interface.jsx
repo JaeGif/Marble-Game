@@ -109,13 +109,16 @@ function Interface() {
                 placeholder='username'
               />
               <button
-                onClick={() => {
+                onClick={async () => {
                   if (username === '') return;
 
-                  const { data, isLoading, isSuccess, err } = post('/scores', {
-                    user_name: username,
-                    score: score,
-                  });
+                  const { data, isLoading, isSuccess, err } = await post(
+                    '/scores',
+                    {
+                      user_name: username,
+                      score: score,
+                    }
+                  );
 
                   if (err) console.log(err);
                   if (isSuccess) startOver();
