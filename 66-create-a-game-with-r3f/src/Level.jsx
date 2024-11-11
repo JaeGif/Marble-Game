@@ -16,7 +16,7 @@ const floor2Material = new THREE.MeshStandardMaterial({ color: 'greenyellow' });
 const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 'orangered' });
 const speedMaterial = new THREE.MeshStandardMaterial({ color: 'blue' });
 
-const wallMaterial = new THREE.MeshStandardMaterial({ color: 'slategrey' });
+// const wallMaterial = new THREE.MeshStandardMaterial({ color: 'slategrey' });
 
 export function BlockStart({ position = [0, 0, 0] }) {
   return (
@@ -286,31 +286,33 @@ export function BlockBlueHealth({ position = [0, 0, 0] }) {
 
   return (
     <group position={position}>
-      <mesh
-        scale={[4, 0.2, 4]}
-        geometry={boxGeometry}
-        material={floor2Material}
-        position={[0, -0.1, 0]}
-        receiveShadow
-      />
-      {isUncollected && (
-        <RigidBody
-          type='kinematicPosition'
-          ref={healthRef}
-          onCollisionEnter={handleCollisionEnter}
-        >
-          <MeshCollider
-            args={[2, 2, 2]}
-            //   args={[nodes.YourMesh.geometry]} // Use geometry from the GLTF model
-            sensor
+      <Float>
+        <mesh
+          scale={[4, 0.2, 4]}
+          geometry={boxGeometry}
+          material={floor2Material}
+          position={[0, -0.1, 0]}
+          receiveShadow
+        />
+        {isUncollected && (
+          <RigidBody
+            type='kinematicPosition'
+            ref={healthRef}
+            onCollisionEnter={handleCollisionEnter}
           >
-            <mesh>
-              <boxGeometry args={[2, 2, 2]} />
-              <meshStandardMaterial color='blue' opacity={0.3} transparent />
-            </mesh>
-          </MeshCollider>
-        </RigidBody>
-      )}
+            <MeshCollider
+              args={[2, 2, 2]}
+              //   args={[nodes.YourMesh.geometry]} // Use geometry from the GLTF model
+              sensor
+            >
+              <mesh>
+                <boxGeometry args={[2, 2, 2]} />
+                <meshStandardMaterial color='blue' opacity={0.3} transparent />
+              </mesh>
+            </MeshCollider>
+          </RigidBody>
+        )}
+      </Float>
     </group>
   );
 }
