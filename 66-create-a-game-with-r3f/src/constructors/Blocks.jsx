@@ -5,6 +5,9 @@ import { useFrame } from '@react-three/fiber';
 import { Float, Text, useGLTF } from '@react-three/drei';
 import useGame from '../stores/useGame';
 
+// blocks are 4x4, -z is away from starting cam position
+const UNIT_CONSTANT = -4;
+
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 const floor1Material = new THREE.MeshStandardMaterial({ color: 'limegreen' });
 const floor2Material = new THREE.MeshStandardMaterial({ color: 'greenyellow' });
@@ -311,11 +314,31 @@ export function Platform({ type, position }) {
   return (
     <>
       {type === 'floor' ? (
-        <BlockFloor position={position} type={type} />
+        <BlockFloor
+          position={[
+            position[0] * UNIT_CONSTANT,
+            position[1] * UNIT_CONSTANT,
+            position[2] * UNIT_CONSTANT,
+          ]}
+          type={type}
+        />
       ) : (
         <>
-          <BlockFloor position={position} type={type} />
-          <Block position={position} />
+          <BlockFloor
+            position={[
+              position[0] * UNIT_CONSTANT,
+              position[1] * UNIT_CONSTANT,
+              position[2] * UNIT_CONSTANT,
+            ]}
+            type={type}
+          />
+          <Block
+            position={[
+              position[0] * UNIT_CONSTANT,
+              position[1] * UNIT_CONSTANT,
+              position[2] * UNIT_CONSTANT,
+            ]}
+          />
         </>
       )}
     </>
