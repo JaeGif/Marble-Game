@@ -8,3 +8,8 @@
 
 Changelog:
 - Convert to monorepo with backend
+
+
+BUGFIX:
+- Phantom block
+- ocassional floor missing, bounds are not missing. (check the position attrs.)
