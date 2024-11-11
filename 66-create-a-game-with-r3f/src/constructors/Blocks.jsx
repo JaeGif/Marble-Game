@@ -177,7 +177,9 @@ function BlockSpeed({ position = [0, 0, 0] }) {
   return (
     <group position={position}>
       <RigidBody
+        type='fixed'
         onCollisionEnter={handleAddingSpeedToPlayer}
+        onIntersectionEnter={handleAddingSpeedToPlayer}
         colliders={'cuboid'}
       >
         <mesh
@@ -275,8 +277,18 @@ function BlockBlueHealth({ position = [0, 0, 0] }) {
 }
 // platform types are block types
 function BlockFloor({ position, type }) {
-  const material =
-    type === 'start' || type === 'end' ? floor1Material : floor2Material;
+  let material = floor2Material;
+  switch (type) {
+    case 'start':
+      material = floor1Material;
+      break;
+    case 'end':
+      material = floor1Material;
+      break;
+
+    default:
+      material = floor2Material;
+  }
   return (
     <group position={position}>
       <RigidBody type='fixed' colliders='cuboid' restitution={0.2} friction={0}>
@@ -322,6 +334,16 @@ export function Platform({ type, position }) {
           ]}
           type={type}
         />
+      ) : type === 'speed' ? (
+        <>
+          <Block
+            position={[
+              position[0] * UNIT_CONSTANT,
+              position[1] * UNIT_CONSTANT,
+              position[2] * UNIT_CONSTANT,
+            ]}
+          />
+        </>
       ) : (
         <>
           <BlockFloor
