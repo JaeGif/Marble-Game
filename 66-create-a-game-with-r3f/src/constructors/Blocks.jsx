@@ -39,12 +39,16 @@ function BlockEnd({ position = [0, 0, 0] }) {
     mesh.castShadow = true;
   });
   const goalRef = useRef();
+  const end = useGame((state) => state.end);
 
   useFrame((state) => {
     if (!goalRef.current) return;
 
     goalRef.current.rotation.y = state.clock.getElapsedTime() * 0.25;
   });
+  const handleCollisionEnter = () => {
+    end();
+  };
   return (
     <group position={position}>
       <Text
@@ -58,6 +62,7 @@ function BlockEnd({ position = [0, 0, 0] }) {
       <Float rotationIntensity={0.5}>
         <group ref={goalRef}>
           <RigidBody
+            onCollisionEnter={handleCollisionEnter}
             type='fixed'
             colliders='hull'
             position={[0, 0.25, 0]}
@@ -283,6 +288,12 @@ function BlockFloor({ position, type }) {
     </group>
   );
 }
+
+/**
+ * Represents a Platform of specified type and position.
+ * @param {string} 'start' | 'end' | 'spinner' | 'axe' | 'limbo' | 'blueHealth' | 'speed' | 'floor'
+ * @param {[number, number, number]} position [x, y, z] world coordinates
+ */
 export function Platform({ type, position }) {
   const blockMap = {
     floor: BlockFloor,

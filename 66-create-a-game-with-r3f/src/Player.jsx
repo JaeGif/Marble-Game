@@ -27,11 +27,6 @@ function Player(props) {
   const restart = useGame((state) => state.restart);
   const phase = useGame((state) => state.phase);
 
-  const obstacleCount = useGame((state) => state.obstacleCount);
-  const level = useGame((state) => state.level);
-
-  const distance = obstacleCount + level * 2;
-
   const jump = () => {
     const origin = bodyRef.current.translation();
     origin.y -= BALLSIZE + 0.01;
@@ -139,10 +134,6 @@ function Player(props) {
     state.camera.position.copy(smoothedCameraPosition);
     state.camera.lookAt(smoothedCameraTarget);
 
-    // Phases
-    if (bodyPosition.z < -(distance * 4 + 2) && bodyPosition.y >= 0) {
-      end();
-    }
     // out of bounds
     if (bodyPosition.y < -8 && phase !== 'complete') {
       restart();
