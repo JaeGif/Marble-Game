@@ -196,7 +196,6 @@ export function BlockSpeed({ position = [0, 0, 0] }) {
   const { world } = useRapier();
   const handleAddingSpeedToPlayer = (collision) => {
     const player = world.getRigidBody(collision.rigidBody.handle);
-    console.log(collision, playerHandle);
 
     if (player.handle.toString() == playerHandle.toString()) {
       player.applyImpulse({ x: 0, y: 0, z: -speedMultiplier });
