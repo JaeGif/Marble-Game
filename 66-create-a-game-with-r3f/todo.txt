@@ -13,3 +13,9 @@ Changelog:
 BUGFIX:
 - Phantom block
 - ocassional floor missing, bounds are not missing. (check the position attrs.)
+
+- Phantom Blocks Affect:
+    - Axe
+    - Limbo
+
+// Seems to affect specifically second to last zone on lvl 2
