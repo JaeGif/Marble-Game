@@ -1,21 +1,5 @@
-- scoring system using time to complete each level, and the level difficulty
 - more diverse obstacles
 - change the map so it isn't only linear and is randomly generated
 - Modes: Hardcore 1 death is game over
     Casual, 3 respawns
-- Need to integrate the backend/frontend with a highscores section, and a way to submit your own highscore
-- fix scoring system
 
-Changelog:
-- Convert to monorepo with backend
-
-
-BUGFIX:
-- Phantom block
-- ocassional floor missing, bounds are not missing. (check the position attrs.)
-
-- Phantom Blocks Affect:
-    - Axe
-    - Limbo
-
-// Seems to affect specifically second to last zone on lvl 2
