@@ -200,7 +200,6 @@ export function BlockSpeed({ position = [0, 0, 0] }) {
 
     if (player.handle.toString() == playerHandle.toString()) {
       player.applyImpulse({ x: 0, y: 0, z: -speedMultiplier });
-      console.log('match');
     }
   };
   return (
