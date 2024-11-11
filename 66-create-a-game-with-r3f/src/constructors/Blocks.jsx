@@ -1,15 +1,9 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import * as THREE from 'three';
-import {
-  RigidBody,
-  CuboidCollider,
-  useRapier,
-  MeshCollider,
-} from '@react-three/rapier';
+import { RigidBody, useRapier, MeshCollider } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { Float, Text, useGLTF } from '@react-three/drei';
-import useGame from './stores/useGame';
-import Level1 from './levels/Level1';
+import useGame from '../stores/useGame';
 
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 const floor1Material = new THREE.MeshStandardMaterial({ color: 'limegreen' });
@@ -17,9 +11,7 @@ const floor2Material = new THREE.MeshStandardMaterial({ color: 'greenyellow' });
 const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 'orangered' });
 const speedMaterial = new THREE.MeshStandardMaterial({ color: 'blue' });
 
-const wallMaterial = new THREE.MeshStandardMaterial({ color: 'slategrey' });
-
-export function BlockStart({ position = [0, 0, 0] }) {
+function BlockStart({ position = [0, 0, 0] }) {
   return (
     <group position={position}>
       <Float floatIntensity={0.25} rotationIntensity={0.25}>
@@ -40,7 +32,7 @@ export function BlockStart({ position = [0, 0, 0] }) {
   );
 }
 
-export function BlockEnd({ position = [0, 0, 0] }) {
+function BlockEnd({ position = [0, 0, 0] }) {
   const hamburger = useGLTF('./hamburger.glb');
   // hamburger shadows
   hamburger.scene.children.forEach((mesh) => {
@@ -80,7 +72,7 @@ export function BlockEnd({ position = [0, 0, 0] }) {
   );
 }
 
-export function BlockSpinner({ position = [0, 0, 0] }) {
+function BlockSpinner({ position = [0, 0, 0] }) {
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
   );
@@ -116,7 +108,7 @@ export function BlockSpinner({ position = [0, 0, 0] }) {
   );
 }
 
-export function BlockLimbo({ position = [0, 0, 0] }) {
+function BlockLimbo({ position = [0, 0, 0] }) {
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
   );
@@ -157,7 +149,7 @@ export function BlockLimbo({ position = [0, 0, 0] }) {
   );
 }
 
-export function BlockSpeed({ position = [0, 0, 0] }) {
+function BlockSpeed({ position = [0, 0, 0] }) {
   // when player crosses this block they get a temporary acceleration
   const obstacleRef = useRef();
   useFrame((state) => {
@@ -191,7 +183,7 @@ export function BlockSpeed({ position = [0, 0, 0] }) {
     </group>
   );
 }
-export function BlockAxe({ position = [0, 0, 0] }) {
+function BlockAxe({ position = [0, 0, 0] }) {
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
   );
@@ -231,7 +223,7 @@ export function BlockAxe({ position = [0, 0, 0] }) {
     </group>
   );
 }
-export function BlockBlueHealth({ position = [0, 0, 0] }) {
+function BlockBlueHealth({ position = [0, 0, 0] }) {
   /*   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
   );
@@ -291,7 +283,7 @@ function BlockFloor({ position, type }) {
     </group>
   );
 }
-function Platform({ type, position }) {
+export function Platform({ type, position }) {
   const blockMap = {
     floor: BlockFloor,
     limbo: BlockLimbo,
@@ -318,33 +310,3 @@ function Platform({ type, position }) {
     </>
   );
 }
-function Level({ obstacleCount = 5, types = [BlockSpeed], level = 1 }) {
-  /*   const levelObstacles = obstacleCount + level * 2;
-
-  const blocks = useMemo(() => {
-    // scoped out :)
-    const blocks = [];
-    const OFFSET = 0.0001;
-
-    for (let i = 0; i < levelObstacles; i++) {
-      const type = types[Math.floor(Math.random() * types.length - OFFSET)];
-      blocks.push(type);
-    }
-    return blocks;
-  }, [obstacleCount, types, level]);
- */
-  return (
-    <>
-      {/*       <BlockStart position={[0, 0, 0]} />
-      {blocks.map((BlockEl, i) => (
-        <BlockEl key={i} position={[0, 0, -(i + 1) * 4]} />
-      ))}
-      <BlockEnd position={[0, 0, -(levelObstacles + 1) * 4]} />
-
-      <Bounds length={levelObstacles + 2} /> */}
-      <Level1 />
-    </>
-  );
-}
-
-export default Level;
