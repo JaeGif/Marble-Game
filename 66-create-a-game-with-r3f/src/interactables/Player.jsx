@@ -3,13 +3,13 @@ import { RigidBody, useRapier } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { useKeyboardControls } from '@react-three/drei';
 import * as THREE from 'three';
-import useGame from './stores/useGame';
+import useGame from '../stores/useGame';
 
 const BALLSIZE = 0.3;
 
 function Player({ textures, position }) {
   const [subscribeKeys, getKeys] = useKeyboardControls();
-
+  const [cameraLocked, setCameraLocked] = useState(true);
   const { rapier, world } = useRapier();
 
   const [smoothedCameraPosition] = useState(
@@ -41,7 +41,52 @@ function Player({ textures, position }) {
       bodyRef.current.applyImpulse({ x: 0, y: 0.5, z: 0 });
     }
   };
+  const cameraFollow = (bodyPosition, state, delta) => {
+    const cameraPosition = new THREE.Vector3();
+    cameraPosition.copy(bodyPosition);
 
+    cameraPosition.z += 3.25;
+    cameraPosition.y += 0.65;
+
+    const cameraTarget = new THREE.Vector3();
+    cameraTarget.copy(bodyPosition);
+    cameraTarget.y += 0.25;
+
+    smoothedCameraPosition.lerp(cameraPosition, 5 * delta);
+    smoothedCameraTarget.lerp(cameraTarget, 5 * delta);
+
+    state.camera.position.copy(smoothedCameraPosition);
+    state.camera.lookAt(smoothedCameraTarget);
+  };
+  const cameraRotate = (bodyPosition, degrees, state, delta) => {
+    state.camera.rotateY(degrees);
+
+    const cameraPosition = new THREE.Vector3();
+    // cameraPosition.copy(bodyPosition);
+
+    // x^2 + y^2 + z^2 = r^2
+
+    const radius = 3.315;
+
+    // Calculate the camera position
+    const angle = degrees;
+    const x = bodyPosition.x + radius * Math.cos(angle);
+    const y = bodyPosition.y + 0.25;
+    const z = bodyPosition.z + radius * Math.sin(angle);
+    cameraPosition.x = x;
+    cameraPosition.y = y;
+    cameraPosition.z = z;
+
+    const cameraTarget = new THREE.Vector3();
+    cameraTarget.copy(bodyPosition);
+    cameraTarget.y += 0.25;
+
+    smoothedCameraPosition.lerp(cameraPosition, 5 * delta);
+    smoothedCameraTarget.lerp(cameraTarget, 5 * delta);
+
+    state.camera.position.copy(smoothedCameraPosition);
+    state.camera.lookAt(smoothedCameraTarget);
+  };
   const reset = () => {
     // when phase changes to ready we need to reset
     bodyRef.current.setTranslation({ x: 0, y: 1, z: 0 });
@@ -86,7 +131,17 @@ function Player({ textures, position }) {
     // instructions per frame
     // Controls
     if (!bodyRef.current) return;
-    const { forward, backward, leftward, rightward } = getKeys();
+    const {
+      forward,
+      backward,
+      leftward,
+      rightward,
+      cameraLeft,
+      cameraRight,
+      cameraUp,
+      cameraDown,
+      cameraCenter,
+    } = getKeys();
 
     const impulse = { x: 0, y: 0, z: 0 };
     const torque = { x: 0, y: 0, z: 0 };
@@ -118,21 +173,19 @@ function Player({ textures, position }) {
 
     const bodyPosition = bodyRef.current.translation();
 
-    const cameraPosition = new THREE.Vector3();
-    cameraPosition.copy(bodyPosition);
-
-    cameraPosition.z += 3.25;
-    cameraPosition.y += 0.65;
-
-    const cameraTarget = new THREE.Vector3();
-    cameraTarget.copy(bodyPosition);
-    cameraTarget.y += 0.25;
-
-    smoothedCameraPosition.lerp(cameraPosition, 5 * delta);
-    smoothedCameraTarget.lerp(cameraTarget, 5 * delta);
-
-    state.camera.position.copy(smoothedCameraPosition);
-    state.camera.lookAt(smoothedCameraTarget);
+    let degrees = 0;
+    if (cameraLocked) {
+      cameraFollow(bodyPosition, state, delta);
+    }
+    if (cameraCenter) {
+      setCameraLocked(true);
+    }
+    if (cameraLeft) {
+      setCameraLocked(false);
+      console.log(cameraLocked);
+      degrees = 0.01;
+      cameraRotate(bodyPosition, degrees, state, delta);
+    }
 
     // out of bounds
     if (bodyPosition.y < -8 && phase !== 'complete') {

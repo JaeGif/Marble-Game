@@ -4,7 +4,7 @@ import { RigidBody, useRapier, MeshCollider } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { Float, Text, useGLTF, useTexture } from '@react-three/drei';
 import useGame from '../stores/useGame';
-import Player from '../Player';
+import Player from '../interactables/Player';
 // blocks are 4x4, -z is away from starting cam position
 const UNIT_CONSTANT = -4;
 
