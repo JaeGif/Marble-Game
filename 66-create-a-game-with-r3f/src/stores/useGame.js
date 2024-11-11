@@ -8,7 +8,7 @@ export default create(
     return {
       obstacleCount: 8,
       jumps: 2,
-      level: 4,
+      level: 6,
       mode: 'casual',
       lives: [true, true, true],
       score: 0,
