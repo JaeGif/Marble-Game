@@ -7,7 +7,7 @@ import useGame from './stores/useGame';
 
 const BALLSIZE = 0.3;
 
-function Player(props) {
+function Player({ textures, position }) {
   const [subscribeKeys, getKeys] = useKeyboardControls();
 
   const { rapier, world } = useRapier();
@@ -155,16 +155,16 @@ function Player(props) {
       restitution={0.2}
       friction={1}
       colliders='ball'
-      position={[0, 1, 0]}
+      position={position}
       ref={bodyRef}
     >
       <mesh castShadow receiveShadow>
         <icosahedronGeometry args={[BALLSIZE, 4]} />
         <meshStandardMaterial
-          map={props.map}
-          metalnessMap={props.metalnessMap}
-          roughnessMap={props.roughnessMap}
-          aoMap={props.aoMap}
+          map={textures.map}
+          metalnessMap={textures.metalnessMap}
+          roughnessMap={textures.roughnessMap}
+          aoMap={textures.aoMap}
         />
       </mesh>
     </RigidBody>

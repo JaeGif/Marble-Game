@@ -2,9 +2,9 @@ import React, { useRef, useState, useMemo, useEffect } from 'react';
 import * as THREE from 'three';
 import { RigidBody, useRapier, MeshCollider } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
-import { Float, Text, useGLTF } from '@react-three/drei';
+import { Float, Text, useGLTF, useTexture } from '@react-three/drei';
 import useGame from '../stores/useGame';
-
+import Player from '../Player';
 // blocks are 4x4, -z is away from starting cam position
 const UNIT_CONSTANT = -4;
 
@@ -15,8 +15,20 @@ const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 'orangered' });
 const speedMaterial = new THREE.MeshStandardMaterial({ color: 'blue' });
 
 function BlockStart({ position = [0, 0, 0] }) {
+  const textures = useTexture({
+    map: './textures/Poliigon_WoodVeneerOak_7760/1K/Poliigon_WoodVeneerOak_7760_BaseColor.jpg',
+    roughnessMap:
+      './textures/Poliigon_WoodVeneerOak_7760/1K/Poliigon_WoodVeneerOak_7760_ORM.jpg',
+    metalnessMap:
+      './textures/Poliigon_WoodVeneerOak_7760/1K/Poliigon_WoodVeneerOak_7760_ORM.jpg',
+    aoMap:
+      './textures/Poliigon_WoodVeneerOak_7760/1K/Poliigon_WoodVeneerOak_7760_ORM.jpg',
+  });
+
   return (
     <group position={position}>
+      <Player textures={textures} position={[0, 1.5, 0]} />
+
       <Float floatIntensity={0.25} rotationIntensity={0.25}>
         <Text
           font='./bebas-neue-v9-latin-regular.woff'
