@@ -9,6 +9,15 @@ import Player from '../interactables/Player';
 const UNIT_CONSTANT = -4;
 
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+const circleGeometry = new THREE.CircleGeometry(1, 16);
+
+const squareGeometry = new THREE.BoxGeometry(2, 2, 0);
+
+const portalMaterial = new THREE.MeshStandardMaterial({
+  color: 'rgba(.5, .5, .5, .1)',
+  transparent: true,
+});
+
 const floor1Material = new THREE.MeshStandardMaterial({ color: 'limegreen' });
 const floor2Material = new THREE.MeshStandardMaterial({ color: 'greenyellow' });
 const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 'orangered' });
@@ -209,6 +218,86 @@ function BlockSpeed({ position = [0, 0, 0] }) {
     </group>
   );
 }
+
+function BlockPortal({
+  position = [
+    [0, 0, 0],
+    [0, 0, 1],
+  ],
+}) {
+  const portal1Position = position[0];
+  const portal2Position = position[1];
+  // when player crosses this block they are teleported between the portals locations.
+  const obstacleRef = useRef();
+  useFrame((state) => {
+    const time = state.clock.getElapsedTime();
+  });
+  // if on cooldown, may not transport
+  const [onCooldown, setOnCooldown] = useState(false);
+
+  // use position and players position to determine if get benefit
+  const playerHandle = useGame((state) => state.globalPlayerHandle);
+  const { world } = useRapier();
+  const handleCooldownTrigger = () => {
+    // 5 sec cooldown
+    setOnCooldown(true);
+    setTimeout(() => setOnCooldown(false), 5000);
+  };
+  const handleUpdatePlayerLocation = (collision, position) => {
+    if (onCooldown) return;
+    console.log('portal active');
+
+    const player = world.getRigidBody(collision.rigidBody.handle);
+    if (player.handle.toString() == playerHandle.toString()) {
+      // interact with player positions
+      const playerLoc = {
+        x: position[0],
+        y: position[1] + 0.25,
+        z: position[2],
+      };
+      player.setTranslation(playerLoc);
+      console.log('portal yeet', playerLoc);
+
+      handleCooldownTrigger();
+    }
+  };
+  return (
+    <>
+      <group position={portal1Position}>
+        <RigidBody
+          type='fixed'
+          sensor
+          onIntersectionEnter={(collision) =>
+            handleUpdatePlayerLocation(collision, portal2Position)
+          }
+        >
+          <mesh
+            geometry={squareGeometry}
+            material={portalMaterial}
+            scale={[1.5, 1.5, 0.3]}
+            position={[0, 1.5, 0]}
+          />
+        </RigidBody>
+      </group>
+      <group position={portal2Position}>
+        <RigidBody
+          type='fixed'
+          sensor
+          onIntersectionEnter={(collision) =>
+            handleUpdatePlayerLocation(collision, portal1Position)
+          }
+        >
+          <mesh
+            geometry={squareGeometry}
+            material={portalMaterial}
+            scale={[1.5, 1.5, 0.3]}
+            position={[0, 1.5, 0]}
+          />
+        </RigidBody>
+      </group>
+    </>
+  );
+}
 function BlockAxe({ position = [0, 0, 0] }) {
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
@@ -250,12 +339,6 @@ function BlockAxe({ position = [0, 0, 0] }) {
   );
 }
 function BlockBlueHealth({ position = [0, 0, 0] }) {
-  /*   const [speed] = useState(
-    () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
-  );
-  const [timeOffset] = useState(() => Math.random() * Math.PI * 2);
- */
-
   const [isUncollected, setIsUncollected] = useState(true);
 
   const healthRef = useRef();
@@ -333,6 +416,7 @@ export function Platform({ type, position }) {
     blueHealth: BlockBlueHealth,
     speed: BlockSpeed,
     spinner: BlockSpinner,
+    portal: BlockPortal,
     start: BlockStart,
     end: BlockEnd,
   };
@@ -357,6 +441,39 @@ export function Platform({ type, position }) {
               position[0] * UNIT_CONSTANT,
               position[1] * UNIT_CONSTANT,
               position[2] * UNIT_CONSTANT,
+            ]}
+          />
+        </>
+      ) : type === 'portal' ? (
+        <>
+          <BlockFloor
+            position={[
+              position[0][0] * UNIT_CONSTANT,
+              position[0][1] * UNIT_CONSTANT,
+              position[0][2] * UNIT_CONSTANT,
+            ]}
+            type={type}
+          />
+          <BlockFloor
+            position={[
+              position[1][0] * UNIT_CONSTANT,
+              position[1][1] * UNIT_CONSTANT,
+              position[1][2] * UNIT_CONSTANT,
+            ]}
+            type={type}
+          />
+          <Block
+            position={[
+              [
+                position[0][0] * UNIT_CONSTANT,
+                position[0][1] * UNIT_CONSTANT,
+                position[0][2] * UNIT_CONSTANT,
+              ],
+              [
+                position[1][0] * UNIT_CONSTANT,
+                position[1][1] * UNIT_CONSTANT,
+                position[1][2] * UNIT_CONSTANT,
+              ],
             ]}
           />
         </>

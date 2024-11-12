@@ -7,6 +7,7 @@ import Level4 from './levels/Level4';
 import Level5 from './levels/Level5';
 import Level6 from './levels/Level6';
 import Level7 from './levels/Level7';
+import Level8 from './levels/Level8';
 
 function Level({ level = 1 }) {
   const levelMap = {
@@ -17,7 +18,7 @@ function Level({ level = 1 }) {
     5: Level5,
     6: Level6,
     7: Level7,
-    //    8: Level8,
+    8: Level8,
     //    9: Level9,
     //    10: Level10,
   };
