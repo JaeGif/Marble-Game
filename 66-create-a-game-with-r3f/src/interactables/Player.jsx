@@ -4,6 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import { useKeyboardControls } from '@react-three/drei';
 import * as THREE from 'three';
 import useGame from '../stores/useGame';
+import { cameraFollow, cameraRotate } from './cameraMotion';
 
 const BALLSIZE = 0.3;
 
@@ -12,8 +13,8 @@ function Player({ textures, position }) {
   const [cameraLocked, setCameraLocked] = useState(true);
   const { rapier, world } = useRapier();
 
-  const hAngle = useRef(Math.PI / 2); // Horizontal dolly angle
-  const vAngle = useRef(Math.PI / 2); // Vertical dolly angle
+  const hAngleRef = useRef(Math.PI / 2); // Horizontal dolly angle
+  const vAngleRef = useRef(Math.PI / 2); // Vertical dolly angle
 
   const [smoothedCameraPosition] = useState(
     () => new THREE.Vector3(10, 10, 10)
@@ -26,7 +27,6 @@ function Player({ textures, position }) {
   const globalPlayerHandle = useGame((state) => state.playerHandle);
 
   const start = useGame((state) => state.start);
-  const end = useGame((state) => state.end);
   const restart = useGame((state) => state.restart);
   const phase = useGame((state) => state.phase);
 
@@ -43,60 +43,6 @@ function Player({ textures, position }) {
       // allow for jumping during slight bounce
       bodyRef.current.applyImpulse({ x: 0, y: 0.5, z: 0 });
     }
-  };
-  const cameraFollow = (bodyPosition, state, delta) => {
-    const cameraPosition = new THREE.Vector3();
-    cameraPosition.copy(bodyPosition);
-
-    cameraPosition.z += 3.25;
-    cameraPosition.y += 0.65;
-
-    const cameraTarget = new THREE.Vector3();
-    cameraTarget.copy(bodyPosition);
-    cameraTarget.y += 0.25;
-
-    smoothedCameraPosition.lerp(cameraPosition, 5 * delta);
-    smoothedCameraTarget.lerp(cameraTarget, 5 * delta);
-
-    state.camera.position.copy(smoothedCameraPosition);
-    state.camera.lookAt(smoothedCameraTarget);
-  };
-  const cameraRotate = (bodyPosition, hRadians, vRadians, state, delta) => {
-    const cameraPosition = new THREE.Vector3();
-    // cameraPosition.copy(bodyPosition);
-
-    const RADIUS = 3.315;
-
-    // Calculate the camera position
-    hAngle.current += hRadians * delta;
-    hAngle.current %= Math.PI * 2;
-
-    vAngle.current += vRadians * delta;
-    vAngle.current %= Math.PI * 2;
-    // Clamp the vertical angle between a small positive angle and PI to avoid flipping at poles
-    vAngle.current = Math.max(0.1, Math.min(Math.PI - 0.1, vAngle.current));
-
-    const x =
-      bodyPosition.x +
-      RADIUS * Math.sin(vAngle.current) * Math.cos(hAngle.current);
-    const y = bodyPosition.y + RADIUS * Math.cos(vAngle.current);
-    const z =
-      bodyPosition.z +
-      RADIUS * Math.sin(hAngle.current) * Math.sin(vAngle.current);
-
-    cameraPosition.x = x;
-    cameraPosition.y = y;
-    cameraPosition.z = z;
-
-    const cameraTarget = new THREE.Vector3();
-    cameraTarget.copy(bodyPosition);
-    cameraTarget.y += 0.25;
-
-    smoothedCameraPosition.lerp(cameraPosition, 5 * delta);
-    smoothedCameraTarget.lerp(cameraTarget, 5 * delta);
-
-    state.camera.position.copy(smoothedCameraPosition);
-    state.camera.lookAt(smoothedCameraTarget);
   };
 
   const reset = () => {
@@ -188,7 +134,13 @@ function Player({ textures, position }) {
     let vAngle = 0;
     let hAngle = 0;
     if (cameraLocked) {
-      cameraFollow(bodyPosition, state, delta);
+      cameraFollow(
+        bodyPosition,
+        smoothedCameraPosition,
+        smoothedCameraTarget,
+        state,
+        delta
+      );
     }
     if (cameraCenter) {
       setCameraLocked(true);
@@ -211,7 +163,17 @@ function Player({ textures, position }) {
       vAngle += 2;
     }
     if (!cameraLocked) {
-      cameraRotate(bodyPosition, hAngle, vAngle, state, delta);
+      cameraRotate(
+        bodyPosition,
+        smoothedCameraPosition,
+        smoothedCameraTarget,
+        hAngle,
+        vAngle,
+        hAngleRef,
+        vAngleRef,
+        state,
+        delta
+      );
     }
 
     // out of bounds, restart
