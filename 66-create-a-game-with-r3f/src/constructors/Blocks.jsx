@@ -338,6 +338,26 @@ function BlockAxe({ position = [0, 0, 0] }) {
     </group>
   );
 }
+function BlockBounce({ position = [0, 0, 0], options = { restitution: 1 } }) {
+  return (
+    <group position={position}>
+      <RigidBody
+        type='kinematicPosition'
+        position={[0, 0, 0]}
+        restitution={options.restitution}
+        friction={0}
+      >
+        <mesh
+          geometry={boxGeometry}
+          material={obstacleMaterial}
+          scale={[4, 0.1, 4]}
+          castShadow
+          receiveShadow
+        />
+      </RigidBody>
+    </group>
+  );
+}
 function BlockBlueHealth({ position = [0, 0, 0] }) {
   const [isUncollected, setIsUncollected] = useState(true);
 
@@ -405,10 +425,10 @@ function BlockFloor({ position, type }) {
 
 /**
  * Represents a Platform of specified type and position.
- * @param {string} 'start' | 'end' | 'spinner' | 'axe' | 'limbo' | 'blueHealth' | 'speed' | 'floor'
+ * @param {string} 'start' | 'end' | 'spinner' | 'axe' | 'limbo' | 'blueHealth' | 'speed' | 'portal' | 'bounce' | 'floor'
  * @param {[number, number, number]} position [x, y, z] world coordinates
  */
-export function Platform({ type, position }) {
+export function Platform({ type, position, options }) {
   const blockMap = {
     floor: BlockFloor,
     limbo: BlockLimbo,
@@ -417,6 +437,7 @@ export function Platform({ type, position }) {
     speed: BlockSpeed,
     spinner: BlockSpinner,
     portal: BlockPortal,
+    bounce: BlockBounce,
     start: BlockStart,
     end: BlockEnd,
   };
@@ -442,6 +463,7 @@ export function Platform({ type, position }) {
               position[1] * UNIT_CONSTANT,
               position[2] * UNIT_CONSTANT,
             ]}
+            options={options}
           />
         </>
       ) : type === 'portal' ? (
@@ -463,6 +485,7 @@ export function Platform({ type, position }) {
             type={type}
           />
           <Block
+            options={options}
             position={[
               [
                 position[0][0] * UNIT_CONSTANT,
@@ -488,6 +511,7 @@ export function Platform({ type, position }) {
             type={type}
           />
           <Block
+            options={options}
             position={[
               position[0] * UNIT_CONSTANT,
               position[1] * UNIT_CONSTANT,
