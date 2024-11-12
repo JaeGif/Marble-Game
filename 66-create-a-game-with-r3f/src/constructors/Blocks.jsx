@@ -339,6 +339,7 @@ function BlockAxe({ position = [0, 0, 0] }) {
   );
 }
 function BlockBounce({ position = [0, 0, 0], options = { restitution: 1 } }) {
+  //f(x)=A⋅e−k⋅(xmodT)⋅(1+cos(2π⋅x/T))
   return (
     <group position={position}>
       <RigidBody
