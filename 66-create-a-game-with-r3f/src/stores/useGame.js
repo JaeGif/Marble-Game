@@ -55,7 +55,7 @@ export default create(
             state.adjustScore(-1500);
             // game over when the last hp is lost
             if (!state.lives[1] && state.lives[0]) state.gameOver();
-            else return { phase: 'ready', obstacleSeed: Math.random() };
+            else return { phase: 'ready' };
           }
           return {};
         });
@@ -80,7 +80,6 @@ export default create(
           if (state.phase === 'complete') {
             return {
               phase: 'ready',
-              obstacleSeed: Math.random(),
               level: state.level + 1,
             };
           }
@@ -100,7 +99,7 @@ export default create(
           if (state.phase === 'gameOver') {
             return {
               phase: 'ready',
-              obstacleSeed: Math.random(),
+              seed: Math.random(),
               level: 1,
               lives: state.mode === 'hardcore' ? [true] : [true, true, true],
             };

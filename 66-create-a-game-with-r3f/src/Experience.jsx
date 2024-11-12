@@ -5,7 +5,6 @@ import { Physics } from '@react-three/rapier';
 import useGame from './stores/useGame.js';
 
 export default function Experience() {
-  const obstacleCount = useGame((state) => state.obstacleCount);
   const level = useGame((state) => state.level);
 
   return (
@@ -13,7 +12,7 @@ export default function Experience() {
       <color args={['#bdedfc']} attach='background' />
       <Physics>
         <Lights />
-        <Level obstacleCount={obstacleCount} level={level} />
+        <Level level={level} />
       </Physics>
     </>
   );

@@ -27,7 +27,11 @@ function BlockStart({ position = [0, 0, 0] }) {
 
   return (
     <group position={position}>
-      <Player textures={textures} position={[0, 1.5, 0]} />
+      <Player
+        textures={textures}
+        parentPosition={position}
+        position={[0, 1.5, 0]}
+      />
 
       <Float floatIntensity={0.25} rotationIntensity={0.25}>
         <Text

@@ -9,7 +9,7 @@ import { playerActionsLogicTree } from './playerActions';
 
 const BALLSIZE = 0.3;
 
-function Player({ textures, position }) {
+function Player({ textures, parentPosition, position }) {
   const [subscribeKeys, getKeys] = useKeyboardControls();
   const [cameraLocked, setCameraLocked] = useState(true);
   const { rapier, world } = useRapier();
@@ -48,7 +48,11 @@ function Player({ textures, position }) {
 
   const reset = () => {
     // when phase changes to ready we need to reset
-    bodyRef.current.setTranslation({ x: 0, y: 1, z: 0 });
+    bodyRef.current.setTranslation({
+      x: parentPosition[0],
+      y: parentPosition[1] + position[1],
+      z: parentPosition[2],
+    });
     bodyRef.current.setLinvel({ x: 0, y: 0, z: 0 });
     bodyRef.current.setAngvel({ x: 0, y: 0, z: 0 });
   };
@@ -132,6 +136,7 @@ function Player({ textures, position }) {
     );
 
     // out of bounds, restart
+    // bounds may need to be adjusted
     if (bodyPosition.y < -8 && phase !== 'complete') {
       restart();
     }
