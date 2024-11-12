@@ -1,4 +1,3 @@
-- more diverse obstacles
 - change the map so it isn't only linear and is randomly generated
 - Modes: Hardcore 1 death is game over
     Casual, 3 respawns
@@ -6,6 +5,7 @@
 obstacle ideas
 - paired portal
 - bouncy
+- thin block
 
 Enemy Type Blocks
 - pursuer ? block like bees that chase the player. If they catch you -1hp no reset
