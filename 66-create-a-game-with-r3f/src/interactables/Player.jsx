@@ -11,7 +11,8 @@ function Player({ textures, position }) {
   const [subscribeKeys, getKeys] = useKeyboardControls();
   const [cameraLocked, setCameraLocked] = useState(true);
   const { rapier, world } = useRapier();
-  const hAngle = useRef(Math.PI / 2); // Keeps track of the angle
+  const hAngle = useRef(Math.PI / 2); // Horizontal dolly angle
+  const vAngle = useRef(0); // Vertical dolly angle
   const [smoothedCameraPosition] = useState(
     () => new THREE.Vector3(10, 10, 10)
   );
