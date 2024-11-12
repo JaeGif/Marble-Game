@@ -9,10 +9,12 @@ function Level8() {
         type={'portal'}
         position={[
           [0, 0, 1],
-          [0, 0, 2],
+          [0, -4, 3],
         ]}
       />
-      <Platform type={'end'} position={[0, 0, 3]} />
+      <Platform type={'floor'} position={[0, -4, 4]} />
+
+      <Platform type={'end'} position={[0, -4, 5]} />
     </>
   );
 }
