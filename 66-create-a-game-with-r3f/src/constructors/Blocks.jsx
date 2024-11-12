@@ -2,18 +2,46 @@ import React, { useRef, useState, useMemo, useEffect } from 'react';
 import * as THREE from 'three';
 import { RigidBody, useRapier, MeshCollider } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
-import { Float, Text, useGLTF } from '@react-three/drei';
+import { Float, Text, useGLTF, useTexture } from '@react-three/drei';
 import useGame from '../stores/useGame';
+import Player from '../interactables/Player';
+// blocks are 4x4, -z is away from starting cam position
+const UNIT_CONSTANT = -4;
 
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+const circleGeometry = new THREE.CircleGeometry(1, 16);
+
+const squareGeometry = new THREE.BoxGeometry(2, 2, 0);
+
+const portalMaterial = new THREE.MeshStandardMaterial({
+  color: 'rgba(.5, .5, .5, .1)',
+  transparent: true,
+});
+
 const floor1Material = new THREE.MeshStandardMaterial({ color: 'limegreen' });
 const floor2Material = new THREE.MeshStandardMaterial({ color: 'greenyellow' });
 const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 'orangered' });
 const speedMaterial = new THREE.MeshStandardMaterial({ color: 'blue' });
 
 function BlockStart({ position = [0, 0, 0] }) {
+  const textures = useTexture({
+    map: './textures/Poliigon_WoodVeneerOak_7760/1K/Poliigon_WoodVeneerOak_7760_BaseColor.jpg',
+    roughnessMap:
+      './textures/Poliigon_WoodVeneerOak_7760/1K/Poliigon_WoodVeneerOak_7760_ORM.jpg',
+    metalnessMap:
+      './textures/Poliigon_WoodVeneerOak_7760/1K/Poliigon_WoodVeneerOak_7760_ORM.jpg',
+    aoMap:
+      './textures/Poliigon_WoodVeneerOak_7760/1K/Poliigon_WoodVeneerOak_7760_ORM.jpg',
+  });
+
   return (
     <group position={position}>
+      <Player
+        textures={textures}
+        parentPosition={position}
+        position={[0, 1.5, 0]}
+      />
+
       <Float floatIntensity={0.25} rotationIntensity={0.25}>
         <Text
           font='./bebas-neue-v9-latin-regular.woff'
@@ -39,12 +67,16 @@ function BlockEnd({ position = [0, 0, 0] }) {
     mesh.castShadow = true;
   });
   const goalRef = useRef();
+  const end = useGame((state) => state.end);
 
   useFrame((state) => {
     if (!goalRef.current) return;
 
     goalRef.current.rotation.y = state.clock.getElapsedTime() * 0.25;
   });
+  const handleCollisionEnter = () => {
+    end();
+  };
   return (
     <group position={position}>
       <Text
@@ -58,6 +90,7 @@ function BlockEnd({ position = [0, 0, 0] }) {
       <Float rotationIntensity={0.5}>
         <group ref={goalRef}>
           <RigidBody
+            onCollisionEnter={handleCollisionEnter}
             type='fixed'
             colliders='hull'
             position={[0, 0.25, 0]}
@@ -169,7 +202,9 @@ function BlockSpeed({ position = [0, 0, 0] }) {
   return (
     <group position={position}>
       <RigidBody
+        type='fixed'
         onCollisionEnter={handleAddingSpeedToPlayer}
+        onIntersectionEnter={handleAddingSpeedToPlayer}
         colliders={'cuboid'}
       >
         <mesh
@@ -181,6 +216,86 @@ function BlockSpeed({ position = [0, 0, 0] }) {
         />
       </RigidBody>
     </group>
+  );
+}
+
+function BlockPortal({
+  position = [
+    [0, 0, 0],
+    [0, 0, 1],
+  ],
+}) {
+  const portal1Position = position[0];
+  const portal2Position = position[1];
+  // when player crosses this block they are teleported between the portals locations.
+  const obstacleRef = useRef();
+  useFrame((state) => {
+    const time = state.clock.getElapsedTime();
+  });
+  // if on cooldown, may not transport
+  const [onCooldown, setOnCooldown] = useState(false);
+
+  // use position and players position to determine if get benefit
+  const playerHandle = useGame((state) => state.globalPlayerHandle);
+  const { world } = useRapier();
+  const handleCooldownTrigger = () => {
+    // 5 sec cooldown
+    setOnCooldown(true);
+    setTimeout(() => setOnCooldown(false), 5000);
+  };
+  const handleUpdatePlayerLocation = (collision, position) => {
+    if (onCooldown) return;
+    console.log('portal active');
+
+    const player = world.getRigidBody(collision.rigidBody.handle);
+    if (player.handle.toString() == playerHandle.toString()) {
+      // interact with player positions
+      const playerLoc = {
+        x: position[0],
+        y: position[1] + 0.25,
+        z: position[2],
+      };
+      player.setTranslation(playerLoc);
+      console.log('portal yeet', playerLoc);
+
+      handleCooldownTrigger();
+    }
+  };
+  return (
+    <>
+      <group position={portal1Position}>
+        <RigidBody
+          type='fixed'
+          sensor
+          onIntersectionEnter={(collision) =>
+            handleUpdatePlayerLocation(collision, portal2Position)
+          }
+        >
+          <mesh
+            geometry={squareGeometry}
+            material={portalMaterial}
+            scale={[1.5, 1.5, 0.3]}
+            position={[0, 1.5, 0]}
+          />
+        </RigidBody>
+      </group>
+      <group position={portal2Position}>
+        <RigidBody
+          type='fixed'
+          sensor
+          onIntersectionEnter={(collision) =>
+            handleUpdatePlayerLocation(collision, portal1Position)
+          }
+        >
+          <mesh
+            geometry={squareGeometry}
+            material={portalMaterial}
+            scale={[1.5, 1.5, 0.3]}
+            position={[0, 1.5, 0]}
+          />
+        </RigidBody>
+      </group>
+    </>
   );
 }
 function BlockAxe({ position = [0, 0, 0] }) {
@@ -224,12 +339,6 @@ function BlockAxe({ position = [0, 0, 0] }) {
   );
 }
 function BlockBlueHealth({ position = [0, 0, 0] }) {
-  /*   const [speed] = useState(
-    () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
-  );
-  const [timeOffset] = useState(() => Math.random() * Math.PI * 2);
- */
-
   const [isUncollected, setIsUncollected] = useState(true);
 
   const healthRef = useRef();
@@ -267,8 +376,18 @@ function BlockBlueHealth({ position = [0, 0, 0] }) {
 }
 // platform types are block types
 function BlockFloor({ position, type }) {
-  const material =
-    type === 'start' || type === 'end' ? floor1Material : floor2Material;
+  let material = floor2Material;
+  switch (type) {
+    case 'start':
+      material = floor1Material;
+      break;
+    case 'end':
+      material = floor1Material;
+      break;
+
+    default:
+      material = floor2Material;
+  }
   return (
     <group position={position}>
       <RigidBody type='fixed' colliders='cuboid' restitution={0.2} friction={0}>
@@ -283,6 +402,12 @@ function BlockFloor({ position, type }) {
     </group>
   );
 }
+
+/**
+ * Represents a Platform of specified type and position.
+ * @param {string} 'start' | 'end' | 'spinner' | 'axe' | 'limbo' | 'blueHealth' | 'speed' | 'floor'
+ * @param {[number, number, number]} position [x, y, z] world coordinates
+ */
 export function Platform({ type, position }) {
   const blockMap = {
     floor: BlockFloor,
@@ -291,6 +416,7 @@ export function Platform({ type, position }) {
     blueHealth: BlockBlueHealth,
     speed: BlockSpeed,
     spinner: BlockSpinner,
+    portal: BlockPortal,
     start: BlockStart,
     end: BlockEnd,
   };
@@ -300,11 +426,74 @@ export function Platform({ type, position }) {
   return (
     <>
       {type === 'floor' ? (
-        <BlockFloor position={position} type={type} />
+        <BlockFloor
+          position={[
+            position[0] * UNIT_CONSTANT,
+            position[1] * UNIT_CONSTANT,
+            position[2] * UNIT_CONSTANT,
+          ]}
+          type={type}
+        />
+      ) : type === 'speed' ? (
+        <>
+          <Block
+            position={[
+              position[0] * UNIT_CONSTANT,
+              position[1] * UNIT_CONSTANT,
+              position[2] * UNIT_CONSTANT,
+            ]}
+          />
+        </>
+      ) : type === 'portal' ? (
+        <>
+          <BlockFloor
+            position={[
+              position[0][0] * UNIT_CONSTANT,
+              position[0][1] * UNIT_CONSTANT,
+              position[0][2] * UNIT_CONSTANT,
+            ]}
+            type={type}
+          />
+          <BlockFloor
+            position={[
+              position[1][0] * UNIT_CONSTANT,
+              position[1][1] * UNIT_CONSTANT,
+              position[1][2] * UNIT_CONSTANT,
+            ]}
+            type={type}
+          />
+          <Block
+            position={[
+              [
+                position[0][0] * UNIT_CONSTANT,
+                position[0][1] * UNIT_CONSTANT,
+                position[0][2] * UNIT_CONSTANT,
+              ],
+              [
+                position[1][0] * UNIT_CONSTANT,
+                position[1][1] * UNIT_CONSTANT,
+                position[1][2] * UNIT_CONSTANT,
+              ],
+            ]}
+          />
+        </>
       ) : (
         <>
-          <BlockFloor position={position} type={type} />
-          <Block position={position} />
+          <BlockFloor
+            position={[
+              position[0] * UNIT_CONSTANT,
+              position[1] * UNIT_CONSTANT,
+              position[2] * UNIT_CONSTANT,
+            ]}
+            type={type}
+          />
+          <Block
+            position={[
+              position[0] * UNIT_CONSTANT,
+              position[1] * UNIT_CONSTANT,
+              position[2] * UNIT_CONSTANT,
+            ]}
+          />
         </>
       )}
     </>

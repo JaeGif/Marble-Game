@@ -3,14 +3,19 @@ import { RigidBody, useRapier } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { useKeyboardControls } from '@react-three/drei';
 import * as THREE from 'three';
-import useGame from './stores/useGame';
+import useGame from '../stores/useGame';
+import { cameraLogicTree } from './cameraMotion';
+import { playerActionsLogicTree } from './playerActions';
 
 const BALLSIZE = 0.3;
 
-function Player(props) {
+function Player({ textures, parentPosition, position }) {
   const [subscribeKeys, getKeys] = useKeyboardControls();
-
+  const [cameraLocked, setCameraLocked] = useState(true);
   const { rapier, world } = useRapier();
+
+  const hAngleRef = useRef(Math.PI / 2); // Horizontal dolly angle
+  const vAngleRef = useRef(Math.PI / 2); // Vertical dolly angle
 
   const [smoothedCameraPosition] = useState(
     () => new THREE.Vector3(10, 10, 10)
@@ -23,14 +28,8 @@ function Player(props) {
   const globalPlayerHandle = useGame((state) => state.playerHandle);
 
   const start = useGame((state) => state.start);
-  const end = useGame((state) => state.end);
   const restart = useGame((state) => state.restart);
   const phase = useGame((state) => state.phase);
-
-  const obstacleCount = useGame((state) => state.obstacleCount);
-  const level = useGame((state) => state.level);
-
-  const distance = obstacleCount + level * 2;
 
   const jump = () => {
     const origin = bodyRef.current.translation();
@@ -49,7 +48,11 @@ function Player(props) {
 
   const reset = () => {
     // when phase changes to ready we need to reset
-    bodyRef.current.setTranslation({ x: 0, y: 1, z: 0 });
+    bodyRef.current.setTranslation({
+      x: parentPosition[0],
+      y: parentPosition[1] + position[1],
+      z: parentPosition[2],
+    });
     bodyRef.current.setLinvel({ x: 0, y: 0, z: 0 });
     bodyRef.current.setAngvel({ x: 0, y: 0, z: 0 });
   };
@@ -91,60 +94,50 @@ function Player(props) {
     // instructions per frame
     // Controls
     if (!bodyRef.current) return;
-    const { forward, backward, leftward, rightward } = getKeys();
+    const {
+      forward,
+      backward,
+      leftward,
+      rightward,
+      cameraLeft,
+      cameraRight,
+      cameraUp,
+      cameraDown,
+      cameraCenter,
+    } = getKeys();
 
-    const impulse = { x: 0, y: 0, z: 0 };
-    const torque = { x: 0, y: 0, z: 0 };
-
-    const impulseStrength = 0.6 * delta;
-    const torqueStrength = 0.2 * delta;
-
-    if (forward) {
-      impulse.z -= impulseStrength;
-      torque.x -= torqueStrength;
-    }
-    if (backward) {
-      impulse.z += impulseStrength;
-      torque.x += torqueStrength;
-    }
-    if (leftward) {
-      impulse.x -= impulseStrength;
-      torque.z += torqueStrength;
-    }
-    if (rightward) {
-      impulse.x += impulseStrength;
-      torque.z -= torqueStrength;
-    }
-
-    bodyRef.current.applyImpulse(impulse);
-    bodyRef.current.applyTorqueImpulse(torque);
-
-    // Camera
-
+    // Player Actions
+    playerActionsLogicTree(
+      bodyRef,
+      delta,
+      forward,
+      backward,
+      leftward,
+      rightward
+    );
+    // Camera Actions
     const bodyPosition = bodyRef.current.translation();
 
-    const cameraPosition = new THREE.Vector3();
-    cameraPosition.copy(bodyPosition);
+    cameraLogicTree(
+      bodyPosition,
+      smoothedCameraPosition,
+      smoothedCameraTarget,
+      state,
+      delta,
+      cameraLocked,
+      setCameraLocked,
+      hAngleRef,
+      vAngleRef,
+      cameraLeft,
+      cameraRight,
+      cameraUp,
+      cameraDown,
+      cameraCenter
+    );
 
-    cameraPosition.z += 3.25;
-    cameraPosition.y += 0.65;
-
-    const cameraTarget = new THREE.Vector3();
-    cameraTarget.copy(bodyPosition);
-    cameraTarget.y += 0.25;
-
-    smoothedCameraPosition.lerp(cameraPosition, 5 * delta);
-    smoothedCameraTarget.lerp(cameraTarget, 5 * delta);
-
-    state.camera.position.copy(smoothedCameraPosition);
-    state.camera.lookAt(smoothedCameraTarget);
-
-    // Phases
-    if (bodyPosition.z < -(distance * 4 + 2) && bodyPosition.y >= 0) {
-      end();
-    }
-    // out of bounds
-    if (bodyPosition.y < -8 && phase !== 'complete') {
+    // out of bounds, restart
+    // bounds may need to be adjusted
+    if (bodyPosition.y < -16 && phase !== 'complete') {
       restart();
     }
   });
@@ -164,16 +157,16 @@ function Player(props) {
       restitution={0.2}
       friction={1}
       colliders='ball'
-      position={[0, 1, 0]}
+      position={position}
       ref={bodyRef}
     >
       <mesh castShadow receiveShadow>
         <icosahedronGeometry args={[BALLSIZE, 4]} />
         <meshStandardMaterial
-          map={props.map}
-          metalnessMap={props.metalnessMap}
-          roughnessMap={props.roughnessMap}
-          aoMap={props.aoMap}
+          map={textures.map}
+          metalnessMap={textures.metalnessMap}
+          roughnessMap={textures.roughnessMap}
+          aoMap={textures.aoMap}
         />
       </mesh>
     </RigidBody>
