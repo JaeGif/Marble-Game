@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export const cameraFollow = (
+const cameraFollow = (
   bodyPosition,
   smoothedCameraPosition,
   smoothedCameraTarget,
@@ -23,7 +23,7 @@ export const cameraFollow = (
   state.camera.position.copy(smoothedCameraPosition);
   state.camera.lookAt(smoothedCameraTarget);
 };
-export const cameraRotate = (
+const cameraRotate = (
   bodyPosition,
   smoothedCameraPosition,
   smoothedCameraTarget,
@@ -69,4 +69,66 @@ export const cameraRotate = (
 
   state.camera.position.copy(smoothedCameraPosition);
   state.camera.lookAt(smoothedCameraTarget);
+};
+
+export const cameraLogicTree = (
+  bodyPosition,
+  smoothedCameraPosition,
+  smoothedCameraTarget,
+  state,
+  delta,
+  cameraLocked,
+  setCameraLocked,
+  hAngleRef,
+  vAngleRef,
+  cameraLeft,
+  cameraRight,
+  cameraUp,
+  cameraDown,
+  cameraCenter
+) => {
+  let vAngle = 0;
+  let hAngle = 0;
+  if (cameraLocked) {
+    cameraFollow(
+      bodyPosition,
+      smoothedCameraPosition,
+      smoothedCameraTarget,
+      state,
+      delta
+    );
+  }
+  if (cameraCenter) {
+    setCameraLocked(true);
+  }
+  if (cameraLeft) {
+    // only update cameraLock once so not redoing per frame
+    if (cameraLocked) setCameraLocked(false);
+    hAngle += -2;
+  }
+  if (cameraRight) {
+    if (cameraLocked) setCameraLocked(false);
+    hAngle += 2;
+  }
+  if (cameraUp) {
+    if (cameraLocked) setCameraLocked(false);
+    vAngle += -2;
+  }
+  if (cameraDown) {
+    if (cameraLocked) setCameraLocked(false);
+    vAngle += 2;
+  }
+  if (!cameraLocked) {
+    cameraRotate(
+      bodyPosition,
+      smoothedCameraPosition,
+      smoothedCameraTarget,
+      hAngle,
+      vAngle,
+      hAngleRef,
+      vAngleRef,
+      state,
+      delta
+    );
+  }
 };

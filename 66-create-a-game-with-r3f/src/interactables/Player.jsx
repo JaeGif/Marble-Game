@@ -4,7 +4,8 @@ import { useFrame } from '@react-three/fiber';
 import { useKeyboardControls } from '@react-three/drei';
 import * as THREE from 'three';
 import useGame from '../stores/useGame';
-import { cameraFollow, cameraRotate } from './cameraMotion';
+import { cameraLogicTree } from './cameraMotion';
+import { playerActionsLogicTree } from './playerActions';
 
 const BALLSIZE = 0.3;
 
@@ -101,80 +102,34 @@ function Player({ textures, position }) {
       cameraCenter,
     } = getKeys();
 
-    const impulse = { x: 0, y: 0, z: 0 };
-    const torque = { x: 0, y: 0, z: 0 };
-
-    const impulseStrength = 0.6 * delta;
-    const torqueStrength = 0.2 * delta;
-
-    if (forward) {
-      impulse.z -= impulseStrength;
-      torque.x -= torqueStrength;
-    }
-    if (backward) {
-      impulse.z += impulseStrength;
-      torque.x += torqueStrength;
-    }
-    if (leftward) {
-      impulse.x -= impulseStrength;
-      torque.z += torqueStrength;
-    }
-    if (rightward) {
-      impulse.x += impulseStrength;
-      torque.z -= torqueStrength;
-    }
-
-    bodyRef.current.applyImpulse(impulse);
-    bodyRef.current.applyTorqueImpulse(torque);
-
-    // Camera
-
+    // Player Actions
+    playerActionsLogicTree(
+      bodyRef,
+      delta,
+      forward,
+      backward,
+      leftward,
+      rightward
+    );
+    // Camera Actions
     const bodyPosition = bodyRef.current.translation();
 
-    let vAngle = 0;
-    let hAngle = 0;
-    if (cameraLocked) {
-      cameraFollow(
-        bodyPosition,
-        smoothedCameraPosition,
-        smoothedCameraTarget,
-        state,
-        delta
-      );
-    }
-    if (cameraCenter) {
-      setCameraLocked(true);
-    }
-    if (cameraLeft) {
-      // only updaate cameraLock once so not redoing per frame
-      if (cameraLocked) setCameraLocked(false);
-      hAngle += -2;
-    }
-    if (cameraRight) {
-      if (cameraLocked) setCameraLocked(false);
-      hAngle += 2;
-    }
-    if (cameraUp) {
-      if (cameraLocked) setCameraLocked(false);
-      vAngle += -2;
-    }
-    if (cameraDown) {
-      if (cameraLocked) setCameraLocked(false);
-      vAngle += 2;
-    }
-    if (!cameraLocked) {
-      cameraRotate(
-        bodyPosition,
-        smoothedCameraPosition,
-        smoothedCameraTarget,
-        hAngle,
-        vAngle,
-        hAngleRef,
-        vAngleRef,
-        state,
-        delta
-      );
-    }
+    cameraLogicTree(
+      bodyPosition,
+      smoothedCameraPosition,
+      smoothedCameraTarget,
+      state,
+      delta,
+      cameraLocked,
+      setCameraLocked,
+      hAngleRef,
+      vAngleRef,
+      cameraLeft,
+      cameraRight,
+      cameraUp,
+      cameraDown,
+      cameraCenter
+    );
 
     // out of bounds, restart
     if (bodyPosition.y < -8 && phase !== 'complete') {
