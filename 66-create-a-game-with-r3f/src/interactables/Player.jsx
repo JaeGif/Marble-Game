@@ -11,8 +11,10 @@ function Player({ textures, position }) {
   const [subscribeKeys, getKeys] = useKeyboardControls();
   const [cameraLocked, setCameraLocked] = useState(true);
   const { rapier, world } = useRapier();
+
   const hAngle = useRef(Math.PI / 2); // Horizontal dolly angle
-  const vAngle = useRef(0); // Vertical dolly angle
+  const vAngle = useRef(Math.PI / 2); // Vertical dolly angle
+
   const [smoothedCameraPosition] = useState(
     () => new THREE.Vector3(10, 10, 10)
   );
@@ -59,18 +61,28 @@ function Player({ textures, position }) {
     state.camera.position.copy(smoothedCameraPosition);
     state.camera.lookAt(smoothedCameraTarget);
   };
-  const cameraRotate = (bodyPosition, radians, state, delta) => {
+  const cameraRotate = (bodyPosition, hRadians, vRadians, state, delta) => {
     const cameraPosition = new THREE.Vector3();
     // cameraPosition.copy(bodyPosition);
 
     const RADIUS = 3.315;
 
     // Calculate the camera position
-    hAngle.current += radians * delta;
+    hAngle.current += hRadians * delta;
     hAngle.current %= Math.PI * 2;
-    const x = bodyPosition.x + RADIUS * Math.cos(hAngle.current);
-    const y = bodyPosition.y + 0.25;
-    const z = bodyPosition.z + RADIUS * Math.sin(hAngle.current);
+
+    vAngle.current += vRadians * delta;
+    vAngle.current %= Math.PI * 2;
+    // Clamp the vertical angle between a small positive angle and PI to avoid flipping at poles
+    vAngle.current = Math.max(0.1, Math.min(Math.PI - 0.1, vAngle.current));
+
+    const x =
+      bodyPosition.x +
+      RADIUS * Math.sin(vAngle.current) * Math.cos(hAngle.current);
+    const y = bodyPosition.y + RADIUS * Math.cos(vAngle.current);
+    const z =
+      bodyPosition.z +
+      RADIUS * Math.sin(hAngle.current) * Math.sin(vAngle.current);
 
     cameraPosition.x = x;
     cameraPosition.y = y;
@@ -86,6 +98,7 @@ function Player({ textures, position }) {
     state.camera.position.copy(smoothedCameraPosition);
     state.camera.lookAt(smoothedCameraTarget);
   };
+
   const reset = () => {
     // when phase changes to ready we need to reset
     bodyRef.current.setTranslation({ x: 0, y: 1, z: 0 });
@@ -172,6 +185,8 @@ function Player({ textures, position }) {
 
     const bodyPosition = bodyRef.current.translation();
 
+    let vAngle = 0;
+    let hAngle = 0;
     if (cameraLocked) {
       cameraFollow(bodyPosition, state, delta);
     }
@@ -179,15 +194,27 @@ function Player({ textures, position }) {
       setCameraLocked(true);
     }
     if (cameraLeft) {
-      setCameraLocked(false);
-      cameraRotate(bodyPosition, -2, state, delta);
+      // only updaate cameraLock once so not redoing per frame
+      if (cameraLocked) setCameraLocked(false);
+      hAngle += -2;
     }
     if (cameraRight) {
-      setCameraLocked(false);
-      cameraRotate(bodyPosition, 2, state, delta);
+      if (cameraLocked) setCameraLocked(false);
+      hAngle += 2;
+    }
+    if (cameraUp) {
+      if (cameraLocked) setCameraLocked(false);
+      vAngle += -2;
+    }
+    if (cameraDown) {
+      if (cameraLocked) setCameraLocked(false);
+      vAngle += 2;
+    }
+    if (!cameraLocked) {
+      cameraRotate(bodyPosition, hAngle, vAngle, state, delta);
     }
 
-    // out of bounds
+    // out of bounds, restart
     if (bodyPosition.y < -8 && phase !== 'complete') {
       restart();
     }
