@@ -99,7 +99,6 @@ export default create(
           if (state.phase === 'gameOver') {
             return {
               phase: 'ready',
-              seed: Math.random(),
               level: 1,
               lives: state.mode === 'hardcore' ? [true] : [true, true, true],
             };
