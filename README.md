@@ -1,22 +1,18 @@
 ### Marble Run
 
 
-This is a simple racing game where you dodge obstacles to make it to the end of the level.
-When a level is completed, the next one starts with 2 randomly added obstacles
-The game progresses infinitely. 
+This is a racing game where you dodge obstacles to make it to the end of the level.
 
 
  # In progress
- - scoring system
- - high scores DB
- - randomized level layout
- - multiple paths through more difficult levels
- - more obstacles
- - enhanced ability drops
- - mobile movement options
+- Adding diverse and interesting obstacles and player interactions
+- Scoring system API
+- Levels 11 - 50
+- Level Builder/Editor
 
-# Long term  
- - Change from a marble to a more interesting model
+# Longer term  
+- Assets update to make it pretty :)
+- Real-Time race with other people (Gorilla sockets)
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
