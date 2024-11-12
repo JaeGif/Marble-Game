@@ -11,7 +11,7 @@ function Player({ textures, position }) {
   const [subscribeKeys, getKeys] = useKeyboardControls();
   const [cameraLocked, setCameraLocked] = useState(true);
   const { rapier, world } = useRapier();
-
+  const hAngle = useRef(Math.PI / 2); // Keeps track of the angle
   const [smoothedCameraPosition] = useState(
     () => new THREE.Vector3(10, 10, 10)
   );
@@ -58,21 +58,19 @@ function Player({ textures, position }) {
     state.camera.position.copy(smoothedCameraPosition);
     state.camera.lookAt(smoothedCameraTarget);
   };
-  const cameraRotate = (bodyPosition, degrees, state, delta) => {
-    state.camera.rotateY(degrees);
-
+  const cameraRotate = (bodyPosition, radians, state, delta) => {
     const cameraPosition = new THREE.Vector3();
     // cameraPosition.copy(bodyPosition);
 
-    // x^2 + y^2 + z^2 = r^2
-
-    const radius = 3.315;
+    const RADIUS = 3.315;
 
     // Calculate the camera position
-    const angle = degrees;
-    const x = bodyPosition.x + radius * Math.cos(angle);
+    hAngle.current += radians * delta;
+    hAngle.current %= Math.PI * 2;
+    const x = bodyPosition.x + RADIUS * Math.cos(hAngle.current);
     const y = bodyPosition.y + 0.25;
-    const z = bodyPosition.z + radius * Math.sin(angle);
+    const z = bodyPosition.z + RADIUS * Math.sin(hAngle.current);
+
     cameraPosition.x = x;
     cameraPosition.y = y;
     cameraPosition.z = z;
@@ -173,7 +171,6 @@ function Player({ textures, position }) {
 
     const bodyPosition = bodyRef.current.translation();
 
-    let degrees = 0;
     if (cameraLocked) {
       cameraFollow(bodyPosition, state, delta);
     }
@@ -182,9 +179,11 @@ function Player({ textures, position }) {
     }
     if (cameraLeft) {
       setCameraLocked(false);
-      console.log(cameraLocked);
-      degrees = 0.01;
-      cameraRotate(bodyPosition, degrees, state, delta);
+      cameraRotate(bodyPosition, -2, state, delta);
+    }
+    if (cameraRight) {
+      setCameraLocked(false);
+      cameraRotate(bodyPosition, 2, state, delta);
     }
 
     // out of bounds
