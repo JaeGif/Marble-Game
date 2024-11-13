@@ -1,6 +1,11 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import * as THREE from 'three';
-import { RigidBody, useRapier, MeshCollider } from '@react-three/rapier';
+import {
+  RigidBody,
+  useRapier,
+  MeshCollider,
+  CuboidCollider,
+} from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { Float, Text, useGLTF, useTexture } from '@react-three/drei';
 import useGame from '../stores/useGame';
@@ -228,10 +233,7 @@ function BlockPortal({
   const portal1Position = position[0];
   const portal2Position = position[1];
   // when player crosses this block they are teleported between the portals locations.
-  const obstacleRef = useRef();
-  useFrame((state) => {
-    const time = state.clock.getElapsedTime();
-  });
+
   // if on cooldown, may not transport
   const [onCooldown, setOnCooldown] = useState(false);
 
@@ -338,20 +340,56 @@ function BlockAxe({ position = [0, 0, 0] }) {
     </group>
   );
 }
-function BlockBounce({ position = [0, 0, 0], options = { restitution: 1 } }) {
-  //f(x)=A⋅e−k⋅(xmodT)⋅(1+cos(2π⋅x/T))
+function BlockTravel({
+  position = [0, 0, 0],
+  options = { amplitude: 1, period: 2 },
+}) {
+  const obstacleRef = useRef();
+
+  const travelMotion = (time, amplitude, period) => {
+    const upTime = Math.PI / 5 / 4;
+    if (time >= upTime) {
+      const downTime = 8 - upTime;
+      if (time <= downTime)
+        return (0.5 + Math.cos((time / downTime) * Math.PI) / 2) * 2;
+      else return 0;
+    }
+
+    return (0.5 + Math.cos((10 / 2) * Math.PI * time - Math.PI) / 2) * 2;
+  };
+
+  useFrame((state, delta) => {
+    if (!obstacleRef.current) return;
+
+    const time = state.clock.elapsedTime;
+
+    let animationTime = 0;
+    animationTime += time;
+    animationTime %= 10;
+
+    obstacleRef.current.setNextKinematicTranslation({
+      x: position[0],
+      y:
+        position[1] +
+        travelMotion(animationTime, options.amplitude, options.period) -
+        0.1,
+      z: position[2],
+    });
+  });
   return (
     <group position={position}>
       <RigidBody
+        ref={obstacleRef}
         type='kinematicPosition'
         position={[0, 0, 0]}
-        restitution={options.restitution}
-        friction={0}
+        restitution={1}
+        friction={1}
+        colliders={'cuboid'}
       >
         <mesh
           geometry={boxGeometry}
           material={obstacleMaterial}
-          scale={[4, 0.1, 4]}
+          scale={[4, 0.2, 4]}
           castShadow
           receiveShadow
         />
@@ -426,7 +464,7 @@ function BlockFloor({ position, type }) {
 
 /**
  * Represents a Platform of specified type and position.
- * @param {string} 'start' | 'end' | 'spinner' | 'axe' | 'limbo' | 'blueHealth' | 'speed' | 'portal' | 'bounce' | 'floor'
+ * @param {string} 'start' | 'end' | 'spinner' | 'axe' | 'limbo' | 'blueHealth' | 'speed' | 'portal' | 'travel' | 'floor'
  * @param {[number, number, number]} position [x, y, z] world coordinates
  */
 export function Platform({ type, position, options }) {
@@ -438,7 +476,7 @@ export function Platform({ type, position, options }) {
     speed: BlockSpeed,
     spinner: BlockSpinner,
     portal: BlockPortal,
-    bounce: BlockBounce,
+    travel: BlockTravel,
     start: BlockStart,
     end: BlockEnd,
   };
@@ -456,7 +494,7 @@ export function Platform({ type, position, options }) {
           ]}
           type={type}
         />
-      ) : type === 'speed' ? (
+      ) : type === 'speed' || type === 'travel' ? (
         <>
           <Block
             position={[

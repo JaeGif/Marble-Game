@@ -8,9 +8,9 @@ function Level11() {
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform type={'end'} position={[0, -3, 10]} />
       <Platform
-        type={'bounce'}
+        type={'travel'}
         position={[0, 0, 1]}
-        options={{ restitution: 1 }}
+        options={{ amplitude: 1, period: 1 }}
       />
     </>
   );
