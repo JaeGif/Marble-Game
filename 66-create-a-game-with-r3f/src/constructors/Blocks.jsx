@@ -28,7 +28,7 @@ const floor2Material = new THREE.MeshStandardMaterial({ color: 'greenyellow' });
 const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 'orangered' });
 const speedMaterial = new THREE.MeshStandardMaterial({ color: 'blue' });
 
-function BlockStart({ position = [0, 0, 0] }) {
+function BlockStart({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   const textures = useTexture({
     map: './textures/Poliigon_WoodVeneerOak_7760/1K/Poliigon_WoodVeneerOak_7760_BaseColor.jpg',
     roughnessMap:
@@ -40,7 +40,7 @@ function BlockStart({ position = [0, 0, 0] }) {
   });
 
   return (
-    <group position={position}>
+    <group position={position} rotation={rotation}>
       <Player
         textures={textures}
         parentPosition={position}
@@ -65,7 +65,7 @@ function BlockStart({ position = [0, 0, 0] }) {
   );
 }
 
-function BlockEnd({ position = [0, 0, 0] }) {
+function BlockEnd({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   const hamburger = useGLTF('./hamburger.glb');
   // hamburger shadows
   hamburger.scene.children.forEach((mesh) => {
@@ -83,7 +83,7 @@ function BlockEnd({ position = [0, 0, 0] }) {
     end();
   };
   return (
-    <group position={position}>
+    <group position={position} rotation={rotation}>
       <Text
         font='./bebas-neue-v9-latin-regular.woff'
         scale={5}
@@ -110,7 +110,7 @@ function BlockEnd({ position = [0, 0, 0] }) {
   );
 }
 
-function BlockSpinner({ position = [0, 0, 0] }) {
+function BlockSpinner({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
   );
@@ -126,7 +126,7 @@ function BlockSpinner({ position = [0, 0, 0] }) {
   });
 
   return (
-    <group position={position}>
+    <group position={position} rotation={rotation}>
       <RigidBody
         ref={obstacleRef}
         type='kinematicPosition'
@@ -146,7 +146,7 @@ function BlockSpinner({ position = [0, 0, 0] }) {
   );
 }
 
-function BlockLimbo({ position = [0, 0, 0] }) {
+function BlockLimbo({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
   );
@@ -167,7 +167,7 @@ function BlockLimbo({ position = [0, 0, 0] }) {
   });
 
   return (
-    <group position={position}>
+    <group position={position} rotation={rotation}>
       <RigidBody
         ref={obstacleRef}
         type='kinematicPosition'
@@ -187,7 +187,7 @@ function BlockLimbo({ position = [0, 0, 0] }) {
   );
 }
 
-function BlockSpeed({ position = [0, 0, 0] }) {
+function BlockSpeed({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   // when player crosses this block they get a temporary acceleration
   const obstacleRef = useRef();
   useFrame((state) => {
@@ -205,7 +205,7 @@ function BlockSpeed({ position = [0, 0, 0] }) {
     }
   };
   return (
-    <group position={position}>
+    <group position={position} rotation={rotation}>
       <RigidBody
         type='fixed'
         onCollisionEnter={handleAddingSpeedToPlayer}
@@ -229,6 +229,7 @@ function BlockPortal({
     [0, 0, 0],
     [0, 0, 1],
   ],
+  rotation = [0, 0, 0],
 }) {
   const portal1Position = position[0];
   const portal2Position = position[1];
@@ -247,7 +248,6 @@ function BlockPortal({
   };
   const handleUpdatePlayerLocation = (collision, position) => {
     if (onCooldown) return;
-    console.log('portal active');
 
     const player = world.getRigidBody(collision.rigidBody.handle);
     if (player.handle.toString() == playerHandle.toString()) {
@@ -258,14 +258,13 @@ function BlockPortal({
         z: position[2],
       };
       player.setTranslation(playerLoc);
-      console.log('portal yeet', playerLoc);
 
       handleCooldownTrigger();
     }
   };
   return (
     <>
-      <group position={portal1Position}>
+      <group position={portal1Position} rotation={rotation}>
         <RigidBody
           type='fixed'
           sensor
@@ -281,7 +280,7 @@ function BlockPortal({
           />
         </RigidBody>
       </group>
-      <group position={portal2Position}>
+      <group position={portal2Position} rotation={rotation}>
         <RigidBody
           type='fixed'
           sensor
@@ -300,7 +299,7 @@ function BlockPortal({
     </>
   );
 }
-function BlockAxe({ position = [0, 0, 0] }) {
+function BlockAxe({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
   );
@@ -321,7 +320,7 @@ function BlockAxe({ position = [0, 0, 0] }) {
   });
 
   return (
-    <group position={position}>
+    <group position={position} rotation={rotation}>
       <RigidBody
         ref={obstacleRef}
         type='kinematicPosition'
@@ -342,11 +341,12 @@ function BlockAxe({ position = [0, 0, 0] }) {
 }
 function BlockBounce({
   position = [0, 0, 0],
-  options = { amplitude: 1, speed: 2, seed: Math.random() },
+  rotation = [0, 0, 0],
+  options = { amplitude: 1, speed: 5, seed: Math.random() * 3 },
 }) {
   const obstacleRef = useRef();
 
-  const bounceMotion = (time, amplitude = 2, speed = 5) => {
+  const bounceMotion = (time, amplitude, speed) => {
     const upTime = Math.PI / speed / 4;
     if (time >= upTime) {
       const downTime = 8 - upTime;
@@ -365,7 +365,6 @@ function BlockBounce({
         amplitude
       );
   };
-  console.log(options.seed);
   useFrame((state, delta) => {
     if (!obstacleRef.current) return;
 
@@ -385,7 +384,7 @@ function BlockBounce({
     });
   });
   return (
-    <group position={position}>
+    <group position={position} rotation={rotation}>
       <RigidBody
         ref={obstacleRef}
         type='kinematicPosition'
@@ -405,7 +404,7 @@ function BlockBounce({
     </group>
   );
 }
-function BlockBlueHealth({ position = [0, 0, 0] }) {
+function BlockBlueHealth({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   const [isUncollected, setIsUncollected] = useState(true);
 
   const healthRef = useRef();
@@ -419,20 +418,21 @@ function BlockBlueHealth({ position = [0, 0, 0] }) {
   };
 
   return (
-    <group position={position}>
+    <group position={position} rotation={rotation}>
       {isUncollected && (
         <RigidBody
           type='kinematicPosition'
           ref={healthRef}
           onCollisionEnter={handleCollisionEnter}
+          position={[0, 0.5, 0]}
         >
           <MeshCollider
-            args={[2, 2, 2]}
+            args={[2, 1, 2]}
             //   args={[nodes.YourMesh.geometry]} // Use geometry from the GLTF model
             sensor
           >
             <mesh>
-              <boxGeometry args={[2, 2, 2]} />
+              <boxGeometry args={[2, 1, 2]} />
               <meshStandardMaterial color='blue' opacity={0.3} transparent />
             </mesh>
           </MeshCollider>
@@ -442,7 +442,7 @@ function BlockBlueHealth({ position = [0, 0, 0] }) {
   );
 }
 // platform types are block types
-function BlockFloor({ position, type }) {
+function BlockFloor({ position, rotation = [0, 0, 0], type }) {
   let material = floor2Material;
   switch (type) {
     case 'start':
@@ -456,7 +456,7 @@ function BlockFloor({ position, type }) {
       material = floor2Material;
   }
   return (
-    <group position={position}>
+    <group position={position} rotation={rotation}>
       <RigidBody type='fixed' colliders='cuboid' restitution={0.2} friction={0}>
         <mesh
           scale={[4, 0.2, 4]}
@@ -475,7 +475,12 @@ function BlockFloor({ position, type }) {
  * @param {string} 'start' | 'end' | 'spinner' | 'axe' | 'limbo' | 'blueHealth' | 'speed' | 'portal' | 'bounce' | 'floor'
  * @param {[number, number, number]} position [x, y, z] world coordinates
  */
-export function Platform({ type, position, options }) {
+export function Platform({
+  type,
+  position,
+  rotation = [0, 0, 0],
+  options = { floor: 'floor' },
+}) {
   const blockMap = {
     floor: BlockFloor,
     limbo: BlockLimbo,
@@ -488,6 +493,12 @@ export function Platform({ type, position, options }) {
     start: BlockStart,
     end: BlockEnd,
   };
+  const floorOptions = {
+    floor: BlockFloor,
+    speed: BlockSpeed,
+    bounce: BlockBounce,
+  };
+  const Floor = floorOptions[options.floor];
 
   const Block = blockMap[type];
 
@@ -501,6 +512,7 @@ export function Platform({ type, position, options }) {
             position[2] * UNIT_CONSTANT,
           ]}
           type={type}
+          rotation={rotation}
         />
       ) : type === 'speed' || type === 'bounce' ? (
         <>
@@ -510,6 +522,7 @@ export function Platform({ type, position, options }) {
               position[1] * UNIT_CONSTANT,
               position[2] * UNIT_CONSTANT,
             ]}
+            rotation={rotation}
             options={options}
           />
         </>
@@ -521,6 +534,7 @@ export function Platform({ type, position, options }) {
               position[0][1] * UNIT_CONSTANT,
               position[0][2] * UNIT_CONSTANT,
             ]}
+            rotation={rotation}
             type={type}
           />
           <BlockFloor
@@ -529,6 +543,7 @@ export function Platform({ type, position, options }) {
               position[1][1] * UNIT_CONSTANT,
               position[1][2] * UNIT_CONSTANT,
             ]}
+            rotation={rotation}
             type={type}
           />
           <Block
@@ -545,16 +560,18 @@ export function Platform({ type, position, options }) {
                 position[1][2] * UNIT_CONSTANT,
               ],
             ]}
+            rotation={rotation}
           />
         </>
       ) : (
         <>
-          <BlockFloor
+          <Floor
             position={[
               position[0] * UNIT_CONSTANT,
               position[1] * UNIT_CONSTANT,
               position[2] * UNIT_CONSTANT,
             ]}
+            rotation={rotation}
             type={type}
           />
           <Block
@@ -564,6 +581,7 @@ export function Platform({ type, position, options }) {
               position[1] * UNIT_CONSTANT,
               position[2] * UNIT_CONSTANT,
             ]}
+            rotation={rotation}
           />
         </>
       )}
