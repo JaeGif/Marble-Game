@@ -346,16 +346,24 @@ function BlockTravel({
 }) {
   const obstacleRef = useRef();
 
-  const travelMotion = (time, amplitude, period) => {
-    const upTime = Math.PI / 5 / 4;
+  const travelMotion = (time, amplitude = 2, speed = 5) => {
+    const upTime = Math.PI / speed / 4;
     if (time >= upTime) {
       const downTime = 8 - upTime;
       if (time <= downTime)
-        return (0.5 + Math.cos((time / downTime) * Math.PI) / 2) * 2;
+        return (
+          (1 / amplitude + Math.cos((time / downTime) * Math.PI) / amplitude) *
+          amplitude *
+          amplitude
+        );
       else return 0;
-    }
-
-    return (0.5 + Math.cos((10 / 2) * Math.PI * time - Math.PI) / 2) * 2;
+    } else
+      return (
+        (1 / amplitude +
+          Math.cos(speed * Math.PI * time - Math.PI) / amplitude) *
+        amplitude *
+        amplitude
+      );
   };
 
   useFrame((state, delta) => {

@@ -10,7 +10,7 @@ function Level11() {
       <Platform
         type={'travel'}
         position={[0, 0, 1]}
-        options={{ amplitude: 1, period: 1 }}
+        options={{ amplitude: 1, speed: 1 }}
       />
     </>
   );
