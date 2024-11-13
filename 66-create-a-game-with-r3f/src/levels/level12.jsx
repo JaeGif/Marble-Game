@@ -37,7 +37,23 @@ function Level12() {
         position={[0, -0.75, 5.5]}
         rotation={[Math.PI / 2, 0, 0]}
       />
-      <Platform type={'end'} position={[8, 0, 10]} />
+      <Platform type={'floor'} position={[0, 0, 5]} />
+      <Platform type={'floor'} position={[1, 0, 5]} />
+      <Platform
+        type={'limbo'}
+        position={[3, 0, 5]}
+        rotation={[0, Math.PI / 2, 0]}
+      />
+      <Platform
+        type={'limbo'}
+        position={[3, 0, 5]}
+        rotation={[0, Math.PI / 2, 0]}
+      />
+      <Platform
+        type={'end'}
+        position={[4, 0, 5]}
+        rotation={[0, Math.PI / 2, 0]}
+      />
     </>
   );
 }
