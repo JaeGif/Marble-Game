@@ -340,13 +340,13 @@ function BlockAxe({ position = [0, 0, 0] }) {
     </group>
   );
 }
-function BlockTravel({
+function BlockBounce({
   position = [0, 0, 0],
-  options = { amplitude: 1, speed: 2 },
+  options = { amplitude: 1, speed: 2, seed: Math.random() },
 }) {
   const obstacleRef = useRef();
 
-  const travelMotion = (time, amplitude = 2, speed = 5) => {
+  const bounceMotion = (time, amplitude = 2, speed = 5) => {
     const upTime = Math.PI / speed / 4;
     if (time >= upTime) {
       const downTime = 8 - upTime;
@@ -365,11 +365,11 @@ function BlockTravel({
         amplitude
       );
   };
-
+  console.log(options.seed);
   useFrame((state, delta) => {
     if (!obstacleRef.current) return;
 
-    const time = state.clock.elapsedTime;
+    const time = state.clock.elapsedTime + options.seed;
 
     let animationTime = 0;
     animationTime += time;
@@ -379,7 +379,7 @@ function BlockTravel({
       x: position[0],
       y:
         position[1] +
-        travelMotion(animationTime, options.amplitude, options.speed) -
+        bounceMotion(animationTime, options.amplitude, options.speed) -
         0.1,
       z: position[2],
     });
@@ -472,7 +472,7 @@ function BlockFloor({ position, type }) {
 
 /**
  * Represents a Platform of specified type and position.
- * @param {string} 'start' | 'end' | 'spinner' | 'axe' | 'limbo' | 'blueHealth' | 'speed' | 'portal' | 'travel' | 'floor'
+ * @param {string} 'start' | 'end' | 'spinner' | 'axe' | 'limbo' | 'blueHealth' | 'speed' | 'portal' | 'bounce' | 'floor'
  * @param {[number, number, number]} position [x, y, z] world coordinates
  */
 export function Platform({ type, position, options }) {
@@ -484,7 +484,7 @@ export function Platform({ type, position, options }) {
     speed: BlockSpeed,
     spinner: BlockSpinner,
     portal: BlockPortal,
-    travel: BlockTravel,
+    bounce: BlockBounce,
     start: BlockStart,
     end: BlockEnd,
   };
@@ -502,7 +502,7 @@ export function Platform({ type, position, options }) {
           ]}
           type={type}
         />
-      ) : type === 'speed' || type === 'travel' ? (
+      ) : type === 'speed' || type === 'bounce' ? (
         <>
           <Block
             position={[
