@@ -342,7 +342,7 @@ function BlockAxe({ position = [0, 0, 0] }) {
 }
 function BlockTravel({
   position = [0, 0, 0],
-  options = { amplitude: 1, period: 2 },
+  options = { amplitude: 1, speed: 2 },
 }) {
   const obstacleRef = useRef();
 
@@ -379,7 +379,7 @@ function BlockTravel({
       x: position[0],
       y:
         position[1] +
-        travelMotion(animationTime, options.amplitude, options.period) -
+        travelMotion(animationTime, options.amplitude, options.speed) -
         0.1,
       z: position[2],
     });
