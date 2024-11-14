@@ -9,8 +9,8 @@ import Level6 from './levels/Level6';
 import Level7 from './levels/Level7';
 import Level8 from './levels/Level8';
 import Level9 from './levels/Level9';
-import Level10 from './levels/Level11';
-import Level11 from './levels/Level10';
+import Level10 from './levels/Level10';
+import Level11 from './levels/Level11';
 import Level12 from './levels/Level12';
 import Level13 from './levels/Level13';
 function Level({ level = 1 }) {

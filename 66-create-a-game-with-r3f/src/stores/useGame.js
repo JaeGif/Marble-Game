@@ -8,9 +8,9 @@ export default create(
     return {
       obstacleCount: 8,
       jumps: 2,
-      level: 13,
+      level: 11,
       mode: 'casual',
-      lives: [true, true, true],
+      lives: [true, true, true, true, true, true, true],
       score: 0,
       maxLives: 3,
       globalPlayerHandle: null,
