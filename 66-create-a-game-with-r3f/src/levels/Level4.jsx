@@ -4,6 +4,8 @@ import { Platform } from '../constructors/Blocks';
 function Level4() {
   return (
     <>
+      <color args={['#bdedfc']} attach='background' />
+
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform type={'speed'} position={[0, 0, 1]} />
       <Platform type={'axe'} position={[0, 0, 2]} />

@@ -4,6 +4,7 @@ import { Platform } from '../constructors/Blocks';
 function Level11() {
   return (
     <>
+      <color args={['#bdedfc']} attach='background' />
       // lower level
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform type={'speed'} position={[0, 0, 1]} />

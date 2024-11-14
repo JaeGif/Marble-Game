@@ -4,6 +4,7 @@ import { Platform } from '../constructors/Blocks';
 function Level13() {
   return (
     <>
+      <color args={['#bdedfc']} attach='background' />
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform type={'limbo'} position={[0, 0, 1]} />
       <Platform

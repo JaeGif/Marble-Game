@@ -4,6 +4,8 @@ import { Platform } from '../constructors/Blocks';
 function Level8() {
   return (
     <>
+      <color args={['#bdedfc']} attach='background' />
+
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform
         type={'portal'}

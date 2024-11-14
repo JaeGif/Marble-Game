@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo, useEffect } from 'react';
+import React from 'react';
 
 import Level1 from './levels/Level1';
 import Level2 from './levels/Level2';
