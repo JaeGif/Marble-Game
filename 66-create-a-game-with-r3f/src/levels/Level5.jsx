@@ -1,10 +1,11 @@
 import React from 'react';
 import { Platform } from '../constructors/Blocks';
-
+import Lights from '../Lights';
 function Level5() {
   return (
     <>
       <color args={['#bdedfc']} attach='background' />
+      <Lights />
 
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform type={'axe'} position={[0, 0, 2]} />

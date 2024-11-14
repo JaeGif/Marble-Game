@@ -1,10 +1,11 @@
 import React from 'react';
 import { Platform } from '../constructors/Blocks';
-
+import Lights from '../Lights';
 function Level12() {
   return (
     <>
       <color args={['#bdedfc']} attach='background' />
+      <Lights />
       // lower level
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform type={'spinner'} position={[0, 0, 1]} />
