@@ -192,11 +192,41 @@ function BlockSpeed({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   const speedMultiplier = useGame((state) => state.speedBlockMultiplier);
   const playerHandle = useGame((state) => state.globalPlayerHandle);
   const { world } = useRapier();
+
+  const vector = new THREE.Vector3(0, 0, 1); // Original vector
+
+  // Create individual quaternions for each axis rotation
+  const quaternionX = new THREE.Quaternion().setFromAxisAngle(
+    new THREE.Vector3(1, 0, 0),
+    rotation[0]
+  ); // Rotate around X
+  const quaternionY = new THREE.Quaternion().setFromAxisAngle(
+    new THREE.Vector3(0, 1, 0),
+    rotation[1]
+  ); // Rotate around Y
+  const quaternionZ = new THREE.Quaternion().setFromAxisAngle(
+    new THREE.Vector3(0, 0, 1),
+    rotation[2]
+  ); // Rotate around Z
+
+  // Combine the rotations by multiplying quaternions
+  const combinedQuaternion = quaternionX
+    .multiply(quaternionY)
+    .multiply(quaternionZ);
+
+  // Apply the combined rotation to the vector
+  const rotatedVector = vector.clone().applyQuaternion(combinedQuaternion);
+
   const handleAddingSpeedToPlayer = (collision) => {
     const player = world.getRigidBody(collision.rigidBody.handle);
 
     if (player.handle.toString() == playerHandle.toString()) {
-      player.applyImpulse({ x: 0, y: 0, z: -speedMultiplier });
+      //
+      player.applyImpulse({
+        x: -speedMultiplier * rotatedVector.x,
+        y: -speedMultiplier * rotatedVector.y,
+        z: -speedMultiplier * rotatedVector.z,
+      });
     }
   };
   return (
