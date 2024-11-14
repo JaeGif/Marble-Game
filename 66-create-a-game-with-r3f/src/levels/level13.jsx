@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform } from '../constructors/Blocks';
-import Lights from '../Lights';
+import Lights from '../lights/Lights';
 function Level13() {
   return (
     <>

@@ -25,7 +25,7 @@ function Player({ textures, parentPosition, position }) {
   const bodyRef = useRef();
 
   const setGlobalPlayerHandle = useGame((state) => state.setGlobalPlayerHandle);
-  const globalPlayerHandle = useGame((state) => state.playerHandle);
+  const globalPlayerHandle = useGame((state) => state.globalPlayerHandle);
 
   const start = useGame((state) => state.start);
   const restart = useGame((state) => state.restart);
@@ -79,7 +79,7 @@ function Player({ textures, parentPosition, position }) {
     });
 
     const unsubscribePlayerHandle = useGame.subscribe(
-      (state) => state.playerHandle
+      (state) => state.globalPlayerHandle
     );
 
     return () => {
@@ -161,6 +161,7 @@ function Player({ textures, parentPosition, position }) {
       colliders='ball'
       position={position}
       ref={bodyRef}
+      name='player'
     >
       <mesh castShadow receiveShadow>
         <icosahedronGeometry args={[BALLSIZE, 4]} />
