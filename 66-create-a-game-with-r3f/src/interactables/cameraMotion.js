@@ -23,6 +23,7 @@ const cameraFollow = (
   state.camera.position.copy(smoothedCameraPosition);
   state.camera.lookAt(smoothedCameraTarget);
 };
+
 const cameraRotate = (
   bodyPosition,
   smoothedCameraPosition,

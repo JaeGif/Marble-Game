@@ -12,7 +12,7 @@ import Level9 from './levels/Level9';
 import Level10 from './levels/Level11';
 import Level11 from './levels/Level10';
 import Level12 from './levels/Level12';
-
+import Level13 from './levels/Level13';
 function Level({ level = 1 }) {
   const levelMap = {
     1: Level1,
@@ -27,6 +27,7 @@ function Level({ level = 1 }) {
     10: Level10,
     11: Level11,
     12: Level12,
+    13: Level13,
   };
   const CurrentStage = levelMap[level];
   return (

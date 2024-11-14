@@ -110,6 +110,8 @@ function Player({ textures, parentPosition, position }) {
     playerActionsLogicTree(
       bodyRef,
       delta,
+      cameraLocked,
+      state,
       forward,
       backward,
       leftward,

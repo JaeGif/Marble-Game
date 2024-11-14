@@ -1,6 +1,10 @@
+import * as THREE from 'three';
+
 export const playerActionsLogicTree = (
   bodyRef,
   delta,
+  cameraLocked,
+  state,
   forward,
   backward,
   leftward,

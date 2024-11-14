@@ -1,11 +1,6 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import * as THREE from 'three';
-import {
-  RigidBody,
-  useRapier,
-  MeshCollider,
-  CuboidCollider,
-} from '@react-three/rapier';
+import { RigidBody, useRapier, MeshCollider } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { Float, Text, useGLTF, useTexture } from '@react-three/drei';
 import useGame from '../stores/useGame';
@@ -497,6 +492,7 @@ export function Platform({
     floor: BlockFloor,
     speed: BlockSpeed,
     bounce: BlockBounce,
+    none: null,
   };
   const Floor = floorOptions[options.floor];
 
@@ -565,15 +561,19 @@ export function Platform({
         </>
       ) : (
         <>
-          <Floor
-            position={[
-              position[0] * UNIT_CONSTANT,
-              position[1] * UNIT_CONSTANT,
-              position[2] * UNIT_CONSTANT,
-            ]}
-            rotation={rotation}
-            type={type}
-          />
+          {options.floor === 'none' ? (
+            <></>
+          ) : (
+            <Floor
+              position={[
+                position[0] * UNIT_CONSTANT,
+                position[1] * UNIT_CONSTANT,
+                position[2] * UNIT_CONSTANT,
+              ]}
+              rotation={rotation}
+              type={type}
+            />
+          )}
           <Block
             options={options}
             position={[
