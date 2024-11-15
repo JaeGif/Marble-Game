@@ -72,14 +72,43 @@ const cameraRotate = (
   state.camera.lookAt(smoothedCameraTarget);
 };
 
+const cameraBirdsEye = () => {};
+
+const cameraCenterBird = (
+  bodyPosition,
+  smoothedCameraPosition,
+  smoothedCameraTarget,
+  state,
+  delta
+) => {
+  // [2.5, 4, 6]
+
+  const cameraPosition = new THREE.Vector3();
+  cameraPosition.copy(bodyPosition);
+
+  cameraPosition.y += 3;
+  // console.log(cameraPosition);
+
+  const cameraTarget = new THREE.Vector3();
+  cameraTarget.copy(bodyPosition);
+
+  smoothedCameraPosition.lerp(cameraPosition, 5 * delta);
+  smoothedCameraTarget.lerp(cameraTarget, 5 * delta);
+
+  state.camera.position.copy(smoothedCameraPosition);
+  state.camera.lookAt(smoothedCameraTarget);
+};
+
 export const cameraLogicTree = (
   bodyPosition,
   smoothedCameraPosition,
   smoothedCameraTarget,
   state,
   delta,
-  cameraLocked,
-  setCameraLocked,
+  cameraMode,
+  setCameraMode,
+  cameraBirdCenter,
+  setCameraBirdCenter,
   hAngleRef,
   vAngleRef,
   cameraLeft,
@@ -90,7 +119,20 @@ export const cameraLogicTree = (
 ) => {
   let vAngle = 0;
   let hAngle = 0;
-  if (cameraLocked) {
+
+  // camera mode updates
+  if (cameraCenter && cameraMode !== 'birdseye') {
+    setCameraMode('locked');
+  }
+  if (
+    (cameraLeft || cameraRight || cameraUp || cameraDown) &&
+    cameraMode === 'locked'
+  ) {
+    setCameraMode('free');
+  }
+
+  // camera motion modals
+  if (cameraMode === 'locked') {
     cameraFollow(
       bodyPosition,
       smoothedCameraPosition,
@@ -99,27 +141,19 @@ export const cameraLogicTree = (
       delta
     );
   }
-  if (cameraCenter) {
-    setCameraLocked(true);
-  }
-  if (cameraLeft) {
-    // only update cameraLock once so not redoing per frame
-    if (cameraLocked) setCameraLocked(false);
-    hAngle += -2;
-  }
-  if (cameraRight) {
-    if (cameraLocked) setCameraLocked(false);
-    hAngle += 2;
-  }
-  if (cameraUp) {
-    if (cameraLocked) setCameraLocked(false);
-    vAngle += -2;
-  }
-  if (cameraDown) {
-    if (cameraLocked) setCameraLocked(false);
-    vAngle += 2;
-  }
-  if (!cameraLocked) {
+  if (cameraMode === 'free') {
+    if (cameraLeft) {
+      hAngle += -2;
+    }
+    if (cameraRight) {
+      hAngle += 2;
+    }
+    if (cameraUp) {
+      vAngle += -2;
+    }
+    if (cameraDown) {
+      vAngle += 2;
+    }
     cameraRotate(
       bodyPosition,
       smoothedCameraPosition,
@@ -131,5 +165,43 @@ export const cameraLogicTree = (
       state,
       delta
     );
+  }
+
+  if (cameraMode === 'birdseye') {
+    let cameraX = 0;
+    let cameraZ = 0;
+
+    if (cameraCenter && !cameraBirdCenter) {
+      setCameraBirdCenter(true);
+    }
+    if (
+      (cameraLeft || cameraRight || cameraUp || cameraDown) &&
+      cameraBirdCenter
+    ) {
+      setCameraBirdCenter(false);
+    }
+    if (cameraBirdCenter) {
+      cameraCenterBird(
+        bodyPosition,
+        smoothedCameraPosition,
+        smoothedCameraTarget,
+        state,
+        delta
+      );
+    }
+    if (!cameraBirdCenter) {
+      if (cameraLeft) {
+        cameraX += -2;
+      }
+      if (cameraRight) {
+        cameraX += 2;
+      }
+      if (cameraUp) {
+        cameraZ += -2;
+      }
+      if (cameraDown) {
+        cameraZ += 2;
+      }
+    }
   }
 };
