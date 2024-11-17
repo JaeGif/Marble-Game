@@ -176,8 +176,8 @@ export const cameraLogicTree = (
   if (cameraMode === 'birdseye') {
     if (cameraCenter && !cameraBirdCenter) {
       setCameraBirdCenter(true);
-      cameraXRef.current = 0;
-      cameraZRef.current = 0;
+      cameraXRef.current = bodyPosition.x;
+      cameraZRef.current = bodyPosition.z;
     }
     if (
       (cameraLeft || cameraRight || cameraUp || cameraDown) &&

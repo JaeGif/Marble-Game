@@ -1,11 +1,14 @@
 import React from 'react';
 import { Platform } from '../constructors/Blocks';
 import Lights from '../lights/Lights';
+import Camera from '../interactables/Camera';
+
 function Level10() {
   return (
     <>
       <color args={['#bdedfc']} attach='background' />
       <Lights />
+      <Camera modality='locked' />
       // lower level
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform

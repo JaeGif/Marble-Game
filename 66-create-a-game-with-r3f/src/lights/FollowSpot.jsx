@@ -18,7 +18,7 @@ export default function FollowSpot() {
     if (!player) return;
     const playerPosition = player.translation();
     spotLight.current.position.x = state.camera.position.x;
-    spotLight.current.position.y = playerPosition.y + 1;
+    spotLight.current.position.y = playerPosition.y + 3;
     spotLight.current.position.z = state.camera.position.z + 0.1;
 
     const cameraVecsUnder = new THREE.Vector3(
@@ -37,10 +37,11 @@ export default function FollowSpot() {
       <spotLight
         ref={spotLight}
         //   position={[0, 2, 0]}
-        intensity={2.5}
+        intensity={5}
+        angle={Math.PI / 6}
         distance={5}
-        decay={5}
-        penumbra={0.1}
+        decay={1}
+        penumbra={0.4}
         color={'white'}
       />
     </>
