@@ -10,7 +10,6 @@ function Level15() {
       <color args={['#000']} attach='background' />
       <FollowSpot />
       <Camera modality='birdseye' />
-      <Lights />
       <Platform
         type={'start'}
         position={[0, 0, 0]}
