@@ -75,7 +75,7 @@ const cameraBirdsEye = (state, delta, x, z) => {
   // move camera in x and z only
   const cameraPosition = new THREE.Vector3();
   cameraPosition.x += x;
-  cameraPosition.y += 4;
+  cameraPosition.y += 4.25;
   cameraPosition.z += z;
 
   state.camera.position.copy(cameraPosition);

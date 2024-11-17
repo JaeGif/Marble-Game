@@ -36,7 +36,6 @@ export default function FollowSpot() {
     <>
       <spotLight
         ref={spotLight}
-        //   position={[0, 2, 0]}
         intensity={5}
         angle={Math.PI / 6}
         distance={5}
