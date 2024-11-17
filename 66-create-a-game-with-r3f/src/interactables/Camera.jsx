@@ -17,6 +17,9 @@ function Camera({ modality = 'locked' }) {
   const hAngleRef = useRef(Math.PI / 2); // Horizontal dolly angle
   const vAngleRef = useRef(Math.PI / 2); // Vertical dolly angle
 
+  const cameraXRef = useRef(0); // Horizontal dolly angle
+  const cameraZRef = useRef(0); // Vertical dolly angle
+
   const [smoothedCameraPosition] = useState(() => {
     if (modality === 'locked') return new THREE.Vector3(10, 10, 10);
     else if (modality === 'birdseye') return new THREE.Vector3(0, 0, 0);
@@ -52,6 +55,8 @@ function Camera({ modality = 'locked' }) {
       setCameraBirdCenter,
       hAngleRef,
       vAngleRef,
+      cameraXRef,
+      cameraZRef,
       cameraLeft,
       cameraRight,
       cameraUp,

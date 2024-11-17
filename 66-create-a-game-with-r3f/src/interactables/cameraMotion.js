@@ -7,7 +7,6 @@ const cameraFollow = (
   state,
   delta
 ) => {
-  console.log('cam follow');
   const cameraPosition = new THREE.Vector3();
   cameraPosition.copy(bodyPosition);
 
@@ -36,8 +35,6 @@ const cameraRotate = (
   state,
   delta
 ) => {
-  console.log('cam rotate');
-
   const cameraPosition = new THREE.Vector3();
 
   const RADIUS = 3.315;
@@ -74,7 +71,15 @@ const cameraRotate = (
   state.camera.lookAt(smoothedCameraTarget);
 };
 
-const cameraBirdsEye = () => {};
+const cameraBirdsEye = (state, delta, x, z) => {
+  // move camera in x and z only
+  const cameraPosition = new THREE.Vector3();
+  cameraPosition.x += x;
+  cameraPosition.y += 4;
+  cameraPosition.z += z;
+
+  state.camera.position.copy(cameraPosition);
+};
 
 const cameraCenterBird = (
   bodyPosition,
@@ -110,6 +115,8 @@ export const cameraLogicTree = (
   setCameraBirdCenter,
   hAngleRef,
   vAngleRef,
+  cameraXRef,
+  cameraZRef,
   cameraLeft,
   cameraRight,
   cameraUp,
@@ -167,11 +174,10 @@ export const cameraLogicTree = (
   }
 
   if (cameraMode === 'birdseye') {
-    let cameraX = 0;
-    let cameraZ = 0;
-
     if (cameraCenter && !cameraBirdCenter) {
       setCameraBirdCenter(true);
+      cameraXRef.current = 0;
+      cameraZRef.current = 0;
     }
     if (
       (cameraLeft || cameraRight || cameraUp || cameraDown) &&
@@ -190,17 +196,18 @@ export const cameraLogicTree = (
     }
     if (!cameraBirdCenter) {
       if (cameraLeft) {
-        cameraX += -2;
+        cameraXRef.current += -0.1;
       }
       if (cameraRight) {
-        cameraX += 2;
+        cameraXRef.current += 0.1;
       }
       if (cameraUp) {
-        cameraZ += -2;
+        cameraZRef.current += -0.1;
       }
       if (cameraDown) {
-        cameraZ += 2;
+        cameraZRef.current += 0.1;
       }
+      cameraBirdsEye(state, delta, cameraXRef.current, cameraZRef.current);
     }
   }
 };
