@@ -23,7 +23,11 @@ const floor2Material = new THREE.MeshStandardMaterial({ color: 'greenyellow' });
 const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 'orangered' });
 const speedMaterial = new THREE.MeshStandardMaterial({ color: 'blue' });
 
-function BlockStart({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
+function BlockStart({
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  textRotation = [0, -0.25, 0],
+}) {
   const textures = useTexture({
     map: './textures/Poliigon_WoodVeneerOak_7760/1K/Poliigon_WoodVeneerOak_7760_BaseColor.jpg',
     roughnessMap:
@@ -33,7 +37,6 @@ function BlockStart({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
     aoMap:
       './textures/Poliigon_WoodVeneerOak_7760/1K/Poliigon_WoodVeneerOak_7760_ORM.jpg',
   });
-
   return (
     <group position={position} rotation={rotation}>
       <Player
@@ -50,7 +53,7 @@ function BlockStart({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
           lineHeight={0.75}
           textAlign='right'
           position={[0.75, 0.65, 0]}
-          rotation-y={-0.25}
+          rotation={textRotation}
         >
           Marble Run
           <meshBasicMaterial toneMapped={false} />
@@ -60,7 +63,12 @@ function BlockStart({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   );
 }
 
-function BlockEnd({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
+function BlockEnd({
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  textRotation = [0, 0, 0],
+  options = { textSize: 'l' },
+}) {
   const hamburger = useGLTF('./hamburger.glb');
   // hamburger shadows
   hamburger.scene.children.forEach((mesh) => {
@@ -77,12 +85,26 @@ function BlockEnd({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   const handleCollisionEnter = () => {
     end();
   };
+
+  const textSizeSwitch = () => {
+    switch (options.textSize) {
+      case 's':
+        return 0.5;
+      case 'm':
+        return 3;
+      case 'l':
+        return 5;
+      default:
+        return 5;
+    }
+  };
   return (
     <group position={position} rotation={rotation}>
       <Text
         font='./bebas-neue-v9-latin-regular.woff'
-        scale={5}
+        scale={textSizeSwitch()}
         position={[0, 3, 2]}
+        rotation={textRotation}
       >
         FINISH
         <meshBasicMaterial toneMapped={false} />
@@ -504,6 +526,7 @@ export function Platform({
   type,
   position,
   rotation = [0, 0, 0],
+  textRotation,
   options = { floor: 'floor' },
 }) {
   const blockMap = {
@@ -550,6 +573,7 @@ export function Platform({
             ]}
             rotation={rotation}
             options={options}
+            textRotation={textRotation}
           />
         </>
       ) : type === 'portal' ? (
@@ -587,6 +611,7 @@ export function Platform({
               ],
             ]}
             rotation={rotation}
+            textRotation={textRotation}
           />
         </>
       ) : (
@@ -612,6 +637,7 @@ export function Platform({
               position[2] * UNIT_CONSTANT,
             ]}
             rotation={rotation}
+            textRotation={textRotation}
           />
         </>
       )}
