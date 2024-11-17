@@ -7,6 +7,7 @@ const cameraFollow = (
   state,
   delta
 ) => {
+  console.log('cam follow');
   const cameraPosition = new THREE.Vector3();
   cameraPosition.copy(bodyPosition);
 
@@ -35,8 +36,9 @@ const cameraRotate = (
   state,
   delta
 ) => {
+  console.log('cam rotate');
+
   const cameraPosition = new THREE.Vector3();
-  // cameraPosition.copy(bodyPosition);
 
   const RADIUS = 3.315;
 
@@ -81,13 +83,10 @@ const cameraCenterBird = (
   state,
   delta
 ) => {
-  // [2.5, 4, 6]
-
   const cameraPosition = new THREE.Vector3();
   cameraPosition.copy(bodyPosition);
 
-  cameraPosition.y += 3;
-  // console.log(cameraPosition);
+  cameraPosition.y += 4;
 
   const cameraTarget = new THREE.Vector3();
   cameraTarget.copy(bodyPosition);

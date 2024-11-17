@@ -1,28 +1,26 @@
 import { useState, useEffect, useRef } from 'react';
 import { cameraLogicTree } from './cameraMotion';
 import useGame from '../stores/useGame';
-import { useKeyboardControls } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { PerspectiveCamera, useKeyboardControls } from '@react-three/drei';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useRapier } from '@react-three/rapier';
 import * as THREE from 'three';
 
 function Camera({ modality = 'locked' }) {
   const { world } = useRapier();
-
   const [subscribeKeys, getKeys] = useKeyboardControls();
-
   // 'locked' | 'free' | 'birdseye'
   const [cameraMode, setCameraMode] = useState(modality);
-  const [cameraBirdCenter, setCameraBirdCenter] = useState(false);
-
+  const [cameraBirdCenter, setCameraBirdCenter] = useState(true);
   const [playerBody, setPlayerBody] = useState(null);
 
   const hAngleRef = useRef(Math.PI / 2); // Horizontal dolly angle
   const vAngleRef = useRef(Math.PI / 2); // Vertical dolly angle
 
-  const [smoothedCameraPosition] = useState(
-    () => new THREE.Vector3(10, 10, 10)
-  );
+  const [smoothedCameraPosition] = useState(() => {
+    if (modality === 'locked') return new THREE.Vector3(10, 10, 10);
+    else if (modality === 'birdseye') return new THREE.Vector3(0, 0, 0);
+  });
   const [smoothedCameraTarget] = useState(() => new THREE.Vector3());
 
   useEffect(() => {
@@ -37,7 +35,6 @@ function Camera({ modality = 'locked' }) {
       unsubscribePlayerHandle();
     };
   }, []);
-
   useFrame((state, delta) => {
     const { cameraLeft, cameraRight, cameraUp, cameraDown, cameraCenter } =
       getKeys();
@@ -63,7 +60,22 @@ function Camera({ modality = 'locked' }) {
     );
   });
 
-  return null;
+  return (
+    <PerspectiveCamera
+      makeDefault
+      near={0.1}
+      far={200}
+      position={[2.5, 4, 6]}
+      fov={45}
+      // rotation={modality === 'birdseye' ? [0, 0, 0] : undefined}
+    />
+  );
 }
 
 export default Camera;
+/*       camera={{
+        fov: 45,
+        near: 0.1,
+        far: 200,
+        position: [2.5, 4, 6],
+      }} */
