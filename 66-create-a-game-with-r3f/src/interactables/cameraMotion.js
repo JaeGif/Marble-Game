@@ -92,6 +92,7 @@ const cameraCenterBird = (
   cameraPosition.copy(bodyPosition);
 
   cameraPosition.y += 4;
+  // cameraPosition.y += 100;
 
   const cameraTarget = new THREE.Vector3();
   cameraTarget.copy(bodyPosition);

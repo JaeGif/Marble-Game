@@ -72,15 +72,8 @@ function Camera({ modality = 'locked' }) {
       far={200}
       position={[2.5, 4, 6]}
       fov={45}
-      // rotation={modality === 'birdseye' ? [0, 0, 0] : undefined}
     />
   );
 }
 
 export default Camera;
-/*       camera={{
-        fov: 45,
-        near: 0.1,
-        far: 200,
-        position: [2.5, 4, 6],
-      }} */
