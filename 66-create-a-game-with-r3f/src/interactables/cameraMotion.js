@@ -76,7 +76,7 @@ const cameraBirdsEye = (state, delta, x, z, debug) => {
   const cameraPosition = new THREE.Vector3();
   cameraPosition.x += x;
   if (debug) {
-    cameraPosition.y += 50;
+    cameraPosition.y += 20;
   } else cameraPosition.y += 4.25;
   cameraPosition.z += z;
 
@@ -95,7 +95,7 @@ const cameraCenterBird = (
   cameraPosition.copy(bodyPosition);
 
   if (debug) {
-    cameraPosition.y += 50;
+    cameraPosition.y += 20;
   } else cameraPosition.y += 4;
 
   const cameraTarget = new THREE.Vector3();
