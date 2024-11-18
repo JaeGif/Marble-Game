@@ -1,9 +1,15 @@
 import React from 'react';
 import { Platform } from '../constructors/Blocks';
+import Lights from '../lights/Lights';
+import Camera from '../interactables/Camera';
 
 function Level3() {
   return (
     <>
+      <color args={['#bdedfc']} attach='background' />
+      <Lights />
+      <Camera modality='locked' />
+
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform type={'floor'} position={[0, 0, 1]} />
       <Platform type={'axe'} position={[0, 0, 2]} />

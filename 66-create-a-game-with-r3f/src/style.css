@@ -129,4 +129,5 @@ body,
 }
 .level :first-child {
   font-size: xx-large;
+  color: white;
 }

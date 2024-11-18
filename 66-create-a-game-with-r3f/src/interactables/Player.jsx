@@ -1,31 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { RigidBody, useRapier } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { useKeyboardControls } from '@react-three/drei';
-import * as THREE from 'three';
 import useGame from '../stores/useGame';
-import { cameraLogicTree } from './cameraMotion';
 import { playerActionsLogicTree } from './playerActions';
 
 const BALLSIZE = 0.3;
 
 function Player({ textures, parentPosition, position }) {
   const [subscribeKeys, getKeys] = useKeyboardControls();
-  const [cameraLocked, setCameraLocked] = useState(true);
+
   const { rapier, world } = useRapier();
-
-  const hAngleRef = useRef(Math.PI / 2); // Horizontal dolly angle
-  const vAngleRef = useRef(Math.PI / 2); // Vertical dolly angle
-
-  const [smoothedCameraPosition] = useState(
-    () => new THREE.Vector3(10, 10, 10)
-  );
-  const [smoothedCameraTarget] = useState(() => new THREE.Vector3());
 
   const bodyRef = useRef();
 
   const setGlobalPlayerHandle = useGame((state) => state.setGlobalPlayerHandle);
-  const globalPlayerHandle = useGame((state) => state.playerHandle);
+  const globalPlayerHandle = useGame((state) => state.globalPlayerHandle);
 
   const start = useGame((state) => state.start);
   const restart = useGame((state) => state.restart);
@@ -79,7 +69,7 @@ function Player({ textures, parentPosition, position }) {
     });
 
     const unsubscribePlayerHandle = useGame.subscribe(
-      (state) => state.playerHandle
+      (state) => state.globalPlayerHandle
     );
 
     return () => {
@@ -94,46 +84,19 @@ function Player({ textures, parentPosition, position }) {
     // instructions per frame
     // Controls
     if (!bodyRef.current) return;
-    const {
-      forward,
-      backward,
-      leftward,
-      rightward,
-      cameraLeft,
-      cameraRight,
-      cameraUp,
-      cameraDown,
-      cameraCenter,
-    } = getKeys();
+    const { forward, backward, leftward, rightward } = getKeys();
 
     // Player Actions
     playerActionsLogicTree(
       bodyRef,
       delta,
+      state,
       forward,
       backward,
       leftward,
       rightward
     );
-    // Camera Actions
     const bodyPosition = bodyRef.current.translation();
-
-    cameraLogicTree(
-      bodyPosition,
-      smoothedCameraPosition,
-      smoothedCameraTarget,
-      state,
-      delta,
-      cameraLocked,
-      setCameraLocked,
-      hAngleRef,
-      vAngleRef,
-      cameraLeft,
-      cameraRight,
-      cameraUp,
-      cameraDown,
-      cameraCenter
-    );
 
     // out of bounds, restart
     // bounds may need to be adjusted
@@ -159,6 +122,7 @@ function Player({ textures, parentPosition, position }) {
       colliders='ball'
       position={position}
       ref={bodyRef}
+      name='player'
     >
       <mesh castShadow receiveShadow>
         <icosahedronGeometry args={[BALLSIZE, 4]} />

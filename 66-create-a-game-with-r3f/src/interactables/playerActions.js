@@ -1,6 +1,9 @@
+import * as THREE from 'three';
+
 export const playerActionsLogicTree = (
   bodyRef,
   delta,
+  state,
   forward,
   backward,
   leftward,
