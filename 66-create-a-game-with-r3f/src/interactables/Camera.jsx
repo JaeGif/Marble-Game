@@ -6,7 +6,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useRapier } from '@react-three/rapier';
 import * as THREE from 'three';
 
-function Camera({ modality = 'locked' }) {
+function Camera({ debug = false, modality = 'locked' }) {
   const { world } = useRapier();
   const [subscribeKeys, getKeys] = useKeyboardControls();
   // 'locked' | 'free' | 'birdseye'
@@ -44,6 +44,7 @@ function Camera({ modality = 'locked' }) {
     if (!playerBody) return;
     const bodyPosition = playerBody.translation();
     cameraLogicTree(
+      debug,
       bodyPosition,
       smoothedCameraPosition,
       smoothedCameraTarget,

@@ -71,17 +71,20 @@ const cameraRotate = (
   state.camera.lookAt(smoothedCameraTarget);
 };
 
-const cameraBirdsEye = (state, delta, x, z) => {
+const cameraBirdsEye = (state, delta, x, z, debug) => {
   // move camera in x and z only
   const cameraPosition = new THREE.Vector3();
   cameraPosition.x += x;
-  cameraPosition.y += 4.25;
+  if (debug) {
+    cameraPosition.y += 50;
+  } else cameraPosition.y += 4.25;
   cameraPosition.z += z;
 
   state.camera.position.copy(cameraPosition);
 };
 
 const cameraCenterBird = (
+  debug,
   bodyPosition,
   smoothedCameraPosition,
   smoothedCameraTarget,
@@ -91,8 +94,9 @@ const cameraCenterBird = (
   const cameraPosition = new THREE.Vector3();
   cameraPosition.copy(bodyPosition);
 
-  cameraPosition.y += 4;
-  // cameraPosition.y += 100;
+  if (debug) {
+    cameraPosition.y += 50;
+  } else cameraPosition.y += 4;
 
   const cameraTarget = new THREE.Vector3();
   cameraTarget.copy(bodyPosition);
@@ -105,6 +109,7 @@ const cameraCenterBird = (
 };
 
 export const cameraLogicTree = (
+  debug,
   bodyPosition,
   smoothedCameraPosition,
   smoothedCameraTarget,
@@ -188,6 +193,7 @@ export const cameraLogicTree = (
     }
     if (cameraBirdCenter) {
       cameraCenterBird(
+        debug,
         bodyPosition,
         smoothedCameraPosition,
         smoothedCameraTarget,
@@ -208,7 +214,13 @@ export const cameraLogicTree = (
       if (cameraDown) {
         cameraZRef.current += 0.1;
       }
-      cameraBirdsEye(state, delta, cameraXRef.current, cameraZRef.current);
+      cameraBirdsEye(
+        state,
+        delta,
+        cameraXRef.current,
+        cameraZRef.current,
+        debug
+      );
     }
   }
 };
