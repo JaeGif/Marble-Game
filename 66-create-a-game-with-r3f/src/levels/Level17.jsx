@@ -10,7 +10,7 @@ function Level17() {
       <color args={['#000']} attach='background' />
       <FollowSpot />
 
-      <Camera debug modality='birdseye' />
+      <Camera modality='birdseye' />
       <Platform
         type={'end'}
         position={[0, 0, -2]}
@@ -36,7 +36,7 @@ function Level17() {
       <Platform
         type={'bounce'}
         position={[0, -4, 3]}
-        options={{ amplitude: 1, speed: 7, seed: Math.random() * 3 }}
+        options={{ amplitude: 1, speed: 5, seed: Math.random() * 3 }}
       />
       <Platform
         type={'floor'}

@@ -37,8 +37,8 @@ export default function FollowSpot() {
       <spotLight
         ref={spotLight}
         intensity={5}
-        angle={Math.PI / 6}
-        distance={5}
+        angle={Math.PI / 5}
+        distance={50}
         decay={1}
         penumbra={0.4}
         color={'white'}
