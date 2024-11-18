@@ -4,10 +4,11 @@ import useGame from './stores/useGame';
 import { addEffect } from '@react-three/fiber';
 import uniqid from 'uniqid';
 import Api from './classes/Api';
+
 const API_STRING = import.meta.env.VITE_API_STRING;
 
 function Interface() {
-  const controls = useKeyboardControls((state) => state);
+  const [subscribeKeys] = useKeyboardControls();
 
   const timeRef = useRef();
 
@@ -24,7 +25,27 @@ function Interface() {
   const leftward = useKeyboardControls((state) => state.leftward);
   const rightward = useKeyboardControls((state) => state.rightward);
   const jump = useKeyboardControls((state) => state.jump);
+  const enter = useKeyboardControls((state) => {
+    state.enter;
+  });
 
+  useEffect(() => {
+    const unsubscribeEnter = subscribeKeys(
+      // listen to just the jump
+      // selector
+      (state) => state.enter,
+      // instructions when selector trips
+      (enter) => {
+        if (enter && phase === 'complete') {
+          next();
+        }
+      }
+    );
+
+    return () => {
+      unsubscribeEnter();
+    };
+  }, [phase]);
   const [liveState, setLiveState] = useState(lives);
 
   const [formAvailable, setFormAvailable] = useState(false);

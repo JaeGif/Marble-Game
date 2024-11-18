@@ -20,6 +20,7 @@ root.render(
       { name: 'cameraDown', keys: ['ArrowDown'] },
       { name: 'cameraCenter', keys: ['Shift'] },
       { name: 'jump', keys: ['Space'] },
+      { name: 'enter', keys: ['Enter'] },
     ]}
   >
     <Canvas shadows>
