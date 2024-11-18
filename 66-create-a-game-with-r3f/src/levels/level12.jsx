@@ -2,7 +2,6 @@ import React from 'react';
 import { Platform } from '../constructors/Blocks';
 import Lights from '../lights/Lights';
 import Camera from '../interactables/Camera';
-
 function Level12() {
   return (
     <>
