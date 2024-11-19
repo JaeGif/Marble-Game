@@ -7,6 +7,7 @@ export default create(
   subscribeWithSelector((set) => {
     return {
       obstacleCount: 8,
+      cameraMode: 'normal', // normal | original
       jumps: 2,
       level: 1,
       mode: 'casual',
