@@ -7,7 +7,7 @@ export default create(
   subscribeWithSelector((set) => {
     return {
       obstacleCount: 8,
-      cameraMode: 'normal', // normal | original
+      movementMode: 'normal', // normal | original
       jumps: 2,
       level: 1,
       mode: 'casual',
@@ -20,6 +20,11 @@ export default create(
       phase: 'ready',
       startTime: 0,
       endTime: 0,
+      setMovementMode: (mode) => {
+        set((state) => {
+          return { movementMode: mode };
+        });
+      },
       setGlobalPlayerHandle: (handle) => {
         set((state) => {
           return { globalPlayerHandle: handle };

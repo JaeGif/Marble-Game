@@ -20,7 +20,7 @@ function Player({ textures, parentPosition, position }) {
   const start = useGame((state) => state.start);
   const restart = useGame((state) => state.restart);
   const phase = useGame((state) => state.phase);
-  const cameraMode = useGame((state) => state.cameraMode);
+  const movementMode = useGame((state) => state.movementMode);
 
   const jump = () => {
     const origin = bodyRef.current.translation();
@@ -92,7 +92,7 @@ function Player({ textures, parentPosition, position }) {
       bodyRef,
       delta,
       state,
-      cameraMode,
+      movementMode,
       forward,
       backward,
       leftward,

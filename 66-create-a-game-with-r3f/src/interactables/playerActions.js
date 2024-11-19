@@ -4,7 +4,7 @@ export const playerActionsLogicTree = (
   bodyRef,
   delta,
   state,
-  cameraMode,
+  movementMode,
   forward,
   backward,
   leftward,
@@ -20,7 +20,7 @@ export const playerActionsLogicTree = (
   const torqueStrength = 0.2 * delta;
   // get the camera forward vec and normalize it
   //    apply the forces to that
-  if (cameraMode === 'original') {
+  if (movementMode === 'original') {
     if (forward) {
       impulse.z -= impulseStrength;
       torque.x -= torqueStrength;
@@ -38,7 +38,7 @@ export const playerActionsLogicTree = (
       torque.z -= torqueStrength;
     }
   }
-  if (cameraMode === 'normal') {
+  if (movementMode === 'normal') {
     const direction = new THREE.Vector3(0, 0, -1);
     state.camera.getWorldDirection(direction);
     direction.y = 0;
@@ -53,7 +53,6 @@ export const playerActionsLogicTree = (
 
     if (forward) {
       impulse.add(unitDirection.clone().multiplyScalar(impulseStrength)); // Apply forward movement
-
       torque.add(rightDirection.clone().multiplyScalar(-torqueStrength));
     }
     if (backward) {

@@ -15,7 +15,7 @@ function Level20() {
         position={[0, 0, 1]}
         gravitationalConstant={2}
         maxDistance={8}
-      />{' '}
+      />
       <Platform type={'floor'} position={[0, 0, 2]} />
       <Platform
         type={'gravity'}

@@ -20,12 +20,21 @@ function Camera({ debug = false, modality = 'locked' }) {
   const cameraXRef = useRef(0); // Horizontal dolly angle
   const cameraZRef = useRef(0); // Vertical dolly angle
 
+  const movementMode = useGame((state) => state.movementMode);
+  const setMovementMode = useGame((state) => state.setMovementMode);
+
   const [smoothedCameraPosition] = useState(() => {
     if (modality === 'locked') return new THREE.Vector3(10, 10, 10);
     else if (modality === 'birdseye') return new THREE.Vector3(0, 0, 0);
   });
   const [smoothedCameraTarget] = useState(() => new THREE.Vector3());
-
+  if (modality === 'birdseye') {
+  }
+  useEffect(() => {
+    if (modality === 'birdseye') {
+      setMovementMode('original');
+    }
+  }, [movementMode]);
   useEffect(() => {
     const unsubscribePlayerHandle = useGame.subscribe(
       (state) => state.globalPlayerHandle,
