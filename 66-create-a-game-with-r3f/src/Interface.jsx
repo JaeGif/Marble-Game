@@ -19,15 +19,13 @@ function Interface() {
   const lives = useGame((state) => state.lives);
   const maxLives = useGame((state) => state.maxLives);
   const score = useGame((state) => state.score);
+  const mode = useGame((state) => state.mode);
 
   const forward = useKeyboardControls((state) => state.forward);
   const backward = useKeyboardControls((state) => state.backward);
   const leftward = useKeyboardControls((state) => state.leftward);
   const rightward = useKeyboardControls((state) => state.rightward);
   const jump = useKeyboardControls((state) => state.jump);
-  const enter = useKeyboardControls((state) => {
-    state.enter;
-  });
 
   useEffect(() => {
     const unsubscribeEnter = subscribeKeys(
@@ -91,24 +89,26 @@ function Interface() {
         <p ref={timeRef}>00.0</p>
         <p>Score {score}</p>
       </div>
-      <div className='livesContainer'>
-        {liveState &&
-          liveState.map((life, i) =>
-            life ? (
-              i > maxLives - 1 ? (
-                <img key={uniqid()} src='assets/blueHeart.svg' alt='heart' />
+      {mode !== 'casual' && (
+        <div className='livesContainer'>
+          {liveState &&
+            liveState.map((life, i) =>
+              life ? (
+                i > maxLives - 1 ? (
+                  <img key={uniqid()} src='assets/blueHeart.svg' alt='heart' />
+                ) : (
+                  <img key={uniqid()} src='assets/heart.svg' alt='heart' />
+                )
               ) : (
-                <img key={uniqid()} src='assets/heart.svg' alt='heart' />
+                <img
+                  key={uniqid()}
+                  src='assets/emptyHeart.svg'
+                  alt='empty heart'
+                />
               )
-            ) : (
-              <img
-                key={uniqid()}
-                src='assets/emptyHeart.svg'
-                alt='empty heart'
-              />
-            )
-          )}
-      </div>
+            )}
+        </div>
+      )}
       {phase === 'complete' && (
         <div className='restart' onClick={next}>
           Next

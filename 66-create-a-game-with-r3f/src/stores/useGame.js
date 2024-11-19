@@ -35,6 +35,7 @@ export default create(
       },
       adjustLives: (count) => {
         set((state) => {
+          if (state.mode === 'casual') return {};
           return {
             lives: adjustLivesArray(state.lives, count, state.maxLives),
           };
