@@ -11,29 +11,35 @@ function Level23() {
       <Camera modality='locked' />
       <Platform type={'start'} position={[0, 0, 0]} />{' '}
       <Platform type={'floor'} position={[0, 0, 1]} />
+      <Platform type={'floor'} position={[0, 0, 2]} />
+      <Platform type={'floor'} position={[0, 0, 3]} />
       <Platform
         type={'gravity'}
-        position={[0, 0, 3]}
+        position={[0, 0, 4]}
         gravitationalConstant={-4}
         maxDistance={8}
         options={{ floor: 'none' }}
       />
+      <Platform type={'blueHealth'} position={[0, 1, 2]} />
       <Platform
         type={'gravity'}
-        position={[1, 0, 1]}
-        gravitationalConstant={4}
-        maxDistance={8}
+        position={[0, 0, 2]}
+        rotation={[Math.PI, 0, 0]}
+        gravitationalConstant={5}
+        maxDistance={5}
         options={{ floor: 'none' }}
       />
+      <Platform type={'flipGravity'} position={[0, 1, 3]} />
+      <Platform type={'floor'} position={[0, -2, 5]} />
+      <Platform type={'flipGravity'} position={[0, -2, 6]} />
       <Platform
-        type={'gravity'}
-        position={[-1, 0, 2]}
-        gravitationalConstant={4}
-        maxDistance={8}
+        type={'blueHealth'}
+        position={[0, 0, 6]}
         options={{ floor: 'none' }}
-      />
-      <Platform type={'floor'} position={[0, 0, 2]} />
-      <Platform type={'end'} position={[0, 0, 5]} />
+        rotation={[Math.PI, 0, 0]}
+      />{' '}
+      <Platform type={'floor'} position={[0, 0, 7]} />
+      <Platform type={'end'} position={[0, 0, 6]} />
     </>
   );
 }
