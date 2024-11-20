@@ -616,8 +616,18 @@ function BlockFlipGravity({ position, rotation = [0, 0, 0], type }) {
   });
 
   const { world } = useRapier();
+  const playerHandle = useGame((state) => state.globalPlayerHandle);
+  const gravityDirection = useGame((state) => state.gravityDirection);
+  const setGravityDirection = useGame((state) => state.setGravityDirection);
 
-  const handleGravityFlip = () => {};
+  const handleGravityFlip = () => {
+    const player = world.getRigidBody(playerHandle);
+    if (!player || !gravityDirection) return;
+    const flipped = gravityDirection === 1 ? -1 : 1;
+    console.log(flipped);
+    setGravityDirection(flipped);
+    player.setGravityScale(flipped);
+  };
   return (
     <group position={position} rotation={rotation}>
       <RigidBody

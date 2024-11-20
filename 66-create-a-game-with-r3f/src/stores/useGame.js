@@ -9,17 +9,23 @@ export default create(
       obstacleCount: 8,
       movementMode: 'normal', // normal | original
       jumps: 2,
-      level: 20,
+      level: 21,
       mode: 'casual',
       lives: [true, true, true],
       score: 0,
       maxLives: 3,
       globalPlayerHandle: null,
       speedBlockMultiplier: 1.25,
+      gravityDirection: 1,
       // ready | playing | complete | gameOver
       phase: 'ready',
       startTime: 0,
       endTime: 0,
+      setGravityDirection: (direction) => {
+        set((state) => {
+          return { gravityDirection: direction };
+        });
+      },
       setMovementMode: (mode) => {
         set((state) => {
           return { movementMode: mode };
