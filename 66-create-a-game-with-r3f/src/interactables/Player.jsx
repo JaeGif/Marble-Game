@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { RigidBody, useRapier } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { useKeyboardControls } from '@react-three/drei';
@@ -9,32 +9,43 @@ const BALLSIZE = 0.3;
 
 function Player({ textures, parentPosition, position }) {
   const [subscribeKeys, getKeys] = useKeyboardControls();
-
   const { rapier, world } = useRapier();
 
   const bodyRef = useRef();
 
   const setGlobalPlayerHandle = useGame((state) => state.setGlobalPlayerHandle);
   const globalPlayerHandle = useGame((state) => state.globalPlayerHandle);
-  const gravityDirection = useGame((state) => state.gravityDirection);
 
   const start = useGame((state) => state.start);
   const restart = useGame((state) => state.restart);
   const phase = useGame((state) => state.phase);
   const movementMode = useGame((state) => state.movementMode);
+  const gravityDirection = useGame((state) => state.gravityDirection);
 
   const jump = () => {
     const origin = bodyRef.current.translation();
-    origin.y -= BALLSIZE + 0.01;
+    const directionDown = { x: 0, y: -1, z: 0 };
+    const directionUp = { x: 0, y: 1, z: 0 };
+    // Offset origin for the downward ray slightly above the current position
+    const downOrigin = { ...origin, y: origin.y - BALLSIZE - 0.01 }; // Offset upwards slightly
 
-    const direction = { x: 0, y: -1, z: 0 };
+    // Offset origin for the upward ray slightly below the current position
+    const upOrigin = { ...origin, y: origin.y + BALLSIZE + 0.01 }; // Offset downwards slightly
 
-    const ray = new rapier.Ray(origin, direction);
-    const hit = world.castRay(ray, 10, true);
+    const rayUp = new rapier.Ray(upOrigin, directionUp);
+    const hitUp = world.castRay(rayUp, 10, true);
 
-    if (hit.timeOfImpact < 0.15) {
+    const rayDown = new rapier.Ray(downOrigin, directionDown);
+    const hitDown = world.castRay(rayDown, 10, true);
+
+    if (hitDown && hitDown.timeOfImpact < 0.15) {
       // allow for jumping during slight bounce
       bodyRef.current.applyImpulse({ x: 0, y: 0.5, z: 0 });
+    }
+
+    if (hitUp && hitUp.timeOfImpact < 0.15) {
+      // allow for jumping during slight bounce
+      bodyRef.current.applyImpulse({ x: 0, y: -0.5, z: 0 });
     }
   };
 
@@ -57,6 +68,7 @@ function Player({ textures, parentPosition, position }) {
         }
       }
     );
+
     const unsubscribeJump = subscribeKeys(
       // listen to just the jump
       // selector

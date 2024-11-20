@@ -622,8 +622,8 @@ function BlockFlipGravity({ position, rotation = [0, 0, 0], type }) {
 
   const handleGravityFlip = () => {
     const player = world.getRigidBody(playerHandle);
-    if (!player || !gravityDirection) return;
-    const flipped = gravityDirection === 1 ? -1 : 1;
+    if (!player) return;
+    const flipped = gravityDirection === -1 ? 1 : -1;
     setGravityDirection(flipped);
     player.setGravityScale(flipped);
   };
