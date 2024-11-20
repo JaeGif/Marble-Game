@@ -24,6 +24,7 @@ const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 'orangered' });
 const speedMaterial = new THREE.MeshStandardMaterial({ color: 'blue' });
 const negGravMaterial = new THREE.MeshStandardMaterial({ color: 'black' });
 const posGravMaterial = new THREE.MeshStandardMaterial({ color: 'orange' });
+const flipGravityMaterial = new THREE.MeshStandardMaterial({ color: 'pink' });
 
 function BlockStart({
   position = [0, 0, 0],
@@ -608,7 +609,34 @@ function BlockGravity({
     </group>
   );
 }
+function BlockFlipGravity({ position, rotation = [0, 0, 0], type }) {
+  // when player crosses this block, gravity is inverted
+  useFrame((state) => {
+    const time = state.clock.getElapsedTime();
+  });
 
+  const { world } = useRapier();
+
+  const handleGravityFlip = () => {};
+  return (
+    <group position={position} rotation={rotation}>
+      <RigidBody
+        type='fixed'
+        onCollisionEnter={handleGravityFlip}
+        onIntersectionEnter={handleGravityFlip}
+        colliders={'cuboid'}
+      >
+        <mesh
+          scale={[4, 0.2, 4]}
+          geometry={boxGeometry}
+          material={flipGravityMaterial}
+          position={[0, -0.1, 0]}
+          receiveShadow
+        />
+      </RigidBody>
+    </group>
+  );
+}
 /**
  * Represents a Platform of specified type and position.
  * @param {string} 'start' | 'end' | 'spinner' | 'axe' | 'limbo' | 'blueHealth' | 'speed' | 'portal' | 'bounce' | 'floor'
@@ -633,6 +661,7 @@ export function Platform({
     portal: BlockPortal,
     bounce: BlockBounce,
     gravity: BlockGravity,
+    flipGravity: BlockFlipGravity,
     start: BlockStart,
     end: BlockEnd,
   };
@@ -658,7 +687,7 @@ export function Platform({
           type={type}
           rotation={rotation}
         />
-      ) : type === 'speed' || type === 'bounce' ? (
+      ) : type === 'speed' || type === 'bounce' || type === 'flipGravity' ? (
         <>
           <Block
             position={[
