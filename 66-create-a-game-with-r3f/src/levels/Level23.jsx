@@ -9,21 +9,30 @@ function Level23() {
       <color args={['#bdedfc']} attach='background' />
       <Lights />
       <Camera modality='locked' />
-      <Platform type={'start'} position={[0, 0, 0]} />
-      <Platform
-        type={'gravity'}
-        position={[0, 0, 1]}
-        gravitationalConstant={2}
-        maxDistance={8}
-      />
-      <Platform type={'floor'} position={[0, 0, 2]} />
+      <Platform type={'start'} position={[0, 0, 0]} />{' '}
+      <Platform type={'floor'} position={[0, 0, 1]} />
       <Platform
         type={'gravity'}
         position={[0, 0, 3]}
-        gravitationalConstant={-2}
+        gravitationalConstant={-4}
         maxDistance={8}
+        options={{ floor: 'none' }}
       />
-      <Platform type={'floor'} position={[0, 0, 4]} />
+      <Platform
+        type={'gravity'}
+        position={[1, 0, 1]}
+        gravitationalConstant={4}
+        maxDistance={8}
+        options={{ floor: 'none' }}
+      />
+      <Platform
+        type={'gravity'}
+        position={[-1, 0, 2]}
+        gravitationalConstant={4}
+        maxDistance={8}
+        options={{ floor: 'none' }}
+      />
+      <Platform type={'floor'} position={[0, 0, 2]} />
       <Platform type={'end'} position={[0, 0, 5]} />
     </>
   );
