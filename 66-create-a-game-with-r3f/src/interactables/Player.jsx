@@ -16,6 +16,7 @@ function Player({ textures, parentPosition, position }) {
 
   const setGlobalPlayerHandle = useGame((state) => state.setGlobalPlayerHandle);
   const globalPlayerHandle = useGame((state) => state.globalPlayerHandle);
+  const gravityDirection = useGame((state) => state.gravityDirection);
 
   const start = useGame((state) => state.start);
   const restart = useGame((state) => state.restart);
@@ -92,6 +93,7 @@ function Player({ textures, parentPosition, position }) {
       bodyRef,
       delta,
       state,
+      gravityDirection,
       movementMode,
       forward,
       backward,

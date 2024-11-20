@@ -23,6 +23,8 @@ function Camera({ debug = false, modality = 'locked' }) {
   const movementMode = useGame((state) => state.movementMode);
   const setMovementMode = useGame((state) => state.setMovementMode);
 
+  const gravityDirection = useGame((state) => state.gravityDirection);
+
   const [smoothedCameraPosition] = useState(() => {
     if (modality === 'locked') return new THREE.Vector3(10, 10, 10);
     else if (modality === 'birdseye') return new THREE.Vector3(0, 0, 0);
@@ -59,6 +61,7 @@ function Camera({ debug = false, modality = 'locked' }) {
       smoothedCameraTarget,
       state,
       delta,
+      gravityDirection,
       cameraMode,
       setCameraMode,
       cameraBirdCenter,
