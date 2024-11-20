@@ -9,7 +9,7 @@ export default create(
       obstacleCount: 8,
       movementMode: 'normal', // normal | original
       jumps: 1,
-      level: 21,
+      level: 22,
       mode: 'casual',
       lives: [true, true, true],
       score: 0,
@@ -66,9 +66,10 @@ export default create(
           if (state.phase === 'playing' || state.phase === 'complete') {
             state.adjustLives(-1);
             state.adjustScore(-1500);
+
             // game over when the last hp is lost
             if (!state.lives[1] && state.lives[0]) state.gameOver();
-            else return { phase: 'ready' };
+            else return { phase: 'ready', gravityDirection: 1 };
           }
           return {};
         });

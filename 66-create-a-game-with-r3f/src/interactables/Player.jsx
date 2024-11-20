@@ -68,6 +68,12 @@ function Player({ textures, parentPosition, position }) {
         }
       }
     );
+    const unsubscribeGravity = useGame.subscribe(
+      (state) => state.gravityDirection,
+      (gravityDirection) => {
+        bodyRef.current.setGravityScale(gravityDirection);
+      }
+    );
 
     const unsubscribeJump = subscribeKeys(
       // listen to just the jump
@@ -89,6 +95,7 @@ function Player({ textures, parentPosition, position }) {
     return () => {
       unsubscribeJump();
       unsubscribeAny();
+      unsubscribeGravity();
       unsubscribeReset();
       unsubscribePlayerHandle();
     };
@@ -116,7 +123,7 @@ function Player({ textures, parentPosition, position }) {
 
     // out of bounds, restart
     // bounds may need to be adjusted
-    if (bodyPosition.y < -16 && phase !== 'complete') {
+    if ((bodyPosition.y < -16 || bodyPosition.y > 32) && phase !== 'complete') {
       restart();
     }
   });

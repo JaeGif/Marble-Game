@@ -611,21 +611,13 @@ function BlockGravity({
 }
 function BlockFlipGravity({ position, rotation = [0, 0, 0], type }) {
   // when player crosses this block, gravity is inverted
-  useFrame((state) => {
-    const time = state.clock.getElapsedTime();
-  });
 
-  const { world } = useRapier();
-  const playerHandle = useGame((state) => state.globalPlayerHandle);
   const gravityDirection = useGame((state) => state.gravityDirection);
   const setGravityDirection = useGame((state) => state.setGravityDirection);
 
   const handleGravityFlip = () => {
-    const player = world.getRigidBody(playerHandle);
-    if (!player) return;
     const flipped = gravityDirection === -1 ? 1 : -1;
     setGravityDirection(flipped);
-    player.setGravityScale(flipped);
   };
   return (
     <group position={position} rotation={rotation}>
@@ -660,6 +652,11 @@ export function Platform({
   textRotation,
   options = { floor: 'floor' },
 }) {
+  // position offset so it aligns flush when upside down
+  if (Math.round(rotation[0]) === Math.round(Math.PI)) {
+    position[1] += 0.05;
+  }
+
   const blockMap = {
     floor: BlockFloor,
     limbo: BlockLimbo,
