@@ -279,11 +279,15 @@ function BlockPortal({
     [0, 0, 0],
     [0, 0, 1],
   ],
-  rotation = [0, 0, 0],
+  rotation = [
+    [0, 0, 0],
+    [0, 0, 0],
+  ],
 }) {
   const portal1Position = position[0];
   const portal2Position = position[1];
-  // when player crosses this block they are teleported between the portals locations.
+  const portal1Rotation = rotation[0];
+  const portal2Rotation = rotation[1];
 
   // if on cooldown, may not transport
   const [onCooldown, setOnCooldown] = useState(false);
@@ -314,7 +318,7 @@ function BlockPortal({
   };
   return (
     <>
-      <group position={portal1Position} rotation={rotation}>
+      <group position={portal1Position} rotation={portal1Rotation}>
         <RigidBody
           type='fixed'
           sensor
@@ -330,7 +334,7 @@ function BlockPortal({
           />
         </RigidBody>
       </group>
-      <group position={portal2Position} rotation={rotation}>
+      <group position={portal2Position} rotation={portal2Rotation}>
         <RigidBody
           type='fixed'
           sensor
@@ -710,24 +714,30 @@ export function Platform({
         </>
       ) : type === 'portal' ? (
         <>
-          <BlockFloor
-            position={[
-              position[0][0] * UNIT_CONSTANT,
-              position[0][1] * UNIT_CONSTANT,
-              position[0][2] * UNIT_CONSTANT,
-            ]}
-            rotation={rotation}
-            type={type}
-          />
-          <BlockFloor
-            position={[
-              position[1][0] * UNIT_CONSTANT,
-              position[1][1] * UNIT_CONSTANT,
-              position[1][2] * UNIT_CONSTANT,
-            ]}
-            rotation={rotation}
-            type={type}
-          />
+          {options.floor === 'none' ? (
+            <></>
+          ) : (
+            <>
+              <Floor
+                position={[
+                  position[0][0] * UNIT_CONSTANT,
+                  position[0][1] * UNIT_CONSTANT,
+                  position[0][2] * UNIT_CONSTANT,
+                ]}
+                rotation={[rotation[0][0], rotation[0][1], rotation[0][2]]}
+                type={type}
+              />
+              <Floor
+                position={[
+                  position[1][0] * UNIT_CONSTANT,
+                  position[1][1] * UNIT_CONSTANT,
+                  position[1][2] * UNIT_CONSTANT,
+                ]}
+                rotation={[rotation[1][0], rotation[1][1], rotation[1][2]]}
+                type={type}
+              />
+            </>
+          )}
           <Block
             options={options}
             position={[
@@ -742,7 +752,10 @@ export function Platform({
                 position[1][2] * UNIT_CONSTANT,
               ],
             ]}
-            rotation={rotation}
+            rotation={[
+              [rotation[0][0], rotation[0][1], rotation[0][2]],
+              [rotation[1][0], rotation[1][1], rotation[1][2]],
+            ]}
             textRotation={textRotation}
           />
         </>
