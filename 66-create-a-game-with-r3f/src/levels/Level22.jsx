@@ -10,27 +10,54 @@ function Level22() {
       <Lights />
       <Camera modality='locked' />
       <Platform type={'start'} position={[0, 0, 0]} />
-      <Platform type={'spinner'} position={[0, 0, 1]} />
+      <Platform type={'floor'} position={[0, 0.5, 2]} />{' '}
+      <Platform type={'floor'} position={[0, 0.5, 1]} />
+      <Platform type={'floor'} position={[0, 0.5, 0]} />
+      <Platform type={'floor'} position={[0, 0.5, -1]} />
+      <Platform type={'floor'} position={[0, 0.5, -2]} />
+      <Platform
+        type={'speed'}
+        position={[0, 0, -2]}
+        rotation={[Math.PI / 2, 0, 0]}
+      />
+      <Platform
+        type={'speed'}
+        position={[0, -1, -2]}
+        rotation={[Math.PI / 2, 0, 0]}
+      />
       <Platform
         type={'gravity'}
-        gravitationalConstant={8.5}
+        position={[0, -5, -1]}
+        gravitationalConstant={7}
+        maxDistance={16}
+      />
+      <Platform
+        type={'gravity'}
+        position={[0, -5, 0]}
+        gravitationalConstant={6}
         maxDistance={5}
-        options={{ floor: 'none' }}
+      />
+      <Platform type={'floor'} position={[0, 0, -1]} />
+      <Platform
+        type={'floor'}
+        position={[0, -0.5, -1.5]}
+        rotation={[Math.PI / 2, 0, 0]}
+      />
+      <Platform type={'floor'} position={[0, 0.5, 0]} />
+      <Platform
+        type={'gravity'}
         position={[0, 0, 1]}
+        gravitationalConstant={8}
+        maxDistance={8}
       />
-      <Platform type={'floor'} position={[0, 0, 2]} />
-      <Platform type={'floor'} position={[0, 0, 3]} />
-      <Platform type={'floor'} position={[0, 0, 4]} />
-      <Platform type={'axe'} position={[0, 0, 4]} />
       <Platform
         type={'gravity'}
-        gravitationalConstant={-7}
+        position={[0, 0, 3]}
+        gravitationalConstant={-8}
         maxDistance={5}
-        options={{ floor: 'none' }}
-        position={[0, 0, 4]}
       />
-      <Platform type={'floor'} position={[0, 0, 5]} />
-      <Platform type={'end'} position={[0, 0, 6]} />
+      <Platform type={'axe'} position={[0, 0, 4]} />
+      <Platform type={'end'} position={[0, 0, 5]} />
     </>
   );
 }
