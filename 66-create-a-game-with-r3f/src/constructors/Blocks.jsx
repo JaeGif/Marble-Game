@@ -130,7 +130,11 @@ function BlockEnd({
   );
 }
 
-function BlockSpinner({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
+function BlockSpinner({
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  scale = { x: 1, y: 1, z: 1 },
+}) {
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
   );
@@ -157,7 +161,7 @@ function BlockSpinner({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
         <mesh
           geometry={boxGeometry}
           material={obstacleMaterial}
-          scale={[3.5, 0.3, 0.3]}
+          scale={[3.5 * scale.x, 0.3 * scale.y, 0.3 * scale.z]}
           castShadow
           receiveShadow
         />
@@ -166,7 +170,11 @@ function BlockSpinner({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   );
 }
 
-function BlockLimbo({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
+function BlockLimbo({
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  scale = { x: 1, y: 1, z: 1 },
+}) {
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
   );
@@ -198,7 +206,7 @@ function BlockLimbo({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
         <mesh
           geometry={boxGeometry}
           material={obstacleMaterial}
-          scale={[3.5, 0.3, 0.3]}
+          scale={[3.5 * scale.x, 0.3 * scale.y, 0.3 * scale.z]}
           castShadow
           receiveShadow
         />
@@ -207,7 +215,11 @@ function BlockLimbo({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   );
 }
 
-function BlockSpeed({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
+function BlockSpeed({
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  scale = { x: 1, y: 1, z: 1 },
+}) {
   // when player crosses this block they get a temporary acceleration
   const obstacleRef = useRef();
   useFrame((state) => {
@@ -263,7 +275,7 @@ function BlockSpeed({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
         colliders={'cuboid'}
       >
         <mesh
-          scale={[4, 0.2, 4]}
+          scale={[4 * scale.x, 0.2 * scale.y, 4 * scale.z]}
           geometry={boxGeometry}
           material={speedMaterial}
           position={[0, -0.1, 0]}
@@ -329,7 +341,7 @@ function BlockPortal({
           <mesh
             geometry={squareGeometry}
             material={portalMaterial}
-            scale={[1.5, 1.5, 0.3]}
+            scale={[1.5 * scale.x, 1.5 * scale.y, 0.3 * scale.z]}
             position={[0, 1.5, 0]}
           />
         </RigidBody>
@@ -345,7 +357,7 @@ function BlockPortal({
           <mesh
             geometry={squareGeometry}
             material={portalMaterial}
-            scale={[1.5, 1.5, 0.3]}
+            scale={[1.5 * scale.x, 1.5 * scale.y, 0.3 * scale.z]}
             position={[0, 1.5, 0]}
           />
         </RigidBody>
@@ -353,7 +365,11 @@ function BlockPortal({
     </>
   );
 }
-function BlockAxe({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
+function BlockAxe({
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  scale = { x: 1, y: 1, z: 1 },
+}) {
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
   );
@@ -385,7 +401,7 @@ function BlockAxe({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
         <mesh
           geometry={boxGeometry}
           material={obstacleMaterial}
-          scale={[1.5, 1.5, 0.3]}
+          scale={[1.5 * scale.x, 1.5 * scale.y, 0.3 * scale.z]}
           castShadow
           receiveShadow
         />
@@ -496,7 +512,12 @@ function BlockBlueHealth({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   );
 }
 // platform types are block types
-function BlockFloor({ position, rotation = [0, 0, 0], type }) {
+function BlockFloor({
+  position,
+  rotation = [0, 0, 0],
+  scale = { x: 1, y: 1, z: 1 },
+  type,
+}) {
   let material = floor2Material;
   switch (type) {
     case 'start':
@@ -513,7 +534,7 @@ function BlockFloor({ position, rotation = [0, 0, 0], type }) {
     <group position={position} rotation={rotation}>
       <RigidBody type='fixed' colliders='cuboid' restitution={0.2} friction={0}>
         <mesh
-          scale={[4, 0.2, 4]}
+          scale={[4 * scale.x, 0.2 * scale.y, 4 * scale.z]}
           geometry={boxGeometry}
           position={[0, -0.1, 0]}
           material={material}
@@ -642,17 +663,27 @@ function BlockFlipGravity({ position, rotation = [0, 0, 0], type }) {
     </group>
   );
 }
-function BlockRoundAbout({ position, rotation = [0, 0, 0], type }) {
+function BlockRoundAbout({
+  position,
+  rotation = [0, 0, 0],
+  scale = { x: 1, y: 1, z: 1 },
+  type,
+}) {
   const { nodes } = useGLTF('./models/roundabout.glb');
   const geometry = nodes.Cylinder.geometry;
-
+  position[1] -= 0.1;
   return (
     <group position={position} rotation={rotation}>
-      <RigidBody type='fixed' colliders='cuboid' restitution={0.2} friction={0}>
+      <RigidBody
+        type='fixed'
+        colliders='trimesh'
+        restitution={0.2}
+        friction={0}
+      >
         <mesh
-          scale={[4, 4, 4]}
+          scale={[4 * scale.x, 0.1 * scale.y, 4 * scale.z]}
           geometry={geometry}
-          material={floor1Material}
+          material={floor2Material}
           position={[0, 0, 0]}
           receiveShadow
         />
@@ -672,6 +703,7 @@ export function Platform({
   gravitationalConstant,
   maxDistance,
   textRotation,
+  scale = { x: 1, y: 1, z: 1 },
   options = { floor: 'floor' },
 }) {
   // position offset so it aligns flush when upside down
@@ -690,6 +722,7 @@ export function Platform({
     bounce: BlockBounce,
     gravity: BlockGravity,
     flipGravity: BlockFlipGravity,
+    roundabout: BlockRoundAbout,
     start: BlockStart,
     end: BlockEnd,
   };
@@ -713,9 +746,13 @@ export function Platform({
             position[2] * UNIT_CONSTANT,
           ]}
           type={type}
+          scale={scale}
           rotation={rotation}
         />
-      ) : type === 'speed' || type === 'bounce' || type === 'flipGravity' ? (
+      ) : type === 'speed' ||
+        type === 'bounce' ||
+        type === 'flipGravity' ||
+        type === 'roundabout' ? (
         <>
           <Block
             position={[
@@ -725,6 +762,7 @@ export function Platform({
             ]}
             rotation={rotation}
             options={options}
+            scale={scale}
             gravitationalConstant={gravitationalConstant}
             maxDistance={maxDistance}
             textRotation={textRotation}
@@ -742,6 +780,7 @@ export function Platform({
                   position[0][1] * UNIT_CONSTANT,
                   position[0][2] * UNIT_CONSTANT,
                 ]}
+                scale={scale}
                 rotation={[rotation[0][0], rotation[0][1], rotation[0][2]]}
                 type={type}
               />
@@ -751,6 +790,7 @@ export function Platform({
                   position[1][1] * UNIT_CONSTANT,
                   position[1][2] * UNIT_CONSTANT,
                 ]}
+                scale={scale}
                 rotation={[rotation[1][0], rotation[1][1], rotation[1][2]]}
                 type={type}
               />
@@ -775,6 +815,7 @@ export function Platform({
               [rotation[1][0], rotation[1][1], rotation[1][2]],
             ]}
             textRotation={textRotation}
+            scale={scale}
           />
         </>
       ) : (
@@ -788,6 +829,7 @@ export function Platform({
                 position[1] * UNIT_CONSTANT,
                 position[2] * UNIT_CONSTANT,
               ]}
+              scale={scale}
               rotation={rotation}
               type={type}
             />
@@ -803,6 +845,7 @@ export function Platform({
             maxDistance={maxDistance}
             rotation={rotation}
             textRotation={textRotation}
+            scale={scale}
           />
         </>
       )}
