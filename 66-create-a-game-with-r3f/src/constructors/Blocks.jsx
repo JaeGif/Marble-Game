@@ -72,7 +72,7 @@ function BlockEnd({
   textRotation = [0, 0, 0],
   options = { textSize: 'l' },
 }) {
-  const hamburger = useGLTF('./hamburger.glb');
+  const hamburger = useGLTF('./models/hamburger.glb');
   // hamburger shadows
   hamburger.scene.children.forEach((mesh) => {
     mesh.castShadow = true;
@@ -636,6 +636,24 @@ function BlockFlipGravity({ position, rotation = [0, 0, 0], type }) {
           geometry={boxGeometry}
           material={flipGravityMaterial}
           position={[0, -0.1, 0]}
+          receiveShadow
+        />
+      </RigidBody>
+    </group>
+  );
+}
+function BlockRoundAbout({ position, rotation = [0, 0, 0], type }) {
+  const { nodes } = useGLTF('./models/roundabout.glb');
+  const geometry = nodes.Cylinder.geometry;
+
+  return (
+    <group position={position} rotation={rotation}>
+      <RigidBody type='fixed' colliders='cuboid' restitution={0.2} friction={0}>
+        <mesh
+          scale={[4, 4, 4]}
+          geometry={geometry}
+          material={floor1Material}
+          position={[0, 0, 0]}
           receiveShadow
         />
       </RigidBody>
