@@ -38,12 +38,12 @@ function Player({ textures, parentPosition, position }) {
     const rayDown = new rapier.Ray(downOrigin, directionDown);
     const hitDown = world.castRay(rayDown, 10, true);
 
-    if (hitDown && hitDown.timeOfImpact < 0.15) {
+    if (hitDown && hitDown.timeOfImpact < 0.2) {
       // allow for jumping during slight bounce
       bodyRef.current.applyImpulse({ x: 0, y: 0.5, z: 0 });
     }
 
-    if (hitUp && hitUp.timeOfImpact < 0.15) {
+    if (hitUp && hitUp.timeOfImpact < 0.2) {
       // allow for jumping during slight bounce
       bodyRef.current.applyImpulse({ x: 0, y: -0.5, z: 0 });
     }

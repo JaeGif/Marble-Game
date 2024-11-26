@@ -13,7 +13,7 @@ function Level24() {
       <Platform type={'roundabout'} position={[0, 0, 2.25]} />
       <Platform
         type={'gravity'}
-        position={[0, 0.25, 2.25]}
+        position={[0, 0, 2.25]}
         gravitationalConstant={-10}
         maxDistance={5}
         options={{ floor: 'none' }}
@@ -29,7 +29,7 @@ function Level24() {
       />
       <Platform
         type={'gravity'}
-        position={[-1.75, 0.25, 3.75]}
+        position={[-1.75, 0, 3.75]}
         gravitationalConstant={10}
         maxDistance={5}
         options={{ floor: 'none' }}
@@ -47,7 +47,7 @@ function Level24() {
       />
       <Platform
         type={'spinner'}
-        position={[-2.5, 0.04, 3.75]}
+        position={[-2.5, 0.0, 3.75]}
         rotation={[0, -Math.PI / 5, 0]}
         options={{ floor: 'none' }}
         scale={{ x: 0.5, y: 0.75, z: 0.75 }}
