@@ -9,7 +9,7 @@ export default create(
       obstacleCount: 8,
       movementMode: 'normal', // normal | original
       jumps: 1,
-      level: 24,
+      level: 25,
       mode: 'casual',
       lives: [true, true, true],
       score: 0,

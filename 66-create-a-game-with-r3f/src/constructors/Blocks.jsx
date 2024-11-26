@@ -1,6 +1,6 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import * as THREE from 'three';
-import { RigidBody, useRapier, MeshCollider } from '@react-three/rapier';
+import { RigidBody, useRapier, MeshCollider, quat } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { Float, Text, useGLTF, useTexture } from '@react-three/drei';
 import useGame from '../stores/useGame';
@@ -12,6 +12,8 @@ const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 const circleGeometry = new THREE.CircleGeometry(1, 16);
 const sphereGeometry = new THREE.SphereGeometry(1, 16, 16);
 const squareGeometry = new THREE.BoxGeometry(2, 2, 0);
+const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 4, 4, false);
+const torusGeometry = new THREE.TorusGeometry(1, 1, 4, 4);
 
 const portalMaterial = new THREE.MeshStandardMaterial({
   color: 'rgba(.5, .5, .5, .1)',
@@ -25,6 +27,9 @@ const speedMaterial = new THREE.MeshStandardMaterial({ color: 'blue' });
 const negGravMaterial = new THREE.MeshStandardMaterial({ color: 'black' });
 const posGravMaterial = new THREE.MeshStandardMaterial({ color: 'orange' });
 const flipGravityMaterial = new THREE.MeshStandardMaterial({ color: 'pink' });
+const turretMaterial = new THREE.MeshStandardMaterial({
+  color: new THREE.Color('#6f4e37'),
+});
 
 function BlockStart({
   position = [0, 0, 0],
@@ -691,6 +696,78 @@ function BlockRoundAbout({
     </group>
   );
 }
+function BlockTurret({ position, rotation = [0, 0, 0], type }) {
+  // shoots random shapes straight
+  const direction = new THREE.Vector3(0, 0, 1); // default direction is z
+
+  // some quick maths with quaternions to do the rotation
+  const eulerRotation = new THREE.Euler(rotation[0], rotation[1], rotation[2]);
+  const quaternion = new THREE.Quaternion().setFromEuler(eulerRotation);
+  const rotatedDirection = direction.applyQuaternion(quaternion);
+  const normalDirection = rotatedDirection.normalize();
+
+  const geometries = [
+    boxGeometry,
+    torusGeometry,
+    sphereGeometry,
+    cylinderGeometry,
+  ];
+
+  const randomShape = () => {
+    // returns a random geometric shape
+    const random = Math.floor(Math.random() * 4);
+    return geometries[random];
+  };
+  const fireGeometry = (unitDirection, geometry, state) => {
+    // add the new shape to the scene at 0, 0, 0
+    // scale the shape quickly up to full
+    // give it some force in the unitDirection, with some slight randomness in x, y, z
+
+    const bullet = new THREE.Mesh(geometry, floor1Material);
+    bullet.position.set(0, 0, 0);
+    bullet.scale.addScalar(0.2);
+    // state.scene.add(bullet);
+  };
+  const timer = useRef(0);
+  useFrame((state, delta) => {
+    // generate a random geometry every 2s
+    timer.current += delta;
+
+    if (timer.current >= 2) {
+      timer.current = 0;
+      const shape = randomShape();
+      fireGeometry(normalDirection, shape, state);
+    }
+  });
+
+  return (
+    <group position={position} rotation={rotation}>
+      <RigidBody type='fixed' colliders={'hull'}>
+        <mesh
+          scale={[0.5, 0.5, 1]}
+          geometry={boxGeometry}
+          material={turretMaterial}
+          position={[0, 1, 0]}
+          receiveShadow
+        />
+        <mesh
+          scale={[0.55, 0.1, 1.1]}
+          geometry={boxGeometry}
+          material={turretMaterial}
+          position={[0, 0.75, 0]}
+          receiveShadow
+        />
+        <mesh
+          scale={[0.2, 0.2, 0.5]}
+          geometry={boxGeometry}
+          material={turretMaterial}
+          position={[0, 1, 0.5]}
+          receiveShadow
+        />
+      </RigidBody>
+    </group>
+  );
+}
 /**
  * Represents a Platform of specified type and position.
  * @param {string} 'start' | 'end' | 'spinner' | 'axe' | 'limbo' | 'blueHealth' | 'speed' | 'portal' | 'bounce' | 'floor'
@@ -723,6 +800,7 @@ export function Platform({
     gravity: BlockGravity,
     flipGravity: BlockFlipGravity,
     roundabout: BlockRoundAbout,
+    turret: BlockTurret,
     start: BlockStart,
     end: BlockEnd,
   };
@@ -752,7 +830,8 @@ export function Platform({
       ) : type === 'speed' ||
         type === 'bounce' ||
         type === 'flipGravity' ||
-        type === 'roundabout' ? (
+        type === 'roundabout' ||
+        type === 'turret' ? (
         <>
           <Block
             position={[

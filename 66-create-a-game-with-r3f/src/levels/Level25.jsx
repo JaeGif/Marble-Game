@@ -11,17 +11,9 @@ function Level25() {
       <Camera modality='locked' />
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform
-        type={'gravity'}
+        type={'turret'}
         position={[0, 0, 1]}
-        gravitationalConstant={2}
-        maxDistance={8}
-      />
-      <Platform type={'floor'} position={[0, 0, 2]} />
-      <Platform
-        type={'gravity'}
-        position={[0, 0, 3]}
-        gravitationalConstant={-2}
-        maxDistance={8}
+        rotation={[0, Math.PI / 3, 0]}
       />
       <Platform type={'floor'} position={[0, 0, 4]} />
       <Platform type={'end'} position={[0, 0, 5]} />
