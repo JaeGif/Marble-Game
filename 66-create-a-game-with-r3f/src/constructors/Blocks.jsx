@@ -5,6 +5,7 @@ import { useFrame } from '@react-three/fiber';
 import { Float, Text, useGLTF, useTexture } from '@react-three/drei';
 import useGame from '../stores/useGame';
 import Player from '../interactables/Player';
+import uniqid from 'uniqid';
 // blocks are 4x4, -z is away from starting cam position
 const UNIT_CONSTANT = -4;
 
@@ -699,25 +700,24 @@ function BlockRoundAbout({
 function BlockTurret({ position, rotation = [0, 0, 0], type }) {
   // shoots random shapes straight
   const direction = new THREE.Vector3(0, 0, 1); // default direction is z
-
   // some quick maths with quaternions to do the rotation
   const eulerRotation = new THREE.Euler(rotation[0], rotation[1], rotation[2]);
   const quaternion = new THREE.Quaternion().setFromEuler(eulerRotation);
   const rotatedDirection = direction.applyQuaternion(quaternion);
   const normalDirection = rotatedDirection.normalize();
-
+  const rigidBodies = useRef([]);
   const geometries = [
     boxGeometry,
     torusGeometry,
     sphereGeometry,
     cylinderGeometry,
   ];
-
   const randomShape = () => {
     // returns a random geometric shape
     const random = Math.floor(Math.random() * 4);
     return geometries[random];
   };
+
   const fireGeometry = (unitDirection, geometry, state) => {
     // add the new shape to the scene at 0, 0, 0
     // scale the shape quickly up to full
@@ -735,8 +735,7 @@ function BlockTurret({ position, rotation = [0, 0, 0], type }) {
 
     if (timer.current >= 2) {
       timer.current = 0;
-      const shape = randomShape();
-      fireGeometry(normalDirection, shape, state);
+      addNewBody();
     }
   });
 
