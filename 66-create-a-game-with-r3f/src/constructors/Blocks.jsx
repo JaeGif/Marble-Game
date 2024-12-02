@@ -1,6 +1,6 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import * as THREE from 'three';
-import { RigidBody, useRapier, MeshCollider, quat } from '@react-three/rapier';
+import { RigidBody, useRapier, MeshCollider } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { Float, Text, useGLTF, useTexture } from '@react-three/drei';
 import useGame from '../stores/useGame';
@@ -12,13 +12,24 @@ const UNIT_CONSTANT = -4;
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 const circleGeometry = new THREE.CircleGeometry(1, 16);
 const sphereGeometry = new THREE.SphereGeometry(1, 16, 16);
+const bulletGeometry = new THREE.SphereGeometry(0.5, 16, 16);
 const squareGeometry = new THREE.BoxGeometry(2, 2, 0);
 const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 4, 4, false);
 const torusGeometry = new THREE.TorusGeometry(1, 1, 4, 4);
-
-const portalMaterial = new THREE.MeshStandardMaterial({
-  color: 'rgba(.5, .5, .5, .1)',
+const passThroughBoxGeometry = new THREE.BoxGeometry(
+  -UNIT_CONSTANT * 1,
+  -UNIT_CONSTANT * 1,
+  -UNIT_CONSTANT * 1
+);
+const passThroughBoxMaterial = new THREE.MeshStandardMaterial({
+  color: 'rgb(0, 0, 0)',
+  opacity: 0.7,
   transparent: true,
+});
+const portalMaterial = new THREE.MeshStandardMaterial({
+  color: 'rgb(.5, .5,1)',
+  transparent: true,
+  opacity: 0.4,
 });
 
 const floor1Material = new THREE.MeshStandardMaterial({ color: 'limegreen' });
@@ -706,28 +717,27 @@ function BlockTurret({ position, rotation = [0, 0, 0], type }) {
   const rotatedDirection = direction.applyQuaternion(quaternion);
   const normalDirection = rotatedDirection.normalize();
   const rigidBodies = useRef([]);
-  const geometries = [
-    boxGeometry,
-    torusGeometry,
-    sphereGeometry,
-    cylinderGeometry,
-  ];
-  const randomShape = () => {
-    // returns a random geometric shape
-    const random = Math.floor(Math.random() * 4);
-    return geometries[random];
-  };
-
-  const fireGeometry = (unitDirection, geometry, state) => {
+  const { rapier, world } = useRapier(); // Access the Rapier physics world
+  const fireGeometry = (unitDirection, state) => {
     // add the new shape to the scene at 0, 0, 0
     // scale the shape quickly up to full
     // give it some force in the unitDirection, with some slight randomness in x, y, z
+    console.log('fire:', unitDirection);
+    const bullet = new THREE.Mesh(bulletGeometry, floor1Material);
+    bullet.position.set(position[0], position[1], position[2]);
+    state.scene.add(bullet);
+    const rigidBodyDesc = rapier.RigidBodyDesc.dynamic().setTranslation(
+      0,
+      4,
+      0
+    );
+    const rigidBody = world.createRigidBody(rigidBodyDesc);
 
-    const bullet = new THREE.Mesh(geometry, floor1Material);
-    bullet.position.set(0, 0, 0);
-    bullet.scale.addScalar(0.2);
-    // state.scene.add(bullet);
+    const colliderDesc = rapier.ColliderDesc.ball(0.5);
+
+    world.createCollider(colliderDesc, rigidBody);
   };
+
   const timer = useRef(0);
   useFrame((state, delta) => {
     // generate a random geometry every 2s
@@ -735,7 +745,8 @@ function BlockTurret({ position, rotation = [0, 0, 0], type }) {
 
     if (timer.current >= 2) {
       timer.current = 0;
-      addNewBody();
+
+      fireGeometry(normalDirection, state);
     }
   });
 
@@ -761,6 +772,59 @@ function BlockTurret({ position, rotation = [0, 0, 0], type }) {
           geometry={boxGeometry}
           material={turretMaterial}
           position={[0, 1, 0.5]}
+          receiveShadow
+        />
+      </RigidBody>
+    </group>
+  );
+}
+
+function BlockPassThrough({ position, rotation = [0, 0, 0], type }) {
+  // When player passes through this block, their velocity remains constant, unaffected by gravity
+  //    until they pass through the other side
+  //    effectively, the player continues in a set direction and can only go one way
+  //    through this block
+  const playerVelocity = useRef(new THREE.Vector3(0, 0, 0));
+  const player = useRef(null);
+  const gravityDirection = useGame((state) => state.gravityDirection);
+  const { world } = useRapier();
+  const setEnablePlayerControls = useGame(
+    (state) => state.setEnablePlayerControls
+  );
+  const handlePassThrough = (collision) => {
+    console.log('collision');
+    // get current player velocity and update ref
+    player.current = world.getRigidBody(collision.rigidBody.handle);
+
+    playerVelocity.current.copy(player.current.linvel());
+    // disable gravity so only linvel effects
+    player.current.setGravityScale(0);
+    setEnablePlayerControls(false);
+  };
+  const handleExitMaterial = (collision) => {
+    // flip switch allowing state to be changed
+
+    console.log('exit');
+    // re-enable gravity as it was before
+    player.current.setGravityScale(gravityDirection);
+    setEnablePlayerControls(true);
+  };
+
+  return (
+    <group position={position} rotation={rotation}>
+      <RigidBody
+        friction={0}
+        restitution={0}
+        type='kinematicPosition'
+        sensor
+        onIntersectionEnter={handlePassThrough}
+        onIntersectionExit={handleExitMaterial}
+      >
+        <mesh
+          scale={[1, 1, 1]}
+          geometry={passThroughBoxGeometry}
+          material={passThroughBoxMaterial}
+          position={[0, 0, 0]}
           receiveShadow
         />
       </RigidBody>
@@ -800,6 +864,7 @@ export function Platform({
     flipGravity: BlockFlipGravity,
     roundabout: BlockRoundAbout,
     turret: BlockTurret,
+    passThrough: BlockPassThrough,
     start: BlockStart,
     end: BlockEnd,
   };
@@ -830,7 +895,8 @@ export function Platform({
         type === 'bounce' ||
         type === 'flipGravity' ||
         type === 'roundabout' ||
-        type === 'turret' ? (
+        type === 'turret' ||
+        type === 'passThrough' ? (
         <>
           <Block
             position={[

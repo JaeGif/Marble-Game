@@ -17,10 +17,16 @@ export default create(
       globalPlayerHandle: null,
       speedBlockMultiplier: 1.25,
       gravityDirection: 1,
+      enablePlayerControls: true,
       // ready | playing | complete | gameOver
       phase: 'ready',
       startTime: 0,
       endTime: 0,
+      setEnablePlayerControls: (bool) => {
+        set((state) => {
+          return { enablePlayerControls: bool };
+        });
+      },
       setGravityDirection: (direction) => {
         set((state) => {
           return { gravityDirection: direction };

@@ -10,11 +10,9 @@ function Level25() {
       <Lights />
       <Camera modality='locked' />
       <Platform type={'start'} position={[0, 0, 0]} />
-      <Platform
-        type={'turret'}
-        position={[0, 0, 1]}
-        rotation={[0, Math.PI / 3, 0]}
-      />
+      <Platform type={'passThrough'} position={[0, 0, 1]} />
+      <Platform type={'floor'} position={[0, 0, 2]} />
+      <Platform type={'floor'} position={[0, 0, 3]} />
       <Platform type={'floor'} position={[0, 0, 4]} />
       <Platform type={'end'} position={[0, 0, 5]} />
     </>

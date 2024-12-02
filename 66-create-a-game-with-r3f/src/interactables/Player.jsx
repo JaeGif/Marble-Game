@@ -21,6 +21,7 @@ function Player({ textures, parentPosition, position }) {
   const phase = useGame((state) => state.phase);
   const movementMode = useGame((state) => state.movementMode);
   const gravityDirection = useGame((state) => state.gravityDirection);
+  const enablePlayerControls = useGame((state) => state.enablePlayerControls);
 
   const jump = () => {
     const origin = bodyRef.current.translation();
@@ -108,17 +109,19 @@ function Player({ textures, parentPosition, position }) {
     const { forward, backward, leftward, rightward } = getKeys();
 
     // Player Actions
-    playerActionsLogicTree(
-      bodyRef,
-      delta,
-      state,
-      gravityDirection,
-      movementMode,
-      forward,
-      backward,
-      leftward,
-      rightward
-    );
+    if (enablePlayerControls) {
+      playerActionsLogicTree(
+        bodyRef,
+        delta,
+        state,
+        gravityDirection,
+        movementMode,
+        forward,
+        backward,
+        leftward,
+        rightward
+      );
+    }
     const bodyPosition = bodyRef.current.translation();
 
     // out of bounds, restart
