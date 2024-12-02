@@ -141,8 +141,8 @@ function Player({ textures, parentPosition, position }) {
   return (
     <RigidBody
       canSleep={false}
-      linearDamping={0.5}
-      angularDamping={0.5}
+      linearDamping={enablePlayerControls ? 0.5 : 0}
+      angularDamping={enablePlayerControls ? 0.5 : 0}
       restitution={0.2}
       friction={1}
       colliders='ball'

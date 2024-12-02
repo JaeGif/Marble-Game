@@ -792,7 +792,6 @@ function BlockPassThrough({ position, rotation = [0, 0, 0], type }) {
     (state) => state.setEnablePlayerControls
   );
   const handlePassThrough = (collision) => {
-    console.log('collision');
     // get current player velocity and update ref
     player.current = world.getRigidBody(collision.rigidBody.handle);
 
@@ -802,11 +801,9 @@ function BlockPassThrough({ position, rotation = [0, 0, 0], type }) {
     setEnablePlayerControls(false);
   };
   const handleExitMaterial = (collision) => {
-    // flip switch allowing state to be changed
-
-    console.log('exit');
     // re-enable gravity as it was before
     player.current.setGravityScale(gravityDirection);
+    // flip switch allowing state to be changed
     setEnablePlayerControls(true);
   };
 
