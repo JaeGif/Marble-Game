@@ -2,6 +2,8 @@ import * as THREE from 'three';
 
 const cameraFollow = (
   bodyPosition,
+  gravityDirection,
+
   smoothedCameraPosition,
   smoothedCameraTarget,
   state,
@@ -11,11 +13,13 @@ const cameraFollow = (
   cameraPosition.copy(bodyPosition);
 
   cameraPosition.z += 3.25;
-  cameraPosition.y += 0.65;
+  gravityDirection === 1
+    ? (cameraPosition.y += 0.65)
+    : (cameraPosition.y -= 0.65);
 
   const cameraTarget = new THREE.Vector3();
   cameraTarget.copy(bodyPosition);
-  cameraTarget.y += 0.25;
+  gravityDirection === 1 ? (cameraTarget.y += 0.25) : (cameraTarget.y -= 0.25);
 
   smoothedCameraPosition.lerp(cameraPosition, 5 * delta);
   smoothedCameraTarget.lerp(cameraTarget, 5 * delta);
@@ -26,6 +30,8 @@ const cameraFollow = (
 
 const cameraRotate = (
   bodyPosition,
+  gravityDirection,
+
   smoothedCameraPosition,
   smoothedCameraTarget,
   hRadians,
@@ -62,7 +68,7 @@ const cameraRotate = (
 
   const cameraTarget = new THREE.Vector3();
   cameraTarget.copy(bodyPosition);
-  cameraTarget.y += 0.25;
+  gravityDirection === 1 ? (cameraTarget.y += 0.25) : (cameraTarget.y -= 0.25);
 
   smoothedCameraPosition.lerp(cameraPosition, 5 * delta);
   smoothedCameraTarget.lerp(cameraTarget, 5 * delta);
@@ -115,6 +121,7 @@ export const cameraLogicTree = (
   smoothedCameraTarget,
   state,
   delta,
+  gravityDirection,
   cameraMode,
   setCameraMode,
   cameraBirdCenter,
@@ -147,6 +154,7 @@ export const cameraLogicTree = (
   if (cameraMode === 'locked') {
     cameraFollow(
       bodyPosition,
+      gravityDirection,
       smoothedCameraPosition,
       smoothedCameraTarget,
       state,
@@ -168,6 +176,7 @@ export const cameraLogicTree = (
     }
     cameraRotate(
       bodyPosition,
+      gravityDirection,
       smoothedCameraPosition,
       smoothedCameraTarget,
       hAngle,

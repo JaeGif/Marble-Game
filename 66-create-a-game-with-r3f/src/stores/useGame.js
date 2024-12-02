@@ -8,18 +8,30 @@ export default create(
     return {
       obstacleCount: 8,
       movementMode: 'normal', // normal | original
-      jumps: 2,
-      level: 1,
+      jumps: 1,
+      level: 27,
       mode: 'casual',
       lives: [true, true, true],
       score: 0,
       maxLives: 3,
       globalPlayerHandle: null,
       speedBlockMultiplier: 1.25,
+      gravityDirection: 1,
+      enablePlayerControls: true,
       // ready | playing | complete | gameOver
       phase: 'ready',
       startTime: 0,
       endTime: 0,
+      setEnablePlayerControls: (bool) => {
+        set((state) => {
+          return { enablePlayerControls: bool };
+        });
+      },
+      setGravityDirection: (direction) => {
+        set((state) => {
+          return { gravityDirection: direction };
+        });
+      },
       setMovementMode: (mode) => {
         set((state) => {
           return { movementMode: mode };
@@ -60,9 +72,10 @@ export default create(
           if (state.phase === 'playing' || state.phase === 'complete') {
             state.adjustLives(-1);
             state.adjustScore(-1500);
+
             // game over when the last hp is lost
             if (!state.lives[1] && state.lives[0]) state.gameOver();
-            else return { phase: 'ready' };
+            else return { phase: 'ready', gravityDirection: 1 };
           }
           return {};
         });

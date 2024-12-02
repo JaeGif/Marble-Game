@@ -5,17 +5,31 @@ import { useFrame } from '@react-three/fiber';
 import { Float, Text, useGLTF, useTexture } from '@react-three/drei';
 import useGame from '../stores/useGame';
 import Player from '../interactables/Player';
+import uniqid from 'uniqid';
 // blocks are 4x4, -z is away from starting cam position
 const UNIT_CONSTANT = -4;
 
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 const circleGeometry = new THREE.CircleGeometry(1, 16);
 const sphereGeometry = new THREE.SphereGeometry(1, 16, 16);
+const bulletGeometry = new THREE.SphereGeometry(0.5, 16, 16);
 const squareGeometry = new THREE.BoxGeometry(2, 2, 0);
-
-const portalMaterial = new THREE.MeshStandardMaterial({
-  color: 'rgba(.5, .5, .5, .1)',
+const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 4, 4, false);
+const torusGeometry = new THREE.TorusGeometry(1, 1, 4, 4);
+const passThroughBoxGeometry = new THREE.BoxGeometry(
+  -UNIT_CONSTANT * 1,
+  -UNIT_CONSTANT * 1,
+  -UNIT_CONSTANT * 1
+);
+const passThroughBoxMaterial = new THREE.MeshStandardMaterial({
+  color: 'rgb(0, 0, 0)',
+  opacity: 0.7,
   transparent: true,
+});
+const portalMaterial = new THREE.MeshStandardMaterial({
+  color: 'rgb(.5, .5,1)',
+  transparent: true,
+  opacity: 0.4,
 });
 
 const floor1Material = new THREE.MeshStandardMaterial({ color: 'limegreen' });
@@ -24,6 +38,10 @@ const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 'orangered' });
 const speedMaterial = new THREE.MeshStandardMaterial({ color: 'blue' });
 const negGravMaterial = new THREE.MeshStandardMaterial({ color: 'black' });
 const posGravMaterial = new THREE.MeshStandardMaterial({ color: 'orange' });
+const flipGravityMaterial = new THREE.MeshStandardMaterial({ color: 'pink' });
+const turretMaterial = new THREE.MeshStandardMaterial({
+  color: new THREE.Color('#6f4e37'),
+});
 
 function BlockStart({
   position = [0, 0, 0],
@@ -71,7 +89,7 @@ function BlockEnd({
   textRotation = [0, 0, 0],
   options = { textSize: 'l' },
 }) {
-  const hamburger = useGLTF('./hamburger.glb');
+  const hamburger = useGLTF('./models/hamburger.glb');
   // hamburger shadows
   hamburger.scene.children.forEach((mesh) => {
     mesh.castShadow = true;
@@ -129,7 +147,11 @@ function BlockEnd({
   );
 }
 
-function BlockSpinner({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
+function BlockSpinner({
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  scale = { x: 1, y: 1, z: 1 },
+}) {
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
   );
@@ -156,7 +178,7 @@ function BlockSpinner({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
         <mesh
           geometry={boxGeometry}
           material={obstacleMaterial}
-          scale={[3.5, 0.3, 0.3]}
+          scale={[3.5 * scale.x, 0.3 * scale.y, 0.3 * scale.z]}
           castShadow
           receiveShadow
         />
@@ -165,7 +187,11 @@ function BlockSpinner({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   );
 }
 
-function BlockLimbo({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
+function BlockLimbo({
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  scale = { x: 1, y: 1, z: 1 },
+}) {
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
   );
@@ -197,7 +223,7 @@ function BlockLimbo({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
         <mesh
           geometry={boxGeometry}
           material={obstacleMaterial}
-          scale={[3.5, 0.3, 0.3]}
+          scale={[3.5 * scale.x, 0.3 * scale.y, 0.3 * scale.z]}
           castShadow
           receiveShadow
         />
@@ -206,7 +232,11 @@ function BlockLimbo({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   );
 }
 
-function BlockSpeed({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
+function BlockSpeed({
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  scale = { x: 1, y: 1, z: 1 },
+}) {
   // when player crosses this block they get a temporary acceleration
   const obstacleRef = useRef();
   useFrame((state) => {
@@ -262,7 +292,7 @@ function BlockSpeed({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
         colliders={'cuboid'}
       >
         <mesh
-          scale={[4, 0.2, 4]}
+          scale={[4 * scale.x, 0.2 * scale.y, 4 * scale.z]}
           geometry={boxGeometry}
           material={speedMaterial}
           position={[0, -0.1, 0]}
@@ -278,11 +308,15 @@ function BlockPortal({
     [0, 0, 0],
     [0, 0, 1],
   ],
-  rotation = [0, 0, 0],
+  rotation = [
+    [0, 0, 0],
+    [0, 0, 0],
+  ],
 }) {
   const portal1Position = position[0];
   const portal2Position = position[1];
-  // when player crosses this block they are teleported between the portals locations.
+  const portal1Rotation = rotation[0];
+  const portal2Rotation = rotation[1];
 
   // if on cooldown, may not transport
   const [onCooldown, setOnCooldown] = useState(false);
@@ -313,7 +347,7 @@ function BlockPortal({
   };
   return (
     <>
-      <group position={portal1Position} rotation={rotation}>
+      <group position={portal1Position} rotation={portal1Rotation}>
         <RigidBody
           type='fixed'
           sensor
@@ -324,12 +358,12 @@ function BlockPortal({
           <mesh
             geometry={squareGeometry}
             material={portalMaterial}
-            scale={[1.5, 1.5, 0.3]}
+            scale={[1.5 * scale.x, 1.5 * scale.y, 0.3 * scale.z]}
             position={[0, 1.5, 0]}
           />
         </RigidBody>
       </group>
-      <group position={portal2Position} rotation={rotation}>
+      <group position={portal2Position} rotation={portal2Rotation}>
         <RigidBody
           type='fixed'
           sensor
@@ -340,7 +374,7 @@ function BlockPortal({
           <mesh
             geometry={squareGeometry}
             material={portalMaterial}
-            scale={[1.5, 1.5, 0.3]}
+            scale={[1.5 * scale.x, 1.5 * scale.y, 0.3 * scale.z]}
             position={[0, 1.5, 0]}
           />
         </RigidBody>
@@ -348,7 +382,11 @@ function BlockPortal({
     </>
   );
 }
-function BlockAxe({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
+function BlockAxe({
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  scale = { x: 1, y: 1, z: 1 },
+}) {
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
   );
@@ -380,7 +418,7 @@ function BlockAxe({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
         <mesh
           geometry={boxGeometry}
           material={obstacleMaterial}
-          scale={[1.5, 1.5, 0.3]}
+          scale={[1.5 * scale.x, 1.5 * scale.y, 0.3 * scale.z]}
           castShadow
           receiveShadow
         />
@@ -491,7 +529,12 @@ function BlockBlueHealth({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   );
 }
 // platform types are block types
-function BlockFloor({ position, rotation = [0, 0, 0], type }) {
+function BlockFloor({
+  position,
+  rotation = [0, 0, 0],
+  scale = { x: 1, y: 1, z: 1 },
+  type,
+}) {
   let material = floor2Material;
   switch (type) {
     case 'start':
@@ -508,7 +551,7 @@ function BlockFloor({ position, rotation = [0, 0, 0], type }) {
     <group position={position} rotation={rotation}>
       <RigidBody type='fixed' colliders='cuboid' restitution={0.2} friction={0}>
         <mesh
-          scale={[4, 0.2, 4]}
+          scale={[4 * scale.x, 0.2 * scale.y, 4 * scale.z]}
           geometry={boxGeometry}
           position={[0, -0.1, 0]}
           material={material}
@@ -608,7 +651,186 @@ function BlockGravity({
     </group>
   );
 }
+function BlockFlipGravity({ position, rotation = [0, 0, 0], type }) {
+  // when player crosses this block, gravity is inverted
 
+  const gravityDirection = useGame((state) => state.gravityDirection);
+  const setGravityDirection = useGame((state) => state.setGravityDirection);
+
+  const handleGravityFlip = () => {
+    const flipped = gravityDirection === -1 ? 1 : -1;
+    setGravityDirection(flipped);
+  };
+  return (
+    <group position={position} rotation={rotation}>
+      <RigidBody
+        type='fixed'
+        onCollisionEnter={handleGravityFlip}
+        onIntersectionEnter={handleGravityFlip}
+        colliders={'cuboid'}
+      >
+        <mesh
+          scale={[4, 0.2, 4]}
+          geometry={boxGeometry}
+          material={flipGravityMaterial}
+          position={[0, -0.1, 0]}
+          receiveShadow
+        />
+      </RigidBody>
+    </group>
+  );
+}
+function BlockRoundAbout({
+  position,
+  rotation = [0, 0, 0],
+  scale = { x: 1, y: 1, z: 1 },
+  type,
+}) {
+  const { nodes } = useGLTF('./models/roundabout.glb');
+  const geometry = nodes.Cylinder.geometry;
+  position[1] -= 0.1;
+  return (
+    <group position={position} rotation={rotation}>
+      <RigidBody
+        type='fixed'
+        colliders='trimesh'
+        restitution={0.2}
+        friction={0}
+      >
+        <mesh
+          scale={[4 * scale.x, 0.1 * scale.y, 4 * scale.z]}
+          geometry={geometry}
+          material={floor2Material}
+          position={[0, 0, 0]}
+          receiveShadow
+        />
+      </RigidBody>
+    </group>
+  );
+}
+function BlockTurret({ position, rotation = [0, 0, 0], type }) {
+  // shoots random shapes straight
+  const direction = new THREE.Vector3(0, 0, 1); // default direction is z
+  // some quick maths with quaternions to do the rotation
+  const eulerRotation = new THREE.Euler(rotation[0], rotation[1], rotation[2]);
+  const quaternion = new THREE.Quaternion().setFromEuler(eulerRotation);
+  const rotatedDirection = direction.applyQuaternion(quaternion);
+  const normalDirection = rotatedDirection.normalize();
+  const rigidBodies = useRef([]);
+  const { rapier, world } = useRapier(); // Access the Rapier physics world
+  const fireGeometry = (unitDirection, state) => {
+    // add the new shape to the scene at 0, 0, 0
+    // scale the shape quickly up to full
+    // give it some force in the unitDirection, with some slight randomness in x, y, z
+    console.log('fire:', unitDirection);
+    const bullet = new THREE.Mesh(bulletGeometry, floor1Material);
+    bullet.position.set(position[0], position[1], position[2]);
+    state.scene.add(bullet);
+    const rigidBodyDesc = rapier.RigidBodyDesc.dynamic().setTranslation(
+      0,
+      4,
+      0
+    );
+    const rigidBody = world.createRigidBody(rigidBodyDesc);
+
+    const colliderDesc = rapier.ColliderDesc.ball(0.5);
+
+    world.createCollider(colliderDesc, rigidBody);
+  };
+
+  const timer = useRef(0);
+  useFrame((state, delta) => {
+    // generate a random geometry every 2s
+    timer.current += delta;
+
+    if (timer.current >= 2) {
+      timer.current = 0;
+
+      fireGeometry(normalDirection, state);
+    }
+  });
+
+  return (
+    <group position={position} rotation={rotation}>
+      <RigidBody type='fixed' colliders={'hull'}>
+        <mesh
+          scale={[0.5, 0.5, 1]}
+          geometry={boxGeometry}
+          material={turretMaterial}
+          position={[0, 1, 0]}
+          receiveShadow
+        />
+        <mesh
+          scale={[0.55, 0.1, 1.1]}
+          geometry={boxGeometry}
+          material={turretMaterial}
+          position={[0, 0.75, 0]}
+          receiveShadow
+        />
+        <mesh
+          scale={[0.2, 0.2, 0.5]}
+          geometry={boxGeometry}
+          material={turretMaterial}
+          position={[0, 1, 0.5]}
+          receiveShadow
+        />
+      </RigidBody>
+    </group>
+  );
+}
+
+function BlockPassThrough({
+  position,
+  rotation = [0, 0, 0],
+  scale = { x: 1, y: 1, z: 1 },
+  type,
+}) {
+  // When player passes through this block, their velocity remains constant, unaffected by gravity
+  //    until they pass through the other side
+  //    effectively, the player continues in a set direction and can only go one way
+  //    through this block
+  const player = useRef(null);
+  const gravityDirection = useGame((state) => state.gravityDirection);
+  const { world } = useRapier();
+  const setEnablePlayerControls = useGame(
+    (state) => state.setEnablePlayerControls
+  );
+  const handlePassThrough = (collision) => {
+    // get current player velocity and update ref
+    player.current = world.getRigidBody(collision.rigidBody.handle);
+    // disable gravity so only linvel/angvel effects carry through
+    player.current.setGravityScale(0);
+    setEnablePlayerControls(false);
+  };
+  const handleExitMaterial = (collision) => {
+    // re-enable gravity as it was before
+    player.current.setGravityScale(gravityDirection);
+    // flip switch allowing state to be changed
+
+    setEnablePlayerControls(true);
+  };
+
+  return (
+    <group position={position} rotation={rotation}>
+      <RigidBody
+        friction={0}
+        restitution={0}
+        type='kinematicPosition'
+        sensor
+        onIntersectionEnter={handlePassThrough}
+        onIntersectionExit={handleExitMaterial}
+      >
+        <mesh
+          scale={[scale.x, scale.y, scale.z]}
+          geometry={passThroughBoxGeometry}
+          material={passThroughBoxMaterial}
+          position={[0, 0, 0]}
+          receiveShadow
+        />
+      </RigidBody>
+    </group>
+  );
+}
 /**
  * Represents a Platform of specified type and position.
  * @param {string} 'start' | 'end' | 'spinner' | 'axe' | 'limbo' | 'blueHealth' | 'speed' | 'portal' | 'bounce' | 'floor'
@@ -621,8 +843,17 @@ export function Platform({
   gravitationalConstant,
   maxDistance,
   textRotation,
+  scale = { x: 1, y: 1, z: 1 },
   options = { floor: 'floor' },
 }) {
+  // position offset so it aligns flush when upside down
+  if (Math.round(rotation[0]) === Math.round(Math.PI)) {
+    position[1] += 0.05;
+  }
+  if (Math.round(rotation[2]) === Math.round(Math.PI)) {
+    position[1] += 0.05;
+  }
+
   const blockMap = {
     floor: BlockFloor,
     limbo: BlockLimbo,
@@ -633,6 +864,10 @@ export function Platform({
     portal: BlockPortal,
     bounce: BlockBounce,
     gravity: BlockGravity,
+    flipGravity: BlockFlipGravity,
+    roundabout: BlockRoundAbout,
+    turret: BlockTurret,
+    passThrough: BlockPassThrough,
     start: BlockStart,
     end: BlockEnd,
   };
@@ -656,9 +891,15 @@ export function Platform({
             position[2] * UNIT_CONSTANT,
           ]}
           type={type}
+          scale={scale}
           rotation={rotation}
         />
-      ) : type === 'speed' || type === 'bounce' ? (
+      ) : type === 'speed' ||
+        type === 'bounce' ||
+        type === 'flipGravity' ||
+        type === 'roundabout' ||
+        type === 'turret' ||
+        type === 'passThrough' ? (
         <>
           <Block
             position={[
@@ -668,6 +909,7 @@ export function Platform({
             ]}
             rotation={rotation}
             options={options}
+            scale={scale}
             gravitationalConstant={gravitationalConstant}
             maxDistance={maxDistance}
             textRotation={textRotation}
@@ -675,24 +917,32 @@ export function Platform({
         </>
       ) : type === 'portal' ? (
         <>
-          <BlockFloor
-            position={[
-              position[0][0] * UNIT_CONSTANT,
-              position[0][1] * UNIT_CONSTANT,
-              position[0][2] * UNIT_CONSTANT,
-            ]}
-            rotation={rotation}
-            type={type}
-          />
-          <BlockFloor
-            position={[
-              position[1][0] * UNIT_CONSTANT,
-              position[1][1] * UNIT_CONSTANT,
-              position[1][2] * UNIT_CONSTANT,
-            ]}
-            rotation={rotation}
-            type={type}
-          />
+          {options.floor === 'none' ? (
+            <></>
+          ) : (
+            <>
+              <Floor
+                position={[
+                  position[0][0] * UNIT_CONSTANT,
+                  position[0][1] * UNIT_CONSTANT,
+                  position[0][2] * UNIT_CONSTANT,
+                ]}
+                scale={scale}
+                rotation={[rotation[0][0], rotation[0][1], rotation[0][2]]}
+                type={type}
+              />
+              <Floor
+                position={[
+                  position[1][0] * UNIT_CONSTANT,
+                  position[1][1] * UNIT_CONSTANT,
+                  position[1][2] * UNIT_CONSTANT,
+                ]}
+                scale={scale}
+                rotation={[rotation[1][0], rotation[1][1], rotation[1][2]]}
+                type={type}
+              />
+            </>
+          )}
           <Block
             options={options}
             position={[
@@ -707,8 +957,12 @@ export function Platform({
                 position[1][2] * UNIT_CONSTANT,
               ],
             ]}
-            rotation={rotation}
+            rotation={[
+              [rotation[0][0], rotation[0][1], rotation[0][2]],
+              [rotation[1][0], rotation[1][1], rotation[1][2]],
+            ]}
             textRotation={textRotation}
+            scale={scale}
           />
         </>
       ) : (
@@ -722,6 +976,7 @@ export function Platform({
                 position[1] * UNIT_CONSTANT,
                 position[2] * UNIT_CONSTANT,
               ]}
+              scale={scale}
               rotation={rotation}
               type={type}
             />
@@ -737,6 +992,7 @@ export function Platform({
             maxDistance={maxDistance}
             rotation={rotation}
             textRotation={textRotation}
+            scale={scale}
           />
         </>
       )}

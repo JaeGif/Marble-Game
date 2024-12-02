@@ -10,21 +10,27 @@ function Level20() {
       <Lights />
       <Camera modality='locked' />
       <Platform type={'start'} position={[0, 0, 0]} />
+      <Platform type={'spinner'} position={[0, 0, 1]} />
       <Platform
         type={'gravity'}
+        gravitationalConstant={8.5}
+        maxDistance={5}
+        options={{ floor: 'none' }}
         position={[0, 0, 1]}
-        gravitationalConstant={2}
-        maxDistance={8}
       />
       <Platform type={'floor'} position={[0, 0, 2]} />
+      <Platform type={'floor'} position={[0, 0, 3]} />
+      <Platform type={'floor'} position={[0, 0, 4]} />
+      <Platform type={'axe'} position={[0, 0, 4]} />
       <Platform
         type={'gravity'}
-        position={[0, 0, 3]}
-        gravitationalConstant={-2}
-        maxDistance={8}
+        gravitationalConstant={-7}
+        maxDistance={5}
+        options={{ floor: 'none' }}
+        position={[0, 0, 4]}
       />
-      <Platform type={'floor'} position={[0, 0, 4]} />
-      <Platform type={'end'} position={[0, 0, 5]} />
+      <Platform type={'floor'} position={[0, 0, 5]} />
+      <Platform type={'end'} position={[0, 0, 6]} />
     </>
   );
 }

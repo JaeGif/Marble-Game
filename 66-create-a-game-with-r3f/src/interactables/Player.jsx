@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { RigidBody, useRapier } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { useKeyboardControls } from '@react-three/drei';
@@ -9,7 +9,6 @@ const BALLSIZE = 0.3;
 
 function Player({ textures, parentPosition, position }) {
   const [subscribeKeys, getKeys] = useKeyboardControls();
-
   const { rapier, world } = useRapier();
 
   const bodyRef = useRef();
@@ -21,19 +20,33 @@ function Player({ textures, parentPosition, position }) {
   const restart = useGame((state) => state.restart);
   const phase = useGame((state) => state.phase);
   const movementMode = useGame((state) => state.movementMode);
+  const gravityDirection = useGame((state) => state.gravityDirection);
+  const enablePlayerControls = useGame((state) => state.enablePlayerControls);
 
   const jump = () => {
     const origin = bodyRef.current.translation();
-    origin.y -= BALLSIZE + 0.01;
+    const directionDown = { x: 0, y: -1, z: 0 };
+    const directionUp = { x: 0, y: 1, z: 0 };
+    // Offset origin for the downward ray slightly above the current position
+    const downOrigin = { ...origin, y: origin.y - BALLSIZE - 0.01 }; // Offset upwards slightly
 
-    const direction = { x: 0, y: -1, z: 0 };
+    // Offset origin for the upward ray slightly below the current position
+    const upOrigin = { ...origin, y: origin.y + BALLSIZE + 0.01 }; // Offset downwards slightly
 
-    const ray = new rapier.Ray(origin, direction);
-    const hit = world.castRay(ray, 10, true);
+    const rayUp = new rapier.Ray(upOrigin, directionUp);
+    const hitUp = world.castRay(rayUp, 10, true);
 
-    if (hit.timeOfImpact < 0.15) {
+    const rayDown = new rapier.Ray(downOrigin, directionDown);
+    const hitDown = world.castRay(rayDown, 10, true);
+
+    if (hitDown && hitDown.timeOfImpact < 0.2 && !hitDown.collider.isSensor()) {
       // allow for jumping during slight bounce
       bodyRef.current.applyImpulse({ x: 0, y: 0.5, z: 0 });
+    }
+
+    if (hitUp && hitUp.timeOfImpact < 0.2 && !hitUp.collider.isSensor()) {
+      // allow for jumping during slight bounce
+      bodyRef.current.applyImpulse({ x: 0, y: -0.5, z: 0 });
     }
   };
 
@@ -56,6 +69,13 @@ function Player({ textures, parentPosition, position }) {
         }
       }
     );
+    const unsubscribeGravity = useGame.subscribe(
+      (state) => state.gravityDirection,
+      (gravityDirection) => {
+        bodyRef.current.setGravityScale(gravityDirection);
+      }
+    );
+
     const unsubscribeJump = subscribeKeys(
       // listen to just the jump
       // selector
@@ -76,6 +96,7 @@ function Player({ textures, parentPosition, position }) {
     return () => {
       unsubscribeJump();
       unsubscribeAny();
+      unsubscribeGravity();
       unsubscribeReset();
       unsubscribePlayerHandle();
     };
@@ -88,21 +109,24 @@ function Player({ textures, parentPosition, position }) {
     const { forward, backward, leftward, rightward } = getKeys();
 
     // Player Actions
-    playerActionsLogicTree(
-      bodyRef,
-      delta,
-      state,
-      movementMode,
-      forward,
-      backward,
-      leftward,
-      rightward
-    );
+    if (enablePlayerControls) {
+      playerActionsLogicTree(
+        bodyRef,
+        delta,
+        state,
+        gravityDirection,
+        movementMode,
+        forward,
+        backward,
+        leftward,
+        rightward
+      );
+    }
     const bodyPosition = bodyRef.current.translation();
 
     // out of bounds, restart
     // bounds may need to be adjusted
-    if (bodyPosition.y < -16 && phase !== 'complete') {
+    if ((bodyPosition.y < -16 || bodyPosition.y > 32) && phase !== 'complete') {
       restart();
     }
   });
@@ -117,8 +141,8 @@ function Player({ textures, parentPosition, position }) {
   return (
     <RigidBody
       canSleep={false}
-      linearDamping={0.5}
-      angularDamping={0.5}
+      linearDamping={enablePlayerControls ? 0.5 : 0}
+      angularDamping={enablePlayerControls ? 0.5 : 0}
       restitution={0.2}
       friction={1}
       colliders='ball'

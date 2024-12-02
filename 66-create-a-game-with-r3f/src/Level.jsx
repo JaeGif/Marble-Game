@@ -20,6 +20,16 @@ import Level17 from './levels/Level17';
 import Level18 from './levels/Level18';
 import Level19 from './levels/Level19';
 import Level20 from './levels/Level20';
+import Level21 from './levels/Level21';
+import Level22 from './levels/Level22';
+import Level23 from './levels/Level23';
+import Level24 from './levels/Level24';
+import Level25 from './levels/Level25';
+import Level26 from './levels/Level26';
+import Level27 from './levels/Level27';
+import Level28 from './levels/Level28';
+import Level29 from './levels/Level29';
+import Level30 from './levels/Level30';
 
 function Level({ level = 1 }) {
   const levelMap = {
@@ -43,6 +53,16 @@ function Level({ level = 1 }) {
     18: Level18,
     19: Level19,
     20: Level20,
+    21: Level21,
+    22: Level22,
+    23: Level23,
+    24: Level24,
+    25: Level25,
+    26: Level26,
+    27: Level27,
+    28: Level28,
+    29: Level29,
+    30: Level30,
   };
   const CurrentStage = levelMap[level];
   return (

@@ -4,6 +4,7 @@ export const playerActionsLogicTree = (
   bodyRef,
   delta,
   state,
+  gravityDirection,
   movementMode,
   forward,
   backward,
@@ -15,9 +16,10 @@ export const playerActionsLogicTree = (
   if (!bodyRef.current) return;
   const impulse = new THREE.Vector3();
   const torque = new THREE.Vector3();
-
+  const torqueFactor = gravityDirection === 1 ? 1 : -1;
   const impulseStrength = 0.6 * delta;
-  const torqueStrength = 0.2 * delta;
+  const torqueStrength = 0.2 * delta * torqueFactor;
+
   // get the camera forward vec and normalize it
   //    apply the forces to that
   if (movementMode === 'original') {
