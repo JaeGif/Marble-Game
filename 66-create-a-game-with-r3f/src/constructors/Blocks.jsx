@@ -784,7 +784,6 @@ function BlockPassThrough({ position, rotation = [0, 0, 0], type }) {
   //    until they pass through the other side
   //    effectively, the player continues in a set direction and can only go one way
   //    through this block
-  const playerVelocity = useRef(new THREE.Vector3(0, 0, 0));
   const player = useRef(null);
   const gravityDirection = useGame((state) => state.gravityDirection);
   const { world } = useRapier();
@@ -794,9 +793,7 @@ function BlockPassThrough({ position, rotation = [0, 0, 0], type }) {
   const handlePassThrough = (collision) => {
     // get current player velocity and update ref
     player.current = world.getRigidBody(collision.rigidBody.handle);
-
-    playerVelocity.current.copy(player.current.linvel());
-    // disable gravity so only linvel effects
+    // disable gravity so only linvel/angvel effects carry through
     player.current.setGravityScale(0);
     setEnablePlayerControls(false);
   };
