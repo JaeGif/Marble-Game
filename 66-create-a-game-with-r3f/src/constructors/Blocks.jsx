@@ -850,6 +850,9 @@ export function Platform({
   if (Math.round(rotation[0]) === Math.round(Math.PI)) {
     position[1] += 0.05;
   }
+  if (Math.round(rotation[2]) === Math.round(Math.PI)) {
+    position[1] += 0.05;
+  }
 
   const blockMap = {
     floor: BlockFloor,
