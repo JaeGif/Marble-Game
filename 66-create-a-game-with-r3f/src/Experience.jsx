@@ -7,7 +7,7 @@ export default function Experience() {
 
   return (
     <>
-      <Physics debug>
+      <Physics>
         <Level level={level} />
       </Physics>
     </>
