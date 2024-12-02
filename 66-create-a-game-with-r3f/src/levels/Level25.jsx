@@ -11,7 +11,7 @@ function Level25() {
       <Camera modality='locked' />
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform type={'passThrough'} position={[0, 0, 1]} />
-      <Platform type={'floor'} position={[0, -0.5, 2]} />
+      <Platform type={'blueHealth'} position={[0, -0.5, 2]} />
 
       <Platform type={'floor'} position={[0, 0, 2]} />
       <Platform type={'floor'} position={[0, 0, 3]} />

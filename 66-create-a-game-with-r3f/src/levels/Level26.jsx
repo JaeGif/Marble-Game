@@ -11,20 +11,39 @@ function Level26() {
       <Camera modality='locked' />
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform
-        type={'gravity'}
-        position={[0, 0, 1]}
-        gravitationalConstant={2}
-        maxDistance={8}
-      />
-      <Platform type={'floor'} position={[0, 0, 2]} />
-      <Platform
-        type={'gravity'}
-        position={[0, 0, 3]}
-        gravitationalConstant={-2}
-        maxDistance={8}
+        type={'passThrough'}
+        position={[0, 0, 2]}
+        scale={{ x: 1, y: 1, z: 3 }}
       />
       <Platform type={'floor'} position={[0, 0, 4]} />
-      <Platform type={'end'} position={[0, 0, 5]} />
+      <Platform
+        type={'passThrough'}
+        position={[0, 1, 5]}
+        scale={{ x: 1, y: 2, z: 1 }}
+      />
+      <Platform type={'floor'} position={[0, 3, 5]} />
+      <Platform type={'axe'} position={[0, 3, 6]} />
+      <Platform type={'spinner'} position={[0, 3, 7]} />
+      <Platform
+        type={'spinner'}
+        position={[0, 3, 7]}
+        options={{ floor: 'none' }}
+      />
+      <Platform type={'flipGravity'} position={[0, 3, 8]} />
+      <Platform
+        type={'flipGravity'}
+        position={[0, -0.5, 5.5]}
+        rotation={[Math.PI / 2, 0, 0]}
+      />
+      <Platform type={'passThrough'} position={[0, 0, 9]} />
+      <Platform
+        type={'floor'}
+        position={[0, 0, 9.5]}
+        rotation={[Math.PI / 2, 0, 0]}
+      />
+      <Platform type={'flipGravity'} position={[0, -1, 9]} />
+
+      <Platform type={'end'} position={[0, 0, 8]} />
     </>
   );
 }

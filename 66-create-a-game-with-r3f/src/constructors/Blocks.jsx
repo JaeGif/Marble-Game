@@ -779,7 +779,12 @@ function BlockTurret({ position, rotation = [0, 0, 0], type }) {
   );
 }
 
-function BlockPassThrough({ position, rotation = [0, 0, 0], type }) {
+function BlockPassThrough({
+  position,
+  rotation = [0, 0, 0],
+  scale = { x: 1, y: 1, z: 1 },
+  type,
+}) {
   // When player passes through this block, their velocity remains constant, unaffected by gravity
   //    until they pass through the other side
   //    effectively, the player continues in a set direction and can only go one way
@@ -801,6 +806,7 @@ function BlockPassThrough({ position, rotation = [0, 0, 0], type }) {
     // re-enable gravity as it was before
     player.current.setGravityScale(gravityDirection);
     // flip switch allowing state to be changed
+
     setEnablePlayerControls(true);
   };
 
@@ -815,7 +821,7 @@ function BlockPassThrough({ position, rotation = [0, 0, 0], type }) {
         onIntersectionExit={handleExitMaterial}
       >
         <mesh
-          scale={[1, 1, 1]}
+          scale={[scale.x, scale.y, scale.z]}
           geometry={passThroughBoxGeometry}
           material={passThroughBoxMaterial}
           position={[0, 0, 0]}
