@@ -11,18 +11,18 @@ function Level28() {
       <Camera modality='locked' />
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform
-        type={'gravity'}
-        position={[0, 0, 1]}
-        gravitationalConstant={2}
-        maxDistance={8}
+        type={'switch'}
+        position={[
+          [0, 0, 1],
+          [0, -0.5, 1.5],
+        ]}
+        options={{ floor: 'floor', endGatePosition: [0, -1.5, 1.5] }}
       />
-      <Platform type={'floor'} position={[0, 0, 2]} />
-      <Platform
-        type={'gravity'}
-        position={[0, 0, 3]}
-        gravitationalConstant={-2}
-        maxDistance={8}
-      />
+      {/*       <Platform
+        type={'passThrough'}
+        position={[0, 0, 2]}
+        scale={{ x: 0.5, y: 1, z: 3 }}
+      /> */}
       <Platform type={'floor'} position={[0, 0, 4]} />
       <Platform type={'end'} position={[0, 0, 5]} />
     </>
