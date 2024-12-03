@@ -14,7 +14,7 @@ const circleGeometry = new THREE.CircleGeometry(1, 16);
 const sphereGeometry = new THREE.SphereGeometry(1, 16, 16);
 const bulletGeometry = new THREE.SphereGeometry(0.5, 16, 16);
 const squareGeometry = new THREE.BoxGeometry(2, 2, 0);
-const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 4, 4, false);
+const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 16, 1, false);
 const torusGeometry = new THREE.TorusGeometry(1, 1, 4, 4);
 const passThroughBoxGeometry = new THREE.BoxGeometry(
   -UNIT_CONSTANT * 1,
@@ -722,7 +722,6 @@ function BlockTurret({ position, rotation = [0, 0, 0], type }) {
     // add the new shape to the scene at 0, 0, 0
     // scale the shape quickly up to full
     // give it some force in the unitDirection, with some slight randomness in x, y, z
-    console.log('fire:', unitDirection);
     const bullet = new THREE.Mesh(bulletGeometry, floor1Material);
     bullet.position.set(position[0], position[1], position[2]);
     state.scene.add(bullet);
@@ -831,6 +830,157 @@ function BlockPassThrough({
     </group>
   );
 }
+
+function BlockSwitch({
+  position = [
+    [0, 0, 1],
+    [0, -0.5, 1.5],
+  ],
+  rotation = [
+    [0, 0, 0],
+    [Math.PI / 2, 0, 0],
+  ],
+  scale = { x: 1, y: 1, z: 1 },
+  options = { endGatePosition: [0, -1, 0] },
+  type,
+}) {
+  let switchPosition = position[0];
+  let gatePosition = position[1];
+  let switchRotation = rotation[0];
+  let gateRotation = rotation[1];
+
+  const [isPressed, setIsPressed] = useState(false);
+  const gateRef = useRef(null);
+  const switchRef = useRef(null);
+
+  const handleSwitchPress = () => {
+    // animate switch down
+    // animate gate open direction from opts
+    setIsPressed(true);
+  };
+
+  const gateMotion = (animationTime, gateYDirection) => {
+    if (animationTime <= 2) {
+      // move gate in gateYDirection
+      // needs to return a linear
+    }
+  };
+  const gateOpen = (animationTime, delta) => {
+    animationTime.current = Math.min(
+      animationTime.current + delta / animationDuration,
+      1
+    );
+    // interpolate position
+    const newPosition = startPosition.current.map(
+      (start, i) =>
+        start +
+        animationTime.current * (endPosition.current[i] * UNIT_CONSTANT - start)
+    );
+    gateRef.current.setNextKinematicTranslation({
+      x: newPosition[0],
+      y: newPosition[1],
+      z: newPosition[2],
+    });
+    return newPosition;
+  };
+  const switchDirections = (animationTime, newPosition) => {
+    // If switch is toggled again, gate will go the other way
+    if (animationTime.current === 1) {
+      // finally reset the gate Direction
+      endPosition.current = [
+        startPosition.current[0] / UNIT_CONSTANT,
+        startPosition.current[1] / UNIT_CONSTANT,
+        startPosition.current[2] / UNIT_CONSTANT,
+      ];
+      startPosition.current = newPosition;
+
+      switchEndPosition.current = switchStartPosition.current;
+      switchStartPosition.current = newPosition;
+
+      animationTime.current = 0;
+      setIsPressed(false);
+    }
+  };
+  const switchDown = (animationTime, delta) => {
+    animationTime.current = Math.min(
+      animationTime.current + delta / animationDuration,
+      1
+    );
+    // interpolate position
+    const newPosition = switchStartPosition.current.map(
+      (start, i) =>
+        start + animationTime.current * (switchEndPosition.current[i] - start)
+    );
+    switchRef.current.setNextKinematicTranslation({
+      x: newPosition[0],
+      y: newPosition[1],
+      z: newPosition[2],
+    });
+    return newPosition;
+  };
+  const SWITCH_OFFSET = 0.1;
+  const animationTime = useRef(0);
+  const animationDuration = 2;
+  const startPosition = useRef(gatePosition);
+  const endPosition = useRef(options.endGatePosition);
+  const switchStartPosition = useRef([
+    switchPosition[0],
+    switchPosition[1],
+    switchPosition[2],
+  ]);
+  const switchEndPosition = useRef([
+    switchPosition[0],
+    switchPosition[1] - SWITCH_OFFSET * 4,
+    switchPosition[2],
+  ]);
+  useFrame((state, delta) => {
+    if (isPressed && switchRef.current && gateRef.current) {
+      const newGatePosition = gateOpen(animationTime, delta);
+      const newSwitchPosition = switchDown(animationTime, delta);
+      switchDirections(animationTime, newGatePosition, newSwitchPosition);
+    }
+  });
+
+  return (
+    <>
+      <group position={switchPosition} rotation={switchRotation}>
+        <RigidBody
+          ref={switchRef}
+          onCollisionEnter={handleSwitchPress}
+          type='kinematicPosition'
+          colliders='hull'
+          restitution={0.2}
+          friction={0}
+        >
+          <mesh
+            scale={[1 * scale.x, 0.2 * scale.y, 1 * scale.z]}
+            geometry={cylinderGeometry}
+            position={[0, SWITCH_OFFSET, 0]}
+            material={floor1Material}
+            receiveShadow
+          />
+        </RigidBody>
+      </group>
+      <group position={gatePosition} rotation={gateRotation}>
+        <RigidBody
+          ref={gateRef}
+          type='kinematicPosition'
+          colliders='cuboid'
+          restitution={0.2}
+          friction={0}
+        >
+          <mesh
+            scale={[4 * scale.x, 0.2 * scale.y, 4 * scale.z]}
+            geometry={boxGeometry}
+            position={[0, -0.1, 0]}
+            material={floor1Material}
+            receiveShadow
+          />
+        </RigidBody>
+      </group>
+    </>
+  );
+}
 /**
  * Represents a Platform of specified type and position.
  * @param {string} 'start' | 'end' | 'spinner' | 'axe' | 'limbo' | 'blueHealth' | 'speed' | 'portal' | 'bounce' | 'floor'
@@ -839,18 +989,18 @@ function BlockPassThrough({
 export function Platform({
   type,
   position,
-  rotation = [0, 0, 0],
+  rotation,
   gravitationalConstant,
   maxDistance,
   textRotation,
   scale = { x: 1, y: 1, z: 1 },
-  options = { floor: 'floor' },
+  options = { floor: 'floor', endGatePosition: [0, UNIT_CONSTANT, 0] },
 }) {
   // position offset so it aligns flush when upside down
-  if (Math.round(rotation[0]) === Math.round(Math.PI)) {
+  if (rotation && Math.round(rotation[0]) === Math.round(Math.PI)) {
     position[1] += 0.05;
   }
-  if (Math.round(rotation[2]) === Math.round(Math.PI)) {
+  if (rotation && Math.round(rotation[2]) === Math.round(Math.PI)) {
     position[1] += 0.05;
   }
 
@@ -868,6 +1018,7 @@ export function Platform({
     roundabout: BlockRoundAbout,
     turret: BlockTurret,
     passThrough: BlockPassThrough,
+    switch: BlockSwitch,
     start: BlockStart,
     end: BlockEnd,
   };
@@ -928,7 +1079,9 @@ export function Platform({
                   position[0][2] * UNIT_CONSTANT,
                 ]}
                 scale={scale}
-                rotation={[rotation[0][0], rotation[0][1], rotation[0][2]]}
+                rotation={
+                  rotation && [rotation[0][0], rotation[0][1], rotation[0][2]]
+                }
                 type={type}
               />
               <Floor
@@ -938,7 +1091,9 @@ export function Platform({
                   position[1][2] * UNIT_CONSTANT,
                 ]}
                 scale={scale}
-                rotation={[rotation[1][0], rotation[1][1], rotation[1][2]]}
+                rotation={
+                  rotation && [rotation[1][0], rotation[1][1], rotation[1][2]]
+                }
                 type={type}
               />
             </>
@@ -957,10 +1112,57 @@ export function Platform({
                 position[1][2] * UNIT_CONSTANT,
               ],
             ]}
-            rotation={[
-              [rotation[0][0], rotation[0][1], rotation[0][2]],
-              [rotation[1][0], rotation[1][1], rotation[1][2]],
+            rotation={
+              rotation && [
+                [rotation[0][0], rotation[0][1], rotation[0][2]],
+                [rotation[1][0], rotation[1][1], rotation[1][2]],
+              ]
+            }
+            textRotation={textRotation}
+            scale={scale}
+          />
+        </>
+      ) : type === 'switch' ? (
+        <>
+          {options.floor === 'none' ? (
+            <></>
+          ) : (
+            <>
+              <Floor
+                position={[
+                  position[0][0] * UNIT_CONSTANT,
+                  position[0][1] * UNIT_CONSTANT,
+                  position[0][2] * UNIT_CONSTANT,
+                ]}
+                scale={scale}
+                rotation={
+                  rotation && [rotation[0][0], rotation[0][1], rotation[0][2]]
+                }
+                options={options}
+                type={type}
+              />
+            </>
+          )}
+          <Block
+            options={options}
+            position={[
+              [
+                position[0][0] * UNIT_CONSTANT,
+                position[0][1] * UNIT_CONSTANT,
+                position[0][2] * UNIT_CONSTANT,
+              ],
+              [
+                position[1][0] * UNIT_CONSTANT,
+                position[1][1] * UNIT_CONSTANT,
+                position[1][2] * UNIT_CONSTANT,
+              ],
             ]}
+            rotation={
+              rotation && [
+                [rotation[0][0], rotation[0][1], rotation[0][2]],
+                [rotation[1][0], rotation[1][1], rotation[1][2]],
+              ]
+            }
             textRotation={textRotation}
             scale={scale}
           />

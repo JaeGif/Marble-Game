@@ -126,7 +126,7 @@ function Player({ textures, parentPosition, position }) {
 
     // out of bounds, restart
     // bounds may need to be adjusted
-    if ((bodyPosition.y < -16 || bodyPosition.y > 32) && phase !== 'complete') {
+    if ((bodyPosition.y < -16 || bodyPosition.y > 46) && phase !== 'complete') {
       restart();
     }
   });
