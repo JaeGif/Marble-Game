@@ -856,46 +856,8 @@ function BlockSwitch({
   const handleSwitchPress = () => {
     // animate switch down
     // animate gate open direction from opts
-    console.log('press');
     setIsPressed(true);
   };
-
-  /*    if (!obstacleRef.current) return;
-
-    const time = state.clock.elapsedTime + options.seed;
-
-    let animationTime = 0;
-    animationTime += time;
-    animationTime %= 10;
-
-    obstacleRef.current.setNextKinematicTranslation({
-      x: position[0],
-      y:
-        position[1] +
-        bounceMotion(animationTime, options.amplitude, options.speed) -
-        0.1,
-      z: position[2],
-
-        const bounceMotion = (time, amplitude, speed) => {
-    const upTime = Math.PI / speed / 4;
-    if (time >= upTime) {
-      const downTime = 8 - upTime;
-      if (time <= downTime)
-        return (
-          (1 / amplitude + Math.cos((time / downTime) * Math.PI) / amplitude) *
-          amplitude *
-          amplitude
-        );
-      else return 0;
-    } else
-      return (
-        (1 / amplitude +
-          Math.cos(speed * Math.PI * time - Math.PI) / amplitude) *
-        amplitude *
-        amplitude
-      );
-  };
-    }); */
 
   const gateMotion = (animationTime, gateYDirection) => {
     if (animationTime <= 2) {
@@ -903,54 +865,79 @@ function BlockSwitch({
       // needs to return a linear
     }
   };
-  const gateOpen = (animationTime, gateYDirection) => {
-    const gate = gateRef.current;
-    console.log('gateUp');
-    gate.setNextKinematicTranslation({
-      x: gatePosition[0],
-      y: gatePosition[1] + gateMotion(animationTime, gateYDirection),
-      z: gatePosition[2],
+  const gateOpen = (animationTime, delta) => {
+    animationTime.current = Math.min(
+      animationTime.current + delta / animationDuration,
+      1
+    );
+    // interpolate position
+    const newPosition = startPosition.current.map(
+      (start, i) =>
+        start +
+        animationTime.current * (endPosition.current[i] * UNIT_CONSTANT - start)
+    );
+    gateRef.current.setNextKinematicTranslation({
+      x: newPosition[0],
+      y: newPosition[1],
+      z: newPosition[2],
     });
+    return newPosition;
   };
-  const switchDown = (animationTime) => {
-    const button = switchRef.current;
-    console.log('switchDown');
-  };
+  const switchDirections = (animationTime, newPosition) => {
+    // If switch is toggled again, gate will go the other way
+    if (animationTime.current === 1) {
+      // finally reset the gate Direction
+      endPosition.current = [
+        startPosition.current[0] / UNIT_CONSTANT,
+        startPosition.current[1] / UNIT_CONSTANT,
+        startPosition.current[2] / UNIT_CONSTANT,
+      ];
+      startPosition.current = newPosition;
 
+      switchEndPosition.current = switchStartPosition.current;
+      switchStartPosition.current = newPosition;
+
+      animationTime.current = 0;
+      setIsPressed(false);
+    }
+  };
+  const switchDown = (animationTime, delta) => {
+    animationTime.current = Math.min(
+      animationTime.current + delta / animationDuration,
+      1
+    );
+    // interpolate position
+    const newPosition = switchStartPosition.current.map(
+      (start, i) =>
+        start + animationTime.current * (switchEndPosition.current[i] - start)
+    );
+    switchRef.current.setNextKinematicTranslation({
+      x: newPosition[0],
+      y: newPosition[1],
+      z: newPosition[2],
+    });
+    return newPosition;
+  };
+  const SWITCH_OFFSET = 0.1;
   const animationTime = useRef(0);
   const animationDuration = 2;
   const startPosition = useRef(gatePosition);
   const endPosition = useRef(options.endGatePosition);
+  const switchStartPosition = useRef([
+    switchPosition[0],
+    switchPosition[1],
+    switchPosition[2],
+  ]);
+  const switchEndPosition = useRef([
+    switchPosition[0],
+    switchPosition[1] - SWITCH_OFFSET * 4,
+    switchPosition[2],
+  ]);
   useFrame((state, delta) => {
     if (isPressed && switchRef.current && gateRef.current) {
-      animationTime.current = Math.min(
-        animationTime.current + delta / animationDuration,
-        1
-      );
-      // interpolate position
-      const newPosition = startPosition.current.map(
-        (start, i) =>
-          start +
-          animationTime.current *
-            (endPosition.current[i] * UNIT_CONSTANT - start)
-      );
-      gateRef.current.setNextKinematicTranslation({
-        x: newPosition[0],
-        y: newPosition[1],
-        z: newPosition[2],
-      });
-
-      if (animationTime.current === 1) {
-        // finally reset the gate Direction
-        endPosition.current = [
-          startPosition.current[0] / UNIT_CONSTANT,
-          startPosition.current[1] / UNIT_CONSTANT,
-          startPosition.current[2] / UNIT_CONSTANT,
-        ];
-        startPosition.current = newPosition;
-        animationTime.current = 0;
-        setIsPressed(false);
-      }
+      const newGatePosition = gateOpen(animationTime, delta);
+      const newSwitchPosition = switchDown(animationTime, delta);
+      switchDirections(animationTime, newGatePosition, newSwitchPosition);
     }
   });
 
@@ -968,7 +955,7 @@ function BlockSwitch({
           <mesh
             scale={[1 * scale.x, 0.2 * scale.y, 1 * scale.z]}
             geometry={cylinderGeometry}
-            position={[0, 0.1, 0]}
+            position={[0, SWITCH_OFFSET, 0]}
             material={floor1Material}
             receiveShadow
           />
