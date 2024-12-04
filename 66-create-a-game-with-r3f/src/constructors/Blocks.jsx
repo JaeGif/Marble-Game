@@ -89,7 +89,7 @@ function BlockEnd({
   textRotation = [0, 0, 0],
   options = { textSize: 'l' },
 }) {
-  const hamburger = useGLTF('./models/hamburger.glb');
+  const hamburger = useGLTF('./models/mill.glb');
   // hamburger shadows
   hamburger.scene.children.forEach((mesh) => {
     mesh.castShadow = true;
@@ -100,7 +100,7 @@ function BlockEnd({
   useFrame((state) => {
     if (!goalRef.current) return;
 
-    goalRef.current.rotation.y = state.clock.getElapsedTime() * 0.25;
+    goalRef.current.rotation.y = state.clock.getElapsedTime() * 0.1;
   });
   const handleCollisionEnter = () => {
     end();
@@ -129,17 +129,17 @@ function BlockEnd({
         FINISH
         <meshBasicMaterial toneMapped={false} />
       </Text>
-      <Float rotationIntensity={0.5}>
+      <Float rotationIntensity={0.5} floatIntensity={0}>
         <group ref={goalRef}>
           <RigidBody
             onCollisionEnter={handleCollisionEnter}
             type='fixed'
             colliders='hull'
-            position={[0, 0.25, 0]}
+            position={[0, 1.25, 0]}
             restitution={0.2}
             friction={0}
           >
-            <primitive object={hamburger.scene} scale={0.2} />
+            <primitive object={hamburger.scene} scale={1.5} />
           </RigidBody>
         </group>
       </Float>
