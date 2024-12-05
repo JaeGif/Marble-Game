@@ -312,6 +312,7 @@ function BlockPortal({
     [0, 0, 0],
     [0, 0, 0],
   ],
+  scale = { x: 1, y: 1, z: 1 },
 }) {
   const portal1Position = position[0];
   const portal2Position = position[1];
@@ -503,6 +504,7 @@ function BlockBlueHealth({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
     setIsUncollected(false);
   };
   const heart = useGLTF('./models/blueheart.glb');
+  const heartClone = useMemo(() => heart.scene.clone(), []);
 
   return (
     <group position={position} rotation={rotation}>
@@ -516,7 +518,7 @@ function BlockBlueHealth({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
             colliders={'trimesh'}
             sensor
           >
-            <primitive object={heart.scene} />
+            <primitive object={heartClone} />
           </RigidBody>
         </Float>
       )}
