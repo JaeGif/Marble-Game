@@ -89,9 +89,9 @@ function BlockEnd({
   textRotation = [0, 0, 0],
   options = { textSize: 'l' },
 }) {
-  const hamburger = useGLTF('./models/hamburger.glb');
-  // hamburger shadows
-  hamburger.scene.children.forEach((mesh) => {
+  const mill = useGLTF('./models/mill.glb');
+  // mill shadows
+  mill.scene.children.forEach((mesh) => {
     mesh.castShadow = true;
   });
   const goalRef = useRef();
@@ -100,7 +100,7 @@ function BlockEnd({
   useFrame((state) => {
     if (!goalRef.current) return;
 
-    goalRef.current.rotation.y = state.clock.getElapsedTime() * 0.25;
+    goalRef.current.rotation.y = state.clock.getElapsedTime() * 0.1;
   });
   const handleCollisionEnter = () => {
     end();
@@ -129,17 +129,17 @@ function BlockEnd({
         FINISH
         <meshBasicMaterial toneMapped={false} />
       </Text>
-      <Float rotationIntensity={0.5}>
+      <Float rotationIntensity={0.5} floatIntensity={0}>
         <group ref={goalRef}>
           <RigidBody
             onCollisionEnter={handleCollisionEnter}
             type='fixed'
             colliders='hull'
-            position={[0, 0.25, 0]}
+            position={[0, 1.25, 0]}
             restitution={0.2}
             friction={0}
           >
-            <primitive object={hamburger.scene} scale={0.2} />
+            <primitive object={mill.scene} scale={1.5} />
           </RigidBody>
         </group>
       </Float>
@@ -238,10 +238,8 @@ function BlockSpeed({
   scale = { x: 1, y: 1, z: 1 },
 }) {
   // when player crosses this block they get a temporary acceleration
-  const obstacleRef = useRef();
-  useFrame((state) => {
-    const time = state.clock.getElapsedTime();
-  });
+  const arrow = useGLTF('./models/arrow.glb');
+
   // use position and players position to determine if get benefit
   const speedMultiplier = useGame((state) => state.speedBlockMultiplier);
   const playerHandle = useGame((state) => state.globalPlayerHandle);
@@ -283,6 +281,7 @@ function BlockSpeed({
       });
     }
   };
+  const arrowClone = useMemo(() => arrow.scene.clone(), []);
   return (
     <group position={position} rotation={rotation}>
       <RigidBody
@@ -299,6 +298,7 @@ function BlockSpeed({
           receiveShadow
         />
       </RigidBody>
+      <primitive object={arrowClone} scale={0.15} position={[0, 0, 0]} />
     </group>
   );
 }
@@ -312,6 +312,7 @@ function BlockPortal({
     [0, 0, 0],
     [0, 0, 0],
   ],
+  scale = { x: 1, y: 1, z: 1 },
 }) {
   const portal1Position = position[0];
   const portal2Position = position[1];
@@ -494,7 +495,6 @@ function BlockBounce({
 function BlockBlueHealth({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   const [isUncollected, setIsUncollected] = useState(true);
 
-  const healthRef = useRef();
   const adjustLives = useGame((state) => state.adjustLives);
   const adjustScore = useGame((state) => state.adjustScore);
   const handleCollisionEnter = (foreignCollider) => {
@@ -503,27 +503,24 @@ function BlockBlueHealth({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
     adjustScore(1000);
     setIsUncollected(false);
   };
+  const heart = useGLTF('./models/blueheart.glb');
+  const heartClone = useMemo(() => heart.scene.clone(), []);
 
   return (
     <group position={position} rotation={rotation}>
       {isUncollected && (
-        <RigidBody
-          type='kinematicPosition'
-          ref={healthRef}
-          onCollisionEnter={handleCollisionEnter}
-          position={[0, 0.5, 0]}
-        >
-          <MeshCollider
-            args={[2, 1, 2]}
-            //   args={[nodes.YourMesh.geometry]} // Use geometry from the GLTF model
+        <Float rotationIntensity={0.1} floatIntensity={2} speed={3}>
+          <RigidBody
+            type='fixed'
+            onIntersectionEnter={handleCollisionEnter}
+            position={[0, 1.2, 0]}
+            rotation={[0, Math.PI, 0]}
+            colliders={'trimesh'}
             sensor
           >
-            <mesh>
-              <boxGeometry args={[2, 1, 2]} />
-              <meshStandardMaterial color='blue' opacity={0.3} transparent />
-            </mesh>
-          </MeshCollider>
-        </RigidBody>
+            <primitive object={heartClone} />
+          </RigidBody>
+        </Float>
       )}
     </group>
   );

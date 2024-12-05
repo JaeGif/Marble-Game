@@ -110,23 +110,23 @@ function Level19() {
       />
       <Platform
         type={'speed'}
-        position={[0.5, -0.5, 1]}
-        rotation={[0, 0, Math.PI / 2]}
+        position={[0.45, -0.5, 1]}
+        rotation={[0, 0, -Math.PI / 2]}
       />
       <Platform
         type={'speed'}
-        position={[0.5, -0.5, 2]}
-        rotation={[0, 0, Math.PI / 2]}
+        position={[0.45, -0.5, 2]}
+        rotation={[0, 0, -Math.PI / 2]}
       />
       <Platform
         type={'speed'}
-        position={[0.5, -0.5, 3]}
-        rotation={[0, 0, Math.PI / 2]}
+        position={[0.45, -0.5, 3]}
+        rotation={[0, 0, -Math.PI / 2]}
       />
       <Platform
         type={'speed'}
-        position={[0.5, -0.5, 4]}
-        rotation={[0, 0, Math.PI / 2]}
+        position={[0.45, -0.5, 4]}
+        rotation={[0, 0, -Math.PI / 2]}
       />
       <Platform
         type={'bounce'}
