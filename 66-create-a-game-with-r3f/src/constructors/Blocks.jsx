@@ -89,9 +89,9 @@ function BlockEnd({
   textRotation = [0, 0, 0],
   options = { textSize: 'l' },
 }) {
-  const hamburger = useGLTF('./models/mill.glb');
-  // hamburger shadows
-  hamburger.scene.children.forEach((mesh) => {
+  const mill = useGLTF('./models/mill.glb');
+  // mill shadows
+  mill.scene.children.forEach((mesh) => {
     mesh.castShadow = true;
   });
   const goalRef = useRef();
@@ -139,7 +139,7 @@ function BlockEnd({
             restitution={0.2}
             friction={0}
           >
-            <primitive object={hamburger.scene} scale={1.5} />
+            <primitive object={mill.scene} scale={1.5} />
           </RigidBody>
         </group>
       </Float>
@@ -494,7 +494,6 @@ function BlockBounce({
 function BlockBlueHealth({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   const [isUncollected, setIsUncollected] = useState(true);
 
-  const healthRef = useRef();
   const adjustLives = useGame((state) => state.adjustLives);
   const adjustScore = useGame((state) => state.adjustScore);
   const handleCollisionEnter = (foreignCollider) => {
@@ -503,27 +502,23 @@ function BlockBlueHealth({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
     adjustScore(1000);
     setIsUncollected(false);
   };
+  const heart = useGLTF('./models/blueheart.glb');
 
   return (
     <group position={position} rotation={rotation}>
       {isUncollected && (
-        <RigidBody
-          type='kinematicPosition'
-          ref={healthRef}
-          onCollisionEnter={handleCollisionEnter}
-          position={[0, 0.5, 0]}
-        >
-          <MeshCollider
-            args={[2, 1, 2]}
-            //   args={[nodes.YourMesh.geometry]} // Use geometry from the GLTF model
+        <Float rotationIntensity={0.1} floatIntensity={2} speed={3}>
+          <RigidBody
+            type='fixed'
+            onIntersectionEnter={handleCollisionEnter}
+            position={[0, 1.2, 0]}
+            rotation={[0, Math.PI, 0]}
+            colliders={'trimesh'}
             sensor
           >
-            <mesh>
-              <boxGeometry args={[2, 1, 2]} />
-              <meshStandardMaterial color='blue' opacity={0.3} transparent />
-            </mesh>
-          </MeshCollider>
-        </RigidBody>
+            <primitive object={heart.scene} />
+          </RigidBody>
+        </Float>
       )}
     </group>
   );
