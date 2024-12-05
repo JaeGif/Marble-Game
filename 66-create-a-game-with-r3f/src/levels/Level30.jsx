@@ -68,6 +68,12 @@ function Level30() {
           [0, 1.5, 6.15],
         ]}
         options={{ floor: 'floor', endGatePosition: [0, 0.5, 6.75] }}
+      />{' '}
+      <Platform
+        type={'floor'}
+        position={[0, 0.75, 9.5]}
+        rotation={[0, Math.PI / 2, Math.PI / 2]}
+        scale={{ x: 0.5, y: 1, z: 1 }}
       />
       <Platform type={'floor'} position={[0, -0.2, 8]} />
       <Platform type={'blueHealth'} position={[0, 1, 9]} />
@@ -77,23 +83,14 @@ function Level30() {
         position={[1, 1, 9]}
         options={{ floor: 'none' }}
       />
-      <Platform type={'speed'} position={[2, 1, 9]} />
-      <Platform type={'spinner'} position={[3, 1, 9]} />
       <Platform type={'floor'} position={[4, 2, 9]} />
       <Platform type={'axe'} position={[4, 2, 8]} />
-
       <Platform
-        type={'spinner'}
-        position={[3, 1, 9]}
-        options={{ floor: 'none' }}
+        type={'speed'}
+        position={[4, 2, 7]}
+        rotation={[0, Math.PI, 0]}
       />
-      <Platform
-        type={'floor'}
-        position={[0, 0.75, 9.5]}
-        rotation={[0, Math.PI / 2, Math.PI / 2]}
-        scale={{ x: 0.5, y: 1, z: 1 }}
-      />
-
+      <Platform type={'floor'} position={[3, 1, 9]} />
       <Platform type={'end'} position={[0, -0.2, 10]} />
     </>
   );

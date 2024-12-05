@@ -238,10 +238,8 @@ function BlockSpeed({
   scale = { x: 1, y: 1, z: 1 },
 }) {
   // when player crosses this block they get a temporary acceleration
-  const obstacleRef = useRef();
-  useFrame((state) => {
-    const time = state.clock.getElapsedTime();
-  });
+  const arrow = useGLTF('./models/arrow.glb');
+
   // use position and players position to determine if get benefit
   const speedMultiplier = useGame((state) => state.speedBlockMultiplier);
   const playerHandle = useGame((state) => state.globalPlayerHandle);
@@ -283,6 +281,7 @@ function BlockSpeed({
       });
     }
   };
+  const arrowClone = useMemo(() => arrow.scene.clone(), []);
   return (
     <group position={position} rotation={rotation}>
       <RigidBody
@@ -299,6 +298,7 @@ function BlockSpeed({
           receiveShadow
         />
       </RigidBody>
+      <primitive object={arrowClone} scale={0.15} position={[0, 0, 0]} />
     </group>
   );
 }
