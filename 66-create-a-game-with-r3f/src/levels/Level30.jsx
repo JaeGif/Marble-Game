@@ -55,7 +55,7 @@ function Level30() {
         type={'switch'}
         scale={{ x: 1, y: 3, z: 1 }}
         position={[
-          [-2, 1, 3],
+          [3, 1.15, 9],
           [0, 1.5, 6],
         ]}
         options={{ floor: 'floor', endGatePosition: [0, 0.7, 6.45] }}
@@ -90,7 +90,23 @@ function Level30() {
         position={[4, 2, 7]}
         rotation={[0, Math.PI, 0]}
       />
-      <Platform type={'floor'} position={[3, 1, 9]} />
+      <Platform
+        type={'speed'}
+        position={[4, 2, 6]}
+        rotation={[0, Math.PI, 0]}
+      />
+      <Platform type={'axe'} position={[4, 2, 5]} />
+      <Platform type={'floor'} position={[4, 2, 4]} />
+      <Platform
+        type={'speed'}
+        position={[4, 2, 3]}
+        rotation={[0, -Math.PI / 2, 0]}
+      />
+      <Platform
+        type={'passThrough'}
+        position={[0.5, 2, 3]}
+        scale={{ x: 6, y: 0.5, z: 0.5 }}
+      />
       <Platform type={'end'} position={[0, -0.2, 10]} />
     </>
   );
