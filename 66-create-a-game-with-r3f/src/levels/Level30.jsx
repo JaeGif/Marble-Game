@@ -64,11 +64,45 @@ function Level30() {
         type={'switch'}
         scale={{ x: 1, y: 3, z: 1 }}
         position={[
-          [-1, 1, 3],
+          [0, 0.15, 0],
           [0, 1.5, 6.15],
         ]}
+        rotation={[
+          [Math.PI, 0, 0],
+          [0, 0, 0],
+        ]}
         options={{ floor: 'floor', endGatePosition: [0, 0.5, 6.75] }}
-      />{' '}
+      />
+      <Platform type={'flipGravity'} position={[-2, 0, 2]} />
+      <Platform
+        type={'speed'}
+        position={[-2, -1, 2]}
+        rotation={[Math.PI, 0, 0]}
+      />
+      <Platform type={'floor'} position={[-2, -1, 1]} />
+      <Platform type={'floor'} position={[-2, -1, 0]} />
+      <Platform
+        type={'speed'}
+        position={[-2, -0.5, -0.5]}
+        rotation={[-Math.PI / 2, 0, 0]}
+      />
+      <Platform
+        type={'speed'}
+        position={[-2, 0.5, -0.5]}
+        rotation={[-Math.PI / 2, 0, 0]}
+      />
+      <Platform
+        type={'axe'}
+        position={[-2, 0.5, 0]}
+        rotation={[Math.PI / 2, 0, 0]}
+        options={{ floor: 'none' }}
+        scale={{ x: 3, y: 1.5, z: 1 }}
+      />
+      <Platform
+        type={'flipGravity'}
+        position={[-2, 1, 0]}
+        options={{ floor: 'none' }}
+      />
       <Platform
         type={'floor'}
         position={[0, 0.75, 9.5]}
