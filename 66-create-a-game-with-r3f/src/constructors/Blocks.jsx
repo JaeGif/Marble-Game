@@ -856,12 +856,6 @@ function BlockSwitch({
     setIsPressed(true);
   };
 
-  const gateMotion = (animationTime, gateYDirection) => {
-    if (animationTime <= 2) {
-      // move gate in gateYDirection
-      // needs to return a linear
-    }
-  };
   const gateOpen = (animationTime, delta) => {
     animationTime.current = Math.min(
       animationTime.current + delta / animationDuration,
@@ -882,21 +876,20 @@ function BlockSwitch({
   };
   const switchDirections = (animationTime, newPosition) => {
     // If switch is toggled again, gate will go the other way
-    if (animationTime.current === 1) {
-      // finally reset the gate Direction
-      endPosition.current = [
-        startPosition.current[0] / UNIT_CONSTANT,
-        startPosition.current[1] / UNIT_CONSTANT,
-        startPosition.current[2] / UNIT_CONSTANT,
-      ];
-      startPosition.current = newPosition;
+    setIsPressed(false);
 
-      switchEndPosition.current = switchStartPosition.current;
-      switchStartPosition.current = newPosition;
+    // finally reset the gate Direction
+    endPosition.current = [
+      startPosition.current[0] / UNIT_CONSTANT,
+      startPosition.current[1] / UNIT_CONSTANT,
+      startPosition.current[2] / UNIT_CONSTANT,
+    ];
+    startPosition.current = newPosition;
 
-      animationTime.current = 0;
-      setIsPressed(false);
-    }
+    switchEndPosition.current = switchStartPosition.current;
+    switchStartPosition.current = newPosition;
+
+    animationTime.current = 0;
   };
   const switchDown = (animationTime, delta) => {
     animationTime.current = Math.min(
@@ -920,21 +913,37 @@ function BlockSwitch({
   const animationDuration = 2;
   const startPosition = useRef(gatePosition);
   const endPosition = useRef(options.endGatePosition);
-  const switchStartPosition = useRef([
-    switchPosition[0],
-    switchPosition[1],
-    switchPosition[2],
-  ]);
+  const switchStartPosition = useRef(switchPosition);
+  let switcheroo = -SWITCH_OFFSET * 4;
+  if (
+    rotation &&
+    (Math.round(switchRotation[0]) || Math.round(switchRotation[2])) ===
+      Math.round(Math.PI)
+  ) {
+    switcheroo = SWITCH_OFFSET * 4;
+  }
+
   const switchEndPosition = useRef([
     switchPosition[0],
-    switchPosition[1] - SWITCH_OFFSET * 4,
+    switchPosition[1] + switcheroo,
     switchPosition[2],
   ]);
+  let newGatePosition = useRef();
+  let newSwitchPosition = useRef();
+
   useFrame((state, delta) => {
     if (isPressed && switchRef.current && gateRef.current) {
-      const newGatePosition = gateOpen(animationTime, delta);
-      const newSwitchPosition = switchDown(animationTime, delta);
-      switchDirections(animationTime, newGatePosition, newSwitchPosition);
+      if (animationTime.current !== 1) {
+        newGatePosition.current = gateOpen(animationTime, delta);
+        newSwitchPosition.current = switchDown(animationTime, delta);
+        console.log(newGatePosition);
+      } else {
+        switchDirections(
+          animationTime,
+          newGatePosition.current,
+          newSwitchPosition.current
+        );
+      }
     }
   });
 
