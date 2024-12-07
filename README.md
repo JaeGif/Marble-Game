@@ -1,24 +1,25 @@
 ### Marble Run
 
+LvL 30 is now live!
 
-This is a racing game where you dodge obstacles to make it to the end of the level.
+# In progress
 
-
- # In progress
 - Adding diverse and interesting obstacles and player interactions
 - Scoring system API
-- Levels 11 - 50
+- Levels 31 - 50
 - Level Builder/Editor
 
-# Longer term  
+# Longer term
+
 - Assets update to make it pretty :)
 - Real-Time race with other people (Gorilla sockets)
 
 ## Setup
+
 Download [Node.js](https://nodejs.org/en/download/).
 Run these following commands:
 
-``` bash
+```bash
 # Install dependencies (only the first time)
 npm install
 
