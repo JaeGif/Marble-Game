@@ -4,6 +4,7 @@ import uniqid from 'uniqid';
 import useGame from '../stores/useGame';
 function LevelSelection({ renderHome, renderGame }) {
   const setLevel = useGame((state) => state.setLevel);
+  const mode = useGame((state) => state.mode);
   const handleLevelSelection = (key) => {
     setLevel(parseInt(key));
     renderGame();
@@ -12,9 +13,12 @@ function LevelSelection({ renderHome, renderGame }) {
   return (
     <div className='select-page-container'>
       <span className='level-select-title-container'>
-        <h1 className='home-button' onClick={renderHome}>
-          Home
-        </h1>
+        <span className='home-panel'>
+          <h1 className='home-button' onClick={renderHome}>
+            Home
+          </h1>
+          <h1>Mode: {mode}</h1>
+        </span>
         <h1>Level Select</h1>
       </span>
       <div className='level-select-page'>

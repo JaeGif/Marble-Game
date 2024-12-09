@@ -179,7 +179,52 @@ body,
 .home-button:hover {
   color: red;
 }
+.home-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Bebas Neue', cursive;
+}
+.home-page > h1 {
+  font-size: 52px;
+}
+.home-page > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.mode-select-container {
+  display: flex;
+  gap: 32px;
+}
+.mode-select-box {
+  font-size: x-large;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.home-panel {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
 .mode-select-title:hover {
   cursor: pointer;
   color: lightcoral;
+}
+.hover-blue:hover {
+  color: lightblue;
+  cursor: pointer;
+}
+.level-select,
+.play {
+  font-size: 46px;
+}
+footer {
+  display: flex;
+  position: fixed;
+  bottom: 4px;
 }
