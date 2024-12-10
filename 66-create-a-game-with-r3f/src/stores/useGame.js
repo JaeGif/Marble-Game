@@ -9,7 +9,7 @@ export default create(
       obstacleCount: 8,
       movementMode: 'normal', // normal | original
       jumps: 1,
-      level: 20,
+      level: 1,
       // casual | hardcore
       mode: 'casual',
       lives: [true, true, true],
@@ -23,6 +23,16 @@ export default create(
       phase: 'ready',
       startTime: 0,
       endTime: 0,
+      setLevel: (newLevel) => {
+        set((state) => {
+          return { level: newLevel };
+        });
+      },
+      setMode: (mode) => {
+        set((state) => {
+          return { mode: mode };
+        });
+      },
       setEnablePlayerControls: (bool) => {
         set((state) => {
           return { enablePlayerControls: bool };

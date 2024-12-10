@@ -4,7 +4,6 @@ import useGame from './stores/useGame.js';
 
 export default function Experience() {
   const level = useGame((state) => state.level);
-
   return (
     <>
       <Physics>

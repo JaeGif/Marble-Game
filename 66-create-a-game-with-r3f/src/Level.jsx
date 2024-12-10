@@ -31,40 +31,41 @@ import Level28 from './levels/Level28';
 import Level29 from './levels/Level29';
 import Level30 from './levels/Level30';
 
+export const levelMap = {
+  1: { level: Level1, title: 'The Beginning', thumbnail: '' },
+  2: { level: Level2, title: 'Easy Does It', thumbnail: '' },
+  3: { level: Level3, title: 'Man This Game Is Easy', thumbnail: '' },
+  4: { level: Level4, title: 'WHEEEE!!!', thumbnail: '' },
+  5: { level: Level5, title: 'Mind The Gap', thumbnail: '' },
+  6: { level: Level6, title: 'Second Dimension', thumbnail: '' },
+  7: { level: Level7, title: 'Sudden Drop', thumbnail: '' },
+  8: { level: Level8, title: 'Portals', thumbnail: '' },
+  9: { level: Level9, title: 'Carefully Now', thumbnail: '' },
+  10: { level: Level10, title: 'Boiinnngg', thumbnail: '' },
+  11: { level: Level11, title: 'Full Speed Ahead', thumbnail: '' },
+  12: { level: Level12, title: 'Sidescroller', thumbnail: '' },
+  13: { level: Level13, title: 'Chaos', thumbnail: '' },
+  14: { level: Level14, title: 'All Eyes On You', thumbnail: '' },
+  15: { level: Level15, title: 'Not So Straightforward', thumbnail: '' },
+  16: { level: Level16, title: 'Soul Searching', thumbnail: '' },
+  17: { level: Level17, title: 'Gottem', thumbnail: '' },
+  18: { level: Level18, title: 'Familiar Feeling', thumbnail: '' },
+  19: { level: Level19, title: '2D Platforming', thumbnail: '' },
+  20: { level: Level20, title: 'Reprieve', thumbnail: '' },
+  21: { level: Level21, title: 'Third Dimension', thumbnail: '' },
+  22: { level: Level22, title: 'Floating', thumbnail: '' },
+  23: { level: Level23, title: 'Risk It For The Biscuit', thumbnail: '' },
+  24: { level: Level24, title: 'Push And Pull', thumbnail: '' },
+  25: { level: Level25, title: 'Directional Commitment', thumbnail: '' },
+  26: { level: Level26, title: 'Directionally Challenged', thumbnail: '' },
+  27: { level: Level27, title: 'Backtrack', thumbnail: '' },
+  28: { level: Level28, title: 'Switch Up', thumbnail: '' },
+  29: { level: Level29, title: 'Again and Again', thumbnail: '' },
+  30: { level: Level30, title: 'One Chance', thumbnail: '' },
+};
+
 function Level({ level = 1 }) {
-  const levelMap = {
-    1: Level1,
-    2: Level2,
-    3: Level3,
-    4: Level4,
-    5: Level5,
-    6: Level6,
-    7: Level7,
-    8: Level8,
-    9: Level9,
-    10: Level10,
-    11: Level11,
-    12: Level12,
-    13: Level13,
-    14: Level14,
-    15: Level15,
-    16: Level16,
-    17: Level17,
-    18: Level18,
-    19: Level19,
-    20: Level20,
-    21: Level21,
-    22: Level22,
-    23: Level23,
-    24: Level24,
-    25: Level25,
-    26: Level26,
-    27: Level27,
-    28: Level28,
-    29: Level29,
-    30: Level30,
-  };
-  const CurrentStage = levelMap[level];
+  const CurrentStage = levelMap[level].level;
   return (
     <>
       <CurrentStage />

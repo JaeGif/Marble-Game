@@ -4,6 +4,7 @@ import useGame from './stores/useGame';
 import { addEffect } from '@react-three/fiber';
 import uniqid from 'uniqid';
 import Api from './classes/Api';
+import { levelMap } from './Level';
 
 const API_STRING = import.meta.env.VITE_API_STRING;
 
@@ -168,6 +169,7 @@ function Interface() {
       </div>
       <div className='level'>
         <p>Stage {level}</p>
+        <p className='title'>{levelMap[level].title}</p>
       </div>
     </div>
   );
