@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import useGame from '../stores/useGame';
 
-function Home({ renderGame, renderLevelSelection }) {
+function Home({ renderGame, renderLevelSelection, renderHighscores }) {
   const setMode = useGame((state) => state.setMode);
   const mode = useGame((state) => state.mode);
 
@@ -57,6 +57,9 @@ function Home({ renderGame, renderLevelSelection }) {
         </span>
         <h2 className='hover-blue level-select' onClick={renderLevelSelection}>
           Level Select
+        </h2>
+        <h2 onClick={renderHighscores} className='hover-blue'>
+          Highscores
         </h2>
       </div>
       <footer>

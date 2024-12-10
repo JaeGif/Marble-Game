@@ -223,6 +223,20 @@ body,
 .play {
   font-size: 46px;
 }
+
+.scores-container {
+  font-family: 'Bebas Neue', cursive;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: x-large;
+}
+.score-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
 footer {
   display: flex;
   position: fixed;

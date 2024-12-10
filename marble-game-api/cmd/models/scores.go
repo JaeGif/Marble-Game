@@ -7,6 +7,7 @@ import "time"
 type Score struct {
 	Id        int       `json:"id"`
 	Score     int       `json:"score"`
+	FinalTime int       `json:"final_time"`
 	UserName  string    `json:"user_name"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`

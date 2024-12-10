@@ -32,7 +32,7 @@ func GetScores(c echo.Context) error {
 	for rows.Next() {
 		// need to go across pgsqls result and assign the results to a slice
 		var score models.Score
-		if err := rows.Scan(&score.Id, &score.Score, &score.UserName, &score.CreatedAt, &score.UpdatedAt); err != nil {
+		if err := rows.Scan(&score.Id, &score.UserName, &score.FinalTime, &score.CreatedAt, &score.UpdatedAt, &score.Score); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 		scores = append(scores, score)
@@ -49,8 +49,11 @@ func CreateScore(c echo.Context) error {
 	newScore, err := repositories.CreateScore(score)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
-
+		if err.Error() == "invalid" {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		} else {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
 	}
 
 	return c.JSON(http.StatusCreated, newScore)
@@ -75,4 +78,12 @@ func UpdateScore(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, updatedScore)
 
+}
+
+func TruncateTableScores(c echo.Context) error {
+	result, err := repositories.TruncateTableScores()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, result)
 }
