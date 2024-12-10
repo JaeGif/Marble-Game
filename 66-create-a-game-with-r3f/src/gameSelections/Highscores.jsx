@@ -1,4 +1,6 @@
 import React from 'react';
+import Api from '../classes/Api';
+const API_STRING = import.meta.env.VITE_API_STRING;
 
 function Highscores({ renderHome }) {
   return (

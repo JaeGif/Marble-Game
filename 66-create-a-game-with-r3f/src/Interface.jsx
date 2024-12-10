@@ -20,6 +20,7 @@ function Interface() {
   const lives = useGame((state) => state.lives);
   const maxLives = useGame((state) => state.maxLives);
   const score = useGame((state) => state.score);
+  const final_time = useGame((state) => state.finalTime);
   const mode = useGame((state) => state.mode);
 
   const forward = useKeyboardControls((state) => state.forward);
@@ -139,6 +140,7 @@ function Interface() {
                     {
                       user_name: username,
                       score: score,
+                      final_time: final_time,
                     }
                   );
 
