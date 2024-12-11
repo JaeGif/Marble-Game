@@ -18,7 +18,7 @@ func GetScores(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Database connection failed")
 	}
 
-	psqlStatement := `SELECT * FROM scores LIMIT 10`
+	psqlStatement := `SELECT * FROM scores ORDER BY score ASC LIMIT 10`
 
 	rows, err := db.Query(psqlStatement)
 

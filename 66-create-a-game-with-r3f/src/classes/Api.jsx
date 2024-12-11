@@ -41,21 +41,22 @@ export default class Api {
   };
 
   get = async (path, headers, options) => {
+    console.log('getting');
     this.isLoading = true;
     this.isSuccess = false;
 
     try {
       const res = await fetch(`${this.url}${path}`, {
         method: 'GET',
-        body: JSON.stringify(jsonData),
         headers: {
           'Content-Type': 'application/json',
           ...headers,
         },
         ...options,
       });
-
       const resData = await res.json();
+      console.log(resData);
+
       this.data = resData;
     } catch (err) {
       this.err = err;

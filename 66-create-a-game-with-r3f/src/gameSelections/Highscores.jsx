@@ -1,8 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Api from '../classes/Api';
+import { timeConverter } from '../functions/timeConverter';
 const API_STRING = import.meta.env.VITE_API_STRING;
 
 function Highscores({ renderHome }) {
+  const get = new Api(API_STRING).get;
+  const [highscores, setHighscores] = useState(); // [data]
+  useEffect(() => {
+    if (highscores) return;
+    getTopScores();
+  }, [highscores]);
+  const getTopScores = async () => {
+    const { data, isLoading, isSuccess, err } = await get('/scores');
+    if (err) console.error(err);
+    if (isSuccess) setHighscores(data);
+  };
+
   return (
     <div className='select-page-container'>
       <span className='level-select-title-container'>
@@ -17,13 +30,17 @@ function Highscores({ renderHome }) {
         <span className='score-row'>
           <p>Player</p>
           <p>Score</p>
-          <p>Time</p>
+          <p>Time [hh:mm:ss]</p>
+          <p>Date</p>
         </span>
-        <span className='score-row'>
-          <p>spartacus jneiwjtth</p>
-          <p>31498711089568970</p>
-          <p>00:00:00:00:00:</p>
-        </span>
+        {highscores.map((score) => (
+          <span className='score-row'>
+            <p>{score.user_name}</p>
+            <p>{score.score}</p>
+            <p>{timeConverter.millisecondsToSeconds(score.final_time)}</p>
+            <p>{timeConverter.isoToStandard(score.created_at)}</p>
+          </span>
+        ))}
       </div>
     </div>
   );
