@@ -15,11 +15,11 @@ func CreateScore(Score models.Score) (models.Score, error) {
 	var current_time = time.Now()
 
 	// add safeguard for the score typing
-	if Score.Id == 0 || reflect.TypeOf(Score.FinalTime).Kind() != reflect.Int {
+	if reflect.TypeOf(Score.FinalTime).Kind() != reflect.Int {
 		return Score, fmt.Errorf("invalid input")
 	}
-	sqlStatement := `INSERT INTO scores (id, score, user_name, created_at, updated_at, final_time) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`
-	err := db.QueryRow(sqlStatement, Score.Id, Score.Score, Score.UserName, current_time, current_time, Score.FinalTime).Scan(&Score.Id)
+	sqlStatement := `INSERT INTO scores (score, user_name, created_at, updated_at, final_time) VALUES ($1, $2, $3, $4, $5) RETURNING id`
+	err := db.QueryRow(sqlStatement, Score.Score, Score.UserName, current_time, current_time, Score.FinalTime).Scan(&Score.Id)
 	if err != nil {
 		return Score, err
 	}
@@ -45,6 +45,20 @@ func UpdateScore(Score models.Score, id int) (models.Score, error) {
 func TruncateTableScores() (sql.Result, error) {
 	db := storage.GetDB()
 	sqlStatement := `TRUNCATE TABLE scores`
+
+	result, err := db.Exec(sqlStatement)
+
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(result)
+
+	return result, nil
+
+}
+func DropTableScores() (sql.Result, error) {
+	db := storage.GetDB()
+	sqlStatement := `DROP TABLE scores`
 
 	result, err := db.Exec(sqlStatement)
 

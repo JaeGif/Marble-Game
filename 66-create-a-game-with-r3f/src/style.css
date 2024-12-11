@@ -231,12 +231,14 @@ body,
   justify-content: center;
   align-items: center;
   font-size: x-large;
+  overflow-y: scroll;
 }
 .score-row {
   width: 100%;
   display: flex;
   justify-content: space-around;
 }
+
 footer {
   display: flex;
   position: fixed;

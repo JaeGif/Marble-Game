@@ -138,6 +138,7 @@ function Interface() {
                   const { data, isLoading, isSuccess, err } = await post(
                     '/scores',
                     {
+                      id: uniqid(`${username}_`),
                       user_name: username,
                       score: score,
                       final_time: final_time,

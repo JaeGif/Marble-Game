@@ -30,17 +30,18 @@ function Highscores({ renderHome }) {
         <span className='score-row'>
           <p>Player</p>
           <p>Score</p>
-          <p>Time [hh:mm:ss]</p>
+          <p>Time [h:m:s:ms]</p>
           <p>Date</p>
         </span>
-        {highscores.map((score) => (
-          <span className='score-row'>
-            <p>{score.user_name}</p>
-            <p>{score.score}</p>
-            <p>{timeConverter.millisecondsToSeconds(score.final_time)}</p>
-            <p>{timeConverter.isoToStandard(score.created_at)}</p>
-          </span>
-        ))}
+        {highscores &&
+          highscores.map((score) => (
+            <span className='score-row'>
+              <p>{score.user_name}</p>
+              <p>{score.score}</p>
+              <p>{timeConverter.millisecondsToSeconds(score.final_time)}</p>
+              <p>{timeConverter.isoToStandard(score.created_at)}</p>
+            </span>
+          ))}
       </div>
     </div>
   );

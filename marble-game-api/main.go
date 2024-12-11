@@ -23,8 +23,8 @@ func main() {
 	// starting routes
 	e.POST("/scores", handlers.CreateScore)
 	e.GET("/scores", handlers.GetScores)
-	e.DELETE("/scores", handlers.TruncateTableScores)
-
+	e.DELETE("/scores_trunc_auth", handlers.TruncateTableScores)
+	e.DELETE("/scores_drop_auth", handlers.DropTableScores)
 	e.Use(handlers.LogRequest)
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{AllowOrigins: []string{"http://localhost:5173"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
