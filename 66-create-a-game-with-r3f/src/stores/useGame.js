@@ -133,7 +133,7 @@ export default create(
             return {
               phase: 'ready',
               level: 1,
-              lives: state.mode === 'hardcore' ? [true] : [true, true, true],
+              lives: [true, true, true],
             };
           }
           return {};
