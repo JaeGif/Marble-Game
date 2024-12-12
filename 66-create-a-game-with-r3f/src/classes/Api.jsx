@@ -17,6 +17,7 @@ export default class Api {
       const res = await fetch(`${this.url}${path}`, {
         method: 'POST',
         body: JSON.stringify(jsonData),
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
           ...headers,
@@ -48,6 +49,7 @@ export default class Api {
     try {
       const res = await fetch(`${this.url}${path}`, {
         method: 'GET',
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
           ...headers,
@@ -80,6 +82,7 @@ export default class Api {
       const res = await fetch(`${this.url}${path}`, {
         method: 'PUT',
         body: JSON.stringify(jsonData),
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
           ...headers,
@@ -110,6 +113,7 @@ export default class Api {
     try {
       const res = await fetch(`${this.url}${path}`, {
         method: 'DELETE',
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
           ...headers,
