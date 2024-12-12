@@ -26,7 +26,7 @@ func main() {
 	e.DELETE("/scores_trunc_auth", handlers.TruncateTableScores)
 	e.DELETE("/scores_drop_auth", handlers.DropTableScores)
 	e.Use(handlers.LogRequest)
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{AllowOrigins: []string{"http://localhost:5173, https://marble-6om5yd58y-jaegifs-projects.vercel.app, https://marble-run-blond.vercel.app"},
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 	// start server or log fatal
