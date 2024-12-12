@@ -19,12 +19,12 @@ func InitDB() {
 		log.Fatal("Error loading .env file")
 	}
 
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-	dbUser := os.Getenv("DB_USER")
-	dbPass := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
-	dbExt := os.Getenv("DB_EXT")
+	dbHost := os.Getenv("RAILWAY_DB_HOST")
+	dbPort := os.Getenv("RAILWAY_DB_PORT")
+	dbUser := os.Getenv("RAILWAY_DB_USER")
+	dbPass := os.Getenv("RAILWAY_DB_PASSWORD")
+	dbName := os.Getenv("RAILWAY_DB_NAME")
+	dbExt := os.Getenv("RAILWAY_DB_EXT")
 
 	var dbString = fmt.Sprintf("%s://%s:%s@%s:%s/%s", dbName, dbUser, dbPass, dbHost, dbPort, dbExt)
 
