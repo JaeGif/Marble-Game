@@ -4,4 +4,6 @@ CREATE TABLE scores {
     user_name STRING NOT NULL,
     created_at DATE NOT NULL
     updated_at DATE NOT NULL
+    final_time INTEGER NOT NULL,
+
 }

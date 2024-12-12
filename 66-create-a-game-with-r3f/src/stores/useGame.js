@@ -23,6 +23,7 @@ export default create(
       phase: 'ready',
       startTime: 0,
       endTime: 0,
+      finalTime: 0,
       setLevel: (newLevel) => {
         set((state) => {
           return { level: newLevel };
@@ -98,6 +99,7 @@ export default create(
             return {
               phase: 'complete',
               endTime: endTime,
+              finalTime: endTime - state.startTime,
               score:
                 state.score +
                 calculateScore(state.startTime, endTime, state.level),
