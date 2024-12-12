@@ -16,7 +16,7 @@ var db *sql.DB
 func InitDB() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Print("No env")
 	}
 
 	dbHost := os.Getenv("RAILWAY_DB_HOST")
