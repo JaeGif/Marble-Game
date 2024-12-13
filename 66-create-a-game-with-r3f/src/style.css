@@ -63,9 +63,10 @@ body,
 .restart :first-child:hover {
   color: gold;
 }
-.restart :last-child:hover {
+.restart > p:hover {
   color: red;
 }
+
 .submit-highscore {
   display: flex;
   justify-content: center;
