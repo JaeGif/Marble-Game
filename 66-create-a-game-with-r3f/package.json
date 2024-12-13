@@ -20,6 +20,7 @@
     "r3f-perf": "^7.2.1",
     "react": "18.3",
     "react-dom": "18.3",
+    "react-loading-icons": "^1.1.0",
     "three": "^0.166.1",
     "uniqid": "^5.4.0",
     "zustand": "4.5"
