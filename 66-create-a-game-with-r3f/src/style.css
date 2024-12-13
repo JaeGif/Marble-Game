@@ -74,6 +74,8 @@ body,
   gap: 5px;
 }
 .submit-highscore > input {
+  font-family: 'Bebas Neue', cursive;
+
   height: 50px;
   width: 300px;
   text-align: center;
@@ -89,6 +91,8 @@ body,
   cursor: pointer;
 }
 .submit-highscore > button {
+  font-family: 'Bebas Neue', cursive;
+
   height: 40px;
   width: 300px;
   border-radius: 8px;

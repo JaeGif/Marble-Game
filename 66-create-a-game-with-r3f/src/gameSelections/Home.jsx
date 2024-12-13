@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useGame from '../stores/useGame';
 
 function Home({ renderGame, renderLevelSelection, renderHighscores }) {
   const setMode = useGame((state) => state.setMode);
   const mode = useGame((state) => state.mode);
-
   const [selectedMode, setSelectedMode] = useState(
     mode === 'casual' ? 'Casual' : mode === 'hardcore' && 'Hardcore'
   );
-
+  const phase = useGame((state) => state.phase);
+  const startGameFresh = useGame((state) => state.startGameFresh);
+  const startOver = useGame((state) => state.startOver);
   const handleModeSet = (e) => {
     // set mode to hardcore or casual
     setSelectedMode(e.target.textContent);
@@ -18,15 +19,25 @@ function Home({ renderGame, renderLevelSelection, renderHighscores }) {
       setMode('hardcore');
     }
   };
-  const style = {
-    color: 'blue',
-  };
+
+  useEffect(() => {
+    if (phase !== 'ready') {
+      startOver();
+      console.log('starting over');
+    }
+  }, [phase]);
+
   return (
     <div className='home-page'>
       <h1>Marble Run</h1>
 
       <div>
-        <h2 className='hover-blue play' onClick={renderGame}>
+        <h2
+          className='hover-blue play'
+          onClick={() => {
+            renderGame();
+          }}
+        >
           Play
         </h2>
         <span className='mode-select-container'>

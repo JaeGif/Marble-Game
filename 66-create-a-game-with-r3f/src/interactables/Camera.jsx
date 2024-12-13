@@ -24,7 +24,7 @@ function Camera({ debug = false, modality = 'locked' }) {
   const setMovementMode = useGame((state) => state.setMovementMode);
 
   const gravityDirection = useGame((state) => state.gravityDirection);
-
+  const globalPlayerHandle = useGame((state) => state.globalPlayerHandle);
   const [smoothedCameraPosition] = useState(() => {
     if (modality === 'locked') return new THREE.Vector3(10, 10, 10);
     else if (modality === 'birdseye') return new THREE.Vector3(0, 0, 0);
@@ -52,7 +52,11 @@ function Camera({ debug = false, modality = 'locked' }) {
   useFrame((state, delta) => {
     const { cameraLeft, cameraRight, cameraUp, cameraDown, cameraCenter } =
       getKeys();
-    if (!playerBody) return;
+    if (!playerBody) {
+      if (globalPlayerHandle) {
+        setPlayerBody(world.getRigidBody(globalPlayerHandle));
+      }
+    }
     const bodyPosition = playerBody.translation();
     cameraLogicTree(
       debug,

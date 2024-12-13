@@ -64,6 +64,7 @@ function Player({ textures, parentPosition, position }) {
     const unsubscribeReset = useGame.subscribe(
       (state) => state.phase,
       (phase) => {
+        console.log('phase change', phase);
         if (phase === 'ready') {
           reset();
         }

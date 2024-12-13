@@ -127,6 +127,22 @@ export default create(
           return {};
         });
       },
+      startGameFresh: () => {
+        set((state) => {
+          if (
+            state.phase !== 'ready' ||
+            state.level !== 1 ||
+            state.lives.length !== 3
+          ) {
+            return {
+              phase: 'ready',
+              level: 1,
+              lives: [true, true, true],
+            };
+          }
+          return {};
+        });
+      },
       startOver: () => {
         set((state) => {
           if (state.phase === 'gameOver') {

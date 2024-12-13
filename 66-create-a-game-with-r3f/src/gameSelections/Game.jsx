@@ -4,7 +4,7 @@ import Experience from '../Experience.jsx';
 import { KeyboardControls } from '@react-three/drei';
 import Interface from '../Interface.jsx';
 
-function Game() {
+function Game({ renderHome }) {
   return (
     <KeyboardControls
       map={[
@@ -24,7 +24,7 @@ function Game() {
       <Canvas shadows>
         <Experience />
       </Canvas>
-      <Interface />
+      <Interface renderHome={renderHome} />
     </KeyboardControls>
   );
 }

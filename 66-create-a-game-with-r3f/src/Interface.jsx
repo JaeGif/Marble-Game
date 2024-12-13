@@ -8,7 +8,7 @@ import { levelMap } from './Level';
 
 const API_STRING = import.meta.env.VITE_API_STRING;
 
-function Interface() {
+function Interface({ renderHome }) {
   const [subscribeKeys] = useKeyboardControls();
 
   const timeRef = useRef();
@@ -22,6 +22,7 @@ function Interface() {
   const score = useGame((state) => state.score);
   const final_time = useGame((state) => state.finalTime);
   const mode = useGame((state) => state.mode);
+  const startGameFresh = useGame((state) => state.startGameFresh);
 
   const forward = useKeyboardControls((state) => state.forward);
   const backward = useKeyboardControls((state) => state.backward);
@@ -122,6 +123,13 @@ function Interface() {
             <>
               <p onClick={() => setFormAvailable(true)}>Record Highscore</p>
               <p onClick={startOver}>Restart</p>
+              <p
+                onClick={() => {
+                  renderHome();
+                }}
+              >
+                Home
+              </p>
             </>
           ) : (
             <form className='submit-highscore'>
@@ -138,7 +146,6 @@ function Interface() {
                   const { data, isLoading, isSuccess, err } = await post(
                     '/scores',
                     {
-                      id: uniqid(`${username}_`),
                       user_name: username,
                       score: score,
                       final_time: final_time,
@@ -146,11 +153,14 @@ function Interface() {
                   );
 
                   if (err) console.log(err);
-                  if (isSuccess) startOver();
+                  if (isSuccess) {
+                    setFormAvailable(false);
+                    startGameFresh();
+                  }
                 }}
                 type='button'
               >
-                Submit Score
+                Submit & Restart
               </button>
             </form>
           )}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Api from '../classes/Api';
 import { timeConverter } from '../functions/timeConverter';
+import { SpinningCircles } from 'react-loading-icons';
 const API_STRING = import.meta.env.VITE_API_STRING;
 
 function Highscores({ renderHome }) {
@@ -33,7 +34,7 @@ function Highscores({ renderHome }) {
           <p>Time [h:m:s:ms]</p>
           <p>Date</p>
         </span>
-        {highscores &&
+        {highscores ? (
           highscores.map((score) => (
             <span className='score-row'>
               <p>{score.user_name}</p>
@@ -41,7 +42,10 @@ function Highscores({ renderHome }) {
               <p>{timeConverter.millisecondsToSeconds(score.final_time)}</p>
               <p>{timeConverter.isoToStandard(score.created_at)}</p>
             </span>
-          ))}
+          ))
+        ) : (
+          <SpinningCircles />
+        )}
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ function App() {
   // Handles rendering of different pages, no router necessary
 
   const renderGame = () => {
-    setCurrentPage(<Game />);
+    setCurrentPage(<Game renderHome={renderHome} />);
   };
   const renderLevelSelection = () => {
     setCurrentPage(
