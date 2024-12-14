@@ -2,7 +2,7 @@ import react from '@vitejs/plugin-react';
 import { transformWithEsbuild } from 'vite';
 import restart from 'vite-plugin-restart';
 import dotenv from 'dotenv';
-
+import glsl from 'vite-plugin-glsl';
 // Manually load the `.env` file
 dotenv.config();
 
@@ -15,6 +15,8 @@ export default {
 
     // React support
     react(),
+
+    glsl(), // Handle shader files
 
     // .js file support as if it was JSX
     {
