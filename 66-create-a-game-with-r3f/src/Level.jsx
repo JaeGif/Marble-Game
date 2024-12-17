@@ -1,5 +1,7 @@
 import React from 'react';
 
+import TestZone from './constructors/TestZone';
+
 import Level1 from './levels/Level1';
 import Level2 from './levels/Level2';
 import Level3 from './levels/Level3';
@@ -62,6 +64,7 @@ export const levelMap = {
   28: { level: Level28, title: 'Switch Up', thumbnail: '' },
   29: { level: Level29, title: 'Again and Again', thumbnail: '' },
   30: { level: Level30, title: 'One Chance', thumbnail: '' },
+  TestZone: { level: TestZone, title: 'Test Zone', thumbnail: '' },
 };
 
 function Level({ level = 1 }) {

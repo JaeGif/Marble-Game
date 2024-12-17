@@ -57,6 +57,8 @@ function Camera({ debug = false, modality = 'locked' }) {
         setPlayerBody(world.getRigidBody(globalPlayerHandle));
       }
     }
+    if (!playerBody) return;
+
     const bodyPosition = playerBody.translation();
     cameraLogicTree(
       debug,
