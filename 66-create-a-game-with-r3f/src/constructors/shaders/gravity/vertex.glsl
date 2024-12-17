@@ -1,5 +1,12 @@
+precision highp float;
+
+uniform float uTime;
+varying vec3 vWorldPosition;
+varying vec3 vNormal;
+
 void main() {
-  vec4 worldPosition = vec4(position, 1.0);
-  vec4 mvPosition = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  gl_Position = mvPosition;
+    vWorldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
+    vNormal = normalize(normalMatrix * normal);
+
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
 }

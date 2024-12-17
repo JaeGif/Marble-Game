@@ -15,7 +15,7 @@ function TestZone() {
       <Platform
         type={'gravity'}
         position={[0, 0, 2]}
-        gravitationalConstant={-8}
+        gravitationalConstant={8}
       />
 
       <Platform type={'end'} position={[0, 0, 3]} />

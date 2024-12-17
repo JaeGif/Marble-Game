@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { RigidBody } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
-
 function BlockAxe({
   position = [0, 0, 0],
   rotation = [0, 0, 0],
