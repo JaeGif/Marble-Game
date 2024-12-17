@@ -12,6 +12,7 @@ function TestZone() {
 
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform type={'floor'} position={[0, 0, 1]} />
+      <Platform type={'gravity'} position={[0, 0, 2]} />
 
       <Platform type={'end'} position={[0, 0, 3]} />
     </>
