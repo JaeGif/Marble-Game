@@ -1,20 +1,31 @@
 import React from 'react';
 import { shaderMaterial, Float } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, extend } from '@react-three/fiber';
 import useGame from '../../stores/useGame';
 
 import { useRapier } from '@react-three/rapier';
 import * as THREE from 'three';
+
+import vertexShader from '../shaders/gravity/vertex.glsl';
+import fragmentShader from '../shaders/gravity/fragment.glsl';
+import antiVertexShader from '../shaders/antiGravity/vertex.glsl';
+import antiFragmentShader from '../shaders/antiGravity/fragment.glsl';
+
 const sphereGeometry = new THREE.SphereGeometry(1, 16, 16);
 const negGravMaterial = new THREE.MeshStandardMaterial({ color: 'black' });
 const posGravMaterial = new THREE.MeshStandardMaterial({ color: 'orange' });
-/* 
+
 const GravityShaderMaterial = shaderMaterial(
   { uTime: 0 },
-  portalVertexShader,
-  portalFragmentShader
-); */
-
+  vertexShader,
+  fragmentShader
+);
+const AntiGravityShaderMaterial = shaderMaterial(
+  { uTime: 0 },
+  antiVertexShader,
+  antiFragmentShader
+);
+extend({ AntiGravityShaderMaterial, GravityShaderMaterial });
 function BlockGravity({
   position = [0, 0, 0],
   rotation = [0, 0, 0],
@@ -23,11 +34,6 @@ function BlockGravity({
   type,
 }) {
   {
-    let material = posGravMaterial;
-    if (gravitationalConstant > 0) {
-      material = negGravMaterial;
-    }
-
     const sourcePosition = [0, 1, 0];
     // This block exerts force on the player towards it or away from it
     const playerHandle = useGame((state) => state.globalPlayerHandle);
@@ -99,8 +105,13 @@ function BlockGravity({
             scale={[0.25, 0.25, 0.25]}
             geometry={sphereGeometry}
             position={sourcePosition}
-            material={material}
-          />
+          >
+            {gravitationalConstant > 0 ? (
+              <antiGravityShaderMaterial />
+            ) : (
+              <gravityShaderMaterial />
+            )}
+          </mesh>
         </Float>
       </group>
     );
