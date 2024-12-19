@@ -45,9 +45,13 @@ function DistortingSphere({
   // This block exerts force on the player towards it or away from it
   const playerHandle = useGame((state) => state.globalPlayerHandle);
   const { world } = useRapier();
-  const gravityShaderRef = useRef();
+  const innerGravityShaderRef = useRef();
+  const outerGravityShaderRef = useRef();
+
   useFrame((state, delta) => {
-    gravityShaderRef.current.uniforms.uTime.value += delta;
+    innerGravityShaderRef.current.uniforms.uTime.value += delta;
+    outerGravityShaderRef.current.uniforms.uTime.value += delta;
+
     const player = world.getRigidBody(playerHandle);
     if (!player) return;
 
@@ -111,39 +115,49 @@ function DistortingSphere({
       <Float floatIntensity={2}>
         <>
           <mesh
-            scale={[0.25, 0.25, 0.25]}
+            scale={[0.2, 0.2, 0.2]}
             geometry={sphereGeometry}
             position={sourcePosition}
           >
             {gravitationalConstant > 0 ? (
               <gravityShaderMaterial
                 transparent
-                ref={gravityShaderRef}
+                ref={innerGravityShaderRef}
                 uSceneTexture={renderTarget.texture}
                 uResolution={[window.innerWidth, window.innerHeight]}
                 uRefractiveIndex={1}
+                uPositionFrequency={0.5}
+                uTimeFrequency={0.4}
+                uStrength={0.3}
+                uWarpPositionFrequency={0.38}
+                uWarpTimeFrequency={0.12}
               />
             ) : (
               <antiGravityShaderMaterial transparent side={2} />
             )}
           </mesh>
-          {/*           <mesh
-            scale={[0.25, 0.25, 0.25]}
+          <mesh
+            scale={[0.5, 0.5, 0.5]}
             geometry={sphereGeometry}
             position={sourcePosition}
           >
             {gravitationalConstant > 0 ? (
               <gravityShaderMaterial
-                ref={gravityShaderRef}
+                ref={outerGravityShaderRef}
                 transparent
                 uSceneTexture={renderTarget.texture}
                 uResolution={[window.innerWidth, window.innerHeight]}
                 uRefractiveIndex={0.5}
+                uPositionFrequency={0.5}
+                uTimeFrequency={0.4}
+                uStrength={0.3}
+                uWarpPositionFrequency={0.38}
+                uWarpTimeFrequency={0.12}
               />
             ) : (
               <antiGravityShaderMaterial transparent side={2} />
             )}
-          </mesh> */}
+          </mesh>
         </>
       </Float>
     </group>
