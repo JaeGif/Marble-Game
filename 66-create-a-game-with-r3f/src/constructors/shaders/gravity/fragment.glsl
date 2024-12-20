@@ -23,5 +23,5 @@ void main() {
 
   vec3 color = texture2D(uSceneTexture, screenUV).rgb * strength;
 
-  gl_FragColor = vec4(color, 0.75);
+  gl_FragColor = vec4(color, 0.95);
 }

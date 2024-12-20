@@ -1,18 +1,10 @@
 precision highp float;
 
 uniform float uTime;
-uniform float uTimeFrequency;
-uniform float uPositionFrequency;
-uniform float uStrength;
-uniform float uWarpTimeFrequency;
-uniform float uWarpPositionFrequency;
-uniform float uWarpStrength;
-
-attribute vec4 tangent;
-
-varying float vWobble;
+uniform float uRandom;
 varying vec3 vWorldPosition;
 varying vec3 vNormal;
+
 
 //	Simplex 4D Noise 
 //	by Ian McEwan, Ashima Arts
@@ -107,27 +99,19 @@ float simplexNoise4d(vec4 v){
                 + dot(m1*m1, vec2( dot( p3, x3 ), dot( p4, x4 ) ) ) ) ;
 
 }
-float getWobble(vec3 position) {
-  vec3 warpedPosition = position;
-  warpedPosition += simplexNoise4d(vec4(position * uWarpPositionFrequency, uTime * uWarpTimeFrequency)) * uWarpStrength;
 
-  return simplexNoise4d(vec4(
-    warpedPosition * uPositionFrequency, // xyz
-    uTime * uTimeFrequency       // w
-  )) * uStrength;
-}
 
 void main() {
-    // Transform position to world space
-    vec3 positionWorld = (modelMatrix * vec4(position, 1.0)).xyz;
 
-    // Apply wobble effect to the position
-    float wobble = getWobble(positionWorld.xyz)
-    vec3 wobbledPosition = positionWorld * wobble
+    // Get noise value
+    float noise = simplexNoise4d(vec4(normal, uTime * uRandom));
 
-    // Output position to the pipeline
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(wobbledPosition, 1.0);
+    // Modulate vertex position based on noise
+    vec3 displacedPosition = position + normal * noise * 0.15;
 
-    // Pass wobble for optional fragment shader visualization
-    vWobble = wobble;
+    // Output the distorted position
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(displacedPosition, 1.0);
+
+    // Pass normal and position for further use
+    vNormal = normal; 
 }

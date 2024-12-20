@@ -11,16 +11,15 @@ import fragmentShader from '../shaders/gravity/fragment.glsl';
 import antiVertexShader from '../shaders/antiGravity/vertex.glsl';
 import antiFragmentShader from '../shaders/antiGravity/fragment.glsl';
 
-const sphereGeometry = new THREE.SphereGeometry(1, 16, 16);
-const negGravMaterial = new THREE.MeshStandardMaterial({ color: 'black' });
-const posGravMaterial = new THREE.MeshStandardMaterial({ color: 'orange' });
+const sphereGeometry = new THREE.SphereGeometry(1, 64, 64);
 
 const GravityShaderMaterial = shaderMaterial(
   {
     uTime: 0,
     uSceneTexture: null,
     uResolution: [window.innerWidth, window.innerHeight],
-    uRefractiveIndex: 10,
+    uRefractiveIndex: 0.7,
+    uRandom: Math.random(),
   },
   vertexShader,
   fragmentShader
@@ -126,11 +125,7 @@ function DistortingSphere({
                 uSceneTexture={renderTarget.texture}
                 uResolution={[window.innerWidth, window.innerHeight]}
                 uRefractiveIndex={1}
-                uPositionFrequency={0.5}
-                uTimeFrequency={0.4}
-                uStrength={0.3}
-                uWarpPositionFrequency={0.38}
-                uWarpTimeFrequency={0.12}
+                uRandom={Math.random()}
               />
             ) : (
               <antiGravityShaderMaterial transparent side={2} />
@@ -148,11 +143,7 @@ function DistortingSphere({
                 uSceneTexture={renderTarget.texture}
                 uResolution={[window.innerWidth, window.innerHeight]}
                 uRefractiveIndex={0.5}
-                uPositionFrequency={0.5}
-                uTimeFrequency={0.4}
-                uStrength={0.3}
-                uWarpPositionFrequency={0.38}
-                uWarpTimeFrequency={0.12}
+                uRandom={Math.random()}
               />
             ) : (
               <antiGravityShaderMaterial transparent side={2} />
