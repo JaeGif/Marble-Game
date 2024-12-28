@@ -9,6 +9,7 @@ const portalMaterial = new THREE.MeshStandardMaterial({
   transparent: true,
   opacity: 0.4,
 });
+const squareGeometry = new THREE.BoxGeometry(2, 2);
 
 function BlockPortal({
   position = [

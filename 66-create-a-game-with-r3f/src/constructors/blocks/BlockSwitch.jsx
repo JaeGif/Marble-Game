@@ -4,6 +4,7 @@ import { RigidBody } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 
 const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 16, 1, false);
+const floor1Material = new THREE.MeshStandardMaterial({ color: 'limegreen' });
 
 function BlockSwitch({
   position = [

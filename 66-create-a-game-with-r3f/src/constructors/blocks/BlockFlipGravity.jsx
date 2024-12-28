@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { RigidBody } from '@react-three/rapier';
 
 import useGame from '../../stores/useGame';
-
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 const flipGravityMaterial = new THREE.MeshStandardMaterial({ color: 'pink' });
 
 function BlockFlipGravity({ position, rotation = [0, 0, 0], type }) {

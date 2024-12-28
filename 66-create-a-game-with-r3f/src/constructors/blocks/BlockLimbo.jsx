@@ -4,6 +4,7 @@ import { RigidBody } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 
 const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 'orangered' });
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 
 function BlockLimbo({
   position = [0, 0, 0],

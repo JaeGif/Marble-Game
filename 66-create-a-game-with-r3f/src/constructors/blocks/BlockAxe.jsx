@@ -1,6 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { RigidBody } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 'orangered' });
+
 function BlockAxe({
   position = [0, 0, 0],
   rotation = [0, 0, 0],

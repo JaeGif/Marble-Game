@@ -1,6 +1,9 @@
 import React from 'react';
 import { RigidBody } from '@react-three/rapier';
 import { useGLTF } from '@react-three/drei';
+import * as THREE from 'three';
+
+const floor2Material = new THREE.MeshStandardMaterial({ color: 'greenyellow' });
 
 function BlockRoundAbout({
   position,
