@@ -5,6 +5,8 @@ uniform vec2 uResolution;       // Screen resolution
 uniform float uRefractiveIndex; // Refraction strength (e.g., 1.1 for glass-like)
 uniform float uTime;
 
+uniform float uColorStrength;
+
 varying vec3 vWorldPosition;
 varying vec3 vNormal;
 
@@ -19,9 +21,9 @@ void main() {
   vec2 screenUV = (refractedDir.xy * 0.5 + 0.5);
   // screenUV = clamp(screenUV, 0.0, 1.0); // Clamp to valid UVs
   // Sample the scene texture
-  float strength = 0.25 * uRefractiveIndex;
+  float strength = uColorStrength;
 
-  vec3 color = texture2D(uSceneTexture, screenUV).rgb * strength;
+  vec3 color = texture2D(uSceneTexture, screenUV).rgb * uColorStrength;
 
   gl_FragColor = vec4(color, 0.95);
 }

@@ -8,15 +8,16 @@ import * as THREE from 'three';
 
 import vertexShader from '../shaders/gravity/vertex.glsl';
 import fragmentShader from '../shaders/gravity/fragment.glsl';
-import antiVertexShader from '../shaders/antiGravity/vertex.glsl';
-import antiFragmentShader from '../shaders/antiGravity/fragment.glsl';
 
 const sphereGeometry = new THREE.SphereGeometry(1, 64, 64);
+const DARK_STRENGTH_MOD = 0.25;
+const LIGHT_STRENGTH_MOD = 3;
 
 const GravityShaderMaterial = shaderMaterial(
   {
     uTime: 0,
     uSceneTexture: null,
+    uColorStrength: DARK_STRENGTH_MOD * 0.7,
     uResolution: [window.innerWidth, window.innerHeight],
     uRefractiveIndex: 0.7,
     uRandom: Math.random(),
@@ -25,9 +26,16 @@ const GravityShaderMaterial = shaderMaterial(
   fragmentShader
 );
 const AntiGravityShaderMaterial = shaderMaterial(
-  { uTime: 0 },
-  antiVertexShader,
-  antiFragmentShader
+  {
+    uTime: 0,
+    uSceneTexture: null,
+    uColorStrength: LIGHT_STRENGTH_MOD * 0.7,
+    uResolution: [window.innerWidth, window.innerHeight],
+    uRefractiveIndex: 0.7,
+    uRandom: Math.random(),
+  },
+  vertexShader,
+  fragmentShader
 );
 extend({ GravityShaderMaterial });
 extend({ AntiGravityShaderMaterial });
@@ -128,7 +136,15 @@ function DistortingSphere({
                 uRandom={Math.random()}
               />
             ) : (
-              <antiGravityShaderMaterial transparent side={2} />
+              <antiGravityShaderMaterial
+                transparent
+                side={2}
+                uSceneTexture={renderTarget.texture}
+                uResolution={[window.innerWidth, window.innerHeight]}
+                uRefractiveIndex={1}
+                ref={innerGravityShaderRef}
+                uColorStrength={LIGHT_STRENGTH_MOD * 1.0}
+              />
             )}
           </mesh>
           <mesh
@@ -146,7 +162,15 @@ function DistortingSphere({
                 uRandom={Math.random()}
               />
             ) : (
-              <antiGravityShaderMaterial transparent side={2} />
+              <antiGravityShaderMaterial
+                transparent
+                side={2}
+                uSceneTexture={renderTarget.texture}
+                uResolution={[window.innerWidth, window.innerHeight]}
+                uColorStrength={LIGHT_STRENGTH_MOD * 0.5}
+                uRefractiveIndex={0.5}
+                ref={outerGravityShaderRef}
+              />
             )}
           </mesh>
         </>

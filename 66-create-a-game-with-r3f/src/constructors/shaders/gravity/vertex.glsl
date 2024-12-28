@@ -107,7 +107,7 @@ void main() {
     float noise = simplexNoise4d(vec4(normal, uTime * uRandom));
 
     // Modulate vertex position based on noise
-    vec3 displacedPosition = position + normal * noise * 0.15;
+    vec3 displacedPosition = position + normal * noise * 0.2;
 
     // Output the distorted position
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(displacedPosition, 1.0);
