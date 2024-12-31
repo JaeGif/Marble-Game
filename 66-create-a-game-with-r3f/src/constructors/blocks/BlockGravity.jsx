@@ -117,6 +117,7 @@ function DistortingSphere({
       player.setLinvel(newVelocity);
     }
   });
+
   return (
     <group position={position} rotation={rotation}>
       <Float floatIntensity={2}>

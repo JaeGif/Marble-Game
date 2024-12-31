@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import * as THREE from 'three';
 import { RigidBody } from '@react-three/rapier';
-import { shaderMaterial } from '@react-three/drei';
+import { shaderMaterial, useTexture } from '@react-three/drei';
 import { useFrame, extend } from '@react-three/fiber';
 
 import useGame from '../../stores/useGame';
@@ -25,6 +25,7 @@ const FlipGravityShaderMaterial = shaderMaterial(
 const FlipGravityRibbonShaderMaterial = shaderMaterial(
   {
     uTime: 0,
+    uTexture: null,
   },
   ribbonVertexShader,
   ribbonFragmentShader
@@ -40,6 +41,9 @@ function BlockFlipGravity({ position, rotation = [0, 0, 0], type }) {
   const ribbonRefThree = useRef();
   const ribbonRefFour = useRef();
 
+  // useTexture
+  const ribbonTexture = useTexture('textures/ribbonEffect.png');
+
   const gravityDirection = useGame((state) => state.gravityDirection);
   const setGravityDirection = useGame((state) => state.setGravityDirection);
 
@@ -50,7 +54,12 @@ function BlockFlipGravity({ position, rotation = [0, 0, 0], type }) {
 
   useFrame((state, delta) => {
     flipGravityShaderRef.current.uniforms.uTime.value += delta;
+    ribbonRefOne.current.uniforms.uTime.value += delta;
+    ribbonRefTwo.current.uniforms.uTime.value += delta;
+    ribbonRefThree.current.uniforms.uTime.value += delta;
+    ribbonRefFour.current.uniforms.uTime.value += delta;
   });
+
   return (
     <group position={position} rotation={rotation}>
       <RigidBody
@@ -72,36 +81,44 @@ function BlockFlipGravity({ position, rotation = [0, 0, 0], type }) {
         geometry={squareGeometry}
         position={[2, 0.35, 0]}
         rotation={[0, 0, Math.PI / 2]}
-        receiveShadow
       >
-        <flipGravityRibbonShaderMaterial ref={ribbonRefOne} />
+        <flipGravityRibbonShaderMaterial
+          uTexture={ribbonTexture}
+          ref={ribbonRefOne}
+        />
       </mesh>
       <mesh
         scale={[0.75, 0, 4]}
         geometry={squareGeometry}
         position={[-2, 0.35, 0]}
         rotation={[0, 0, Math.PI / 2]}
-        receiveShadow
       >
-        <flipGravityRibbonShaderMaterial ref={ribbonRefTwo} />
+        <flipGravityRibbonShaderMaterial
+          uTexture={ribbonTexture}
+          ref={ribbonRefTwo}
+        />
       </mesh>
       <mesh
         scale={[0.75, 0, 4]}
         geometry={squareGeometry}
         position={[0, 0.35, 2]}
         rotation={[0, Math.PI / 2, Math.PI / 2]}
-        receiveShadow
       >
-        <flipGravityRibbonShaderMaterial ref={ribbonRefThree} />
+        <flipGravityRibbonShaderMaterial
+          uTexture={ribbonTexture}
+          ref={ribbonRefThree}
+        />
       </mesh>
       <mesh
         scale={[0.75, 0, 4]}
         geometry={squareGeometry}
         position={[0, 0.35, -2]}
         rotation={[0, Math.PI / 2, Math.PI / 2]}
-        receiveShadow
       >
-        <flipGravityRibbonShaderMaterial ref={ribbonRefThree} />
+        <flipGravityRibbonShaderMaterial
+          uTexture={ribbonTexture}
+          ref={ribbonRefFour}
+        />
       </mesh>
     </group>
   );
