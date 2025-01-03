@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as THREE from 'three';
 import { RigidBody, useRapier } from '@react-three/rapier';
-
+import { Float, useGLTF } from '@react-three/drei';
 import useGame from '../../stores/useGame';
 
 const portalMaterial = new THREE.MeshStandardMaterial({
@@ -22,6 +22,8 @@ function BlockPortal({
   ],
   scale = { x: 1, y: 1, z: 1 },
 }) {
+  const { nodes } = useGLTF('./models/portalOnly.glb');
+
   const portal1Position = position[0];
   const portal2Position = position[1];
   const portal1Rotation = rotation[0];
@@ -64,12 +66,66 @@ function BlockPortal({
             handleUpdatePlayerLocation(collision, portal2Position)
           }
         >
-          <mesh
-            geometry={squareGeometry}
-            material={portalMaterial}
-            scale={[1.5 * scale.x, 1.5 * scale.y, 0.3 * scale.z]}
-            position={[0, 1.5, 0]}
-          />
+          <group
+            dispose={null}
+            position={[0, -0.25, 4]}
+            scale={[2.5 * scale.x, 2.5 * scale.y, 2.5 * scale.z]}
+          >
+            <mesh
+              castShadow
+              geometry={nodes.Circle.geometry}
+              position={[0.1, 1, -0.4]}
+            />
+            <Float floatIntensity={0.5} rotationIntensity={0.1}>
+              <mesh
+                castShadow
+                geometry={nodes.float1.geometry}
+                material={nodes.float1.material}
+                position={[-0.2, 0.9, -1.6]}
+              />
+            </Float>
+            <Float floatIntensity={0.5} rotationIntensity={0.1}>
+              <mesh
+                castShadow
+                geometry={nodes.float2.geometry}
+                material={nodes.float1.material}
+                position={[0, 1.3, -1.8]}
+                rotation={[0, 0, 0.1]}
+              />
+            </Float>
+            <Float floatIntensity={0.5} rotationIntensity={0.1}>
+              <mesh
+                castShadow
+                geometry={nodes.float5.geometry}
+                material={nodes.float1.material}
+                position={[0.1, 0.9, -1.5]}
+              />
+            </Float>
+            <Float floatIntensity={0.5} rotationIntensity={0.1}>
+              <mesh
+                castShadow
+                geometry={nodes.float4.geometry}
+                material={nodes.float1.material}
+                position={[0.4, 1, -1.5]}
+              />
+            </Float>
+            <Float floatIntensity={0.5} rotationIntensity={0.1}>
+              <mesh
+                castShadow
+                geometry={nodes.float3.geometry}
+                material={nodes.float1.material}
+                position={[1.6, 1.2, -2]}
+              />
+            </Float>
+            <Float floatIntensity={0.5} rotationIntensity={0.1}>
+              <mesh
+                castShadow
+                geometry={nodes.float6.geometry}
+                material={nodes.float1.material}
+                position={[-0.2, 0.7, -1.7]}
+              />
+            </Float>
+          </group>
         </RigidBody>
       </group>
       <group position={portal2Position} rotation={portal2Rotation}>
@@ -80,12 +136,66 @@ function BlockPortal({
             handleUpdatePlayerLocation(collision, portal1Position)
           }
         >
-          <mesh
-            geometry={squareGeometry}
-            material={portalMaterial}
-            scale={[1.5 * scale.x, 1.5 * scale.y, 0.3 * scale.z]}
-            position={[0, 1.5, 0]}
-          />
+          <group
+            dispose={null}
+            position={[0, -0.25, 4]}
+            scale={[2.5 * scale.x, 2.5 * scale.y, 2.5 * scale.z]}
+          >
+            <mesh
+              castShadow
+              geometry={nodes.Circle.geometry}
+              position={[0.1, 1, -0.4]}
+            />
+            <Float floatIntensity={0.5} rotationIntensity={0.1}>
+              <mesh
+                castShadow
+                geometry={nodes.float1.geometry}
+                material={nodes.float1.material}
+                position={[-0.2, 0.9, -1.6]}
+              />
+            </Float>
+            <Float floatIntensity={0.5} rotationIntensity={0.1}>
+              <mesh
+                castShadow
+                geometry={nodes.float2.geometry}
+                material={nodes.float1.material}
+                position={[0, 1.3, -1.8]}
+                rotation={[0, 0, 0.1]}
+              />
+            </Float>
+            <Float floatIntensity={0.5} rotationIntensity={0.1}>
+              <mesh
+                castShadow
+                geometry={nodes.float5.geometry}
+                material={nodes.float1.material}
+                position={[0.1, 0.9, -1.5]}
+              />
+            </Float>
+            <Float floatIntensity={0.5} rotationIntensity={0.1}>
+              <mesh
+                castShadow
+                geometry={nodes.float4.geometry}
+                material={nodes.float1.material}
+                position={[0.4, 1, -1.5]}
+              />
+            </Float>
+            <Float floatIntensity={0.5} rotationIntensity={0.1}>
+              <mesh
+                castShadow
+                geometry={nodes.float3.geometry}
+                material={nodes.float1.material}
+                position={[1.6, 1.2, -2]}
+              />
+            </Float>
+            <Float floatIntensity={0.5} rotationIntensity={0.1}>
+              <mesh
+                castShadow
+                geometry={nodes.float6.geometry}
+                material={nodes.float1.material}
+                position={[-0.2, 0.7, -1.7]}
+              />
+            </Float>
+          </group>
         </RigidBody>
       </group>
     </>
