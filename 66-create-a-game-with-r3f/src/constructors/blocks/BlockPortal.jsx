@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import * as THREE from 'three';
 import { RigidBody, useRapier } from '@react-three/rapier';
-import { Float, useGLTF } from '@react-three/drei';
+import { Float, useGLTF, shaderMaterial } from '@react-three/drei';
 import useGame from '../../stores/useGame';
+import { useFrame, extend } from '@react-three/fiber';
 
-const portalMaterial = new THREE.MeshStandardMaterial({
-  color: 'rgb(.5, .5,1)',
-  transparent: true,
-  opacity: 0.4,
-});
+import vertexShader from '../shaders/portal/vertex.glsl';
+import fragmentShader from '../shaders/portal/fragment.glsl';
+
+const PortalShaderMaterial = shaderMaterial(
+  {
+    uTime: 0,
+  },
+  vertexShader,
+  fragmentShader
+);
+extend({ PortalShaderMaterial });
 const squareGeometry = new THREE.BoxGeometry(2, 2);
 
 function BlockPortal({
@@ -56,6 +63,14 @@ function BlockPortal({
       handleCooldownTrigger();
     }
   };
+  const portalShaderRef = useRef();
+  const portalOutShaderRef = useRef();
+  useFrame((state, delta) => {
+    if (!portalShaderRef.current || !portalOutShaderRef.current) return;
+    portalShaderRef.current.uniforms.uTime.value += delta;
+    portalOutShaderRef.current.uniforms.uTime.value += delta;
+  });
+
   return (
     <>
       <group position={portal1Position} rotation={portal1Rotation}>
@@ -75,7 +90,13 @@ function BlockPortal({
               castShadow
               geometry={nodes.Circle.geometry}
               position={[0.1, 1, -0.4]}
-            />
+            >
+              <portalShaderMaterial
+                ref={portalShaderRef}
+                transparent
+                side={2}
+              />
+            </mesh>
             <Float floatIntensity={0.5} rotationIntensity={0.1}>
               <mesh
                 castShadow
@@ -145,7 +166,13 @@ function BlockPortal({
               castShadow
               geometry={nodes.Circle.geometry}
               position={[0.1, 1, -0.4]}
-            />
+            >
+              <portalShaderMaterial
+                ref={portalOutShaderRef}
+                transparent
+                side={2}
+              />
+            </mesh>
             <Float floatIntensity={0.5} rotationIntensity={0.1}>
               <mesh
                 castShadow

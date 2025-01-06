@@ -15,7 +15,7 @@ function TestZone() {
         type={'portal'}
         position={[
           [0, 0, 2],
-          [0, -1, 2],
+          [1, 0, 2],
         ]}
       />
       <Platform type={'end'} position={[0, 0, 4]} />
