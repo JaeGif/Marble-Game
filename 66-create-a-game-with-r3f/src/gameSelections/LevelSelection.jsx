@@ -22,18 +22,21 @@ function LevelSelection({ renderHome, renderGame }) {
         <h1>Level Select</h1>
       </span>
       <div className='level-select-page'>
-        {levels.map((entry, i) => (
-          <div
-            className='level-container'
-            onClick={() => handleLevelSelection(entry[0])}
-            key={uniqid()}
-          >
-            <h2 className='level-select-number'>Level {entry[0]}</h2>
-            <p className='level-title'>{entry[1].title}</p>
-            {/*           <img className='level-select-thumbnail' alt={`level ${entry[0]} thumbnail`} />
-             */}{' '}
-          </div>
-        ))}
+        {levels.map(
+          (entry, i) =>
+            entry[1].title !== 'Test Zone' && (
+              <div
+                className='level-container'
+                onClick={() => handleLevelSelection(entry[0])}
+                key={uniqid()}
+              >
+                <h2 className='level-select-number'>Level {entry[0]}</h2>
+                <p className='level-title'>{entry[1].title}</p>
+                {/*           <img className='level-select-thumbnail' alt={`level ${entry[0]} thumbnail`} />
+                 */}{' '}
+              </div>
+            )
+        )}
       </div>
     </div>
   );
