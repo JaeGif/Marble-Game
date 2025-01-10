@@ -64,7 +64,7 @@ export const levelMap = {
   28: { level: Level28, title: 'Switch Up', thumbnail: '' },
   29: { level: Level29, title: 'Again and Again', thumbnail: '' },
   30: { level: Level30, title: 'One Chance', thumbnail: '' },
-  TestZone: { level: TestZone, title: 'Test Zone', thumbnail: '' },
+  //  TestZone: { level: TestZone, title: 'Test Zone', thumbnail: '' },
 };
 
 function Level({ level = 1 }) {
