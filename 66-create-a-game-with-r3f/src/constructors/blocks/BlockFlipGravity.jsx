@@ -43,6 +43,8 @@ function BlockFlipGravity({ position, rotation = [0, 0, 0], type }) {
 
   // useTexture
   const ribbonTexture = useTexture('textures/ribbonEffect.png');
+  ribbonTexture.wrapS = THREE.RepeatWrapping;
+  ribbonTexture.wrapT = THREE.RepeatWrapping;
 
   const gravityDirection = useGame((state) => state.gravityDirection);
   const setGravityDirection = useGame((state) => state.setGravityDirection);
@@ -77,45 +79,53 @@ function BlockFlipGravity({ position, rotation = [0, 0, 0], type }) {
         </mesh>
       </RigidBody>
       <mesh
-        scale={[0.75, 0, 4]}
+        scale={[0.35, 0, 4]}
         geometry={squareGeometry}
-        position={[2, 0.35, 0]}
+        position={[2, 0.15, 0]}
         rotation={[0, 0, Math.PI / 2]}
       >
         <flipGravityRibbonShaderMaterial
+          transparent
+          depthWrite={false}
           uTexture={ribbonTexture}
           ref={ribbonRefOne}
         />
       </mesh>
       <mesh
-        scale={[0.75, 0, 4]}
+        scale={[0.35, 0, 4]}
         geometry={squareGeometry}
-        position={[-2, 0.35, 0]}
+        position={[-2, 0.15, 0]}
         rotation={[0, 0, Math.PI / 2]}
       >
         <flipGravityRibbonShaderMaterial
+          transparent
+          depthWrite={false}
           uTexture={ribbonTexture}
           ref={ribbonRefTwo}
         />
       </mesh>
       <mesh
-        scale={[0.75, 0, 4]}
+        scale={[0.35, 0, 4]}
         geometry={squareGeometry}
-        position={[0, 0.35, 2]}
+        position={[0, 0.15, 2]}
         rotation={[0, Math.PI / 2, Math.PI / 2]}
       >
         <flipGravityRibbonShaderMaterial
+          transparent
+          depthWrite={false}
           uTexture={ribbonTexture}
           ref={ribbonRefThree}
         />
       </mesh>
       <mesh
-        scale={[0.75, 0, 4]}
+        scale={[0.35, 0, 4]}
         geometry={squareGeometry}
-        position={[0, 0.35, -2]}
+        position={[0, 0.15, -2]}
         rotation={[0, Math.PI / 2, Math.PI / 2]}
       >
         <flipGravityRibbonShaderMaterial
+          transparent
+          depthWrite={false}
           uTexture={ribbonTexture}
           ref={ribbonRefFour}
         />

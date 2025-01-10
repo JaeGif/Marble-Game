@@ -69,6 +69,7 @@ export const levelMap = {
 
 function Level({ level = 1 }) {
   const CurrentStage = levelMap[level].level;
+
   return (
     <>
       <CurrentStage />
