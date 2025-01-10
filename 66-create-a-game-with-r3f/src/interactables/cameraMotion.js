@@ -141,7 +141,7 @@ export const cameraLogicTree = (
 
   // camera mode updates
   if (cameraCenter && cameraMode !== 'birdseye') {
-    setCameraMode('locked');
+    // setCameraMode('locked');
   }
   if (
     (cameraLeft || cameraRight || cameraUp || cameraDown) &&

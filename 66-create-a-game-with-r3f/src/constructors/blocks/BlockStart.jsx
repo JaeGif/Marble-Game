@@ -23,7 +23,7 @@ function BlockStart({
         position={[0, 1.5, 0]}
       />
 
-      <Float floatIntensity={0.25} rotationIntensity={0.25}>
+      {/*       <Float floatIntensity={0.25} rotationIntensity={0.25}>
         <Text
           font='./bebas-neue-v9-latin-regular.woff'
           scale={0.5}
@@ -36,7 +36,7 @@ function BlockStart({
           Marble Run
           <meshBasicMaterial toneMapped={false} />
         </Text>
-      </Float>
+      </Float> */}
     </group>
   );
 }
