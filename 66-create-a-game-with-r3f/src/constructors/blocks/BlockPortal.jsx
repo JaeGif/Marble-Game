@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { RigidBody, useRapier } from '@react-three/rapier';
 import { Float, useGLTF, shaderMaterial } from '@react-three/drei';
@@ -65,15 +65,40 @@ function BlockPortal({
   };
   const portalShaderRef = useRef();
   const portalOutShaderRef = useRef();
+
+  const coolTimerRef = useRef(1);
+
   useFrame((state, delta) => {
     if (!portalShaderRef.current || !portalOutShaderRef.current) return;
     portalShaderRef.current.uniforms.uTime.value += delta;
     portalOutShaderRef.current.uniforms.uTime.value += delta;
+
+    if (onCooldown) {
+      // scale down?
+      if (coolScale >= 0.25) {
+        coolTimerRef.current -= state.clock.elapsedTime / 1000;
+        setCoolScale(coolTimerRef.current);
+      }
+    } else {
+      if (coolScale < 1) {
+        coolTimerRef.current += state.clock.elapsedTime / 1000;
+        setCoolScale(coolTimerRef.current);
+      }
+    }
   });
+  const [coolScale, setCoolScale] = useState(1);
 
   return (
     <>
-      <group position={portal1Position} rotation={portal1Rotation}>
+      <group
+        position={[
+          portal1Position[0],
+          portal1Position[1] - coolScale + 1,
+          portal1Position[2],
+        ]}
+        rotation={portal1Rotation}
+        scale={coolScale}
+      >
         <RigidBody
           type='fixed'
           sensor
@@ -87,6 +112,7 @@ function BlockPortal({
             scale={[2.5 * scale.x, 2.5 * scale.y, 2.5 * scale.z]}
           >
             <mesh
+              visible={!onCooldown}
               castShadow
               geometry={nodes.Circle.geometry}
               position={[0.1, 1, -0.4]}
@@ -97,6 +123,7 @@ function BlockPortal({
                 side={2}
               />
             </mesh>
+
             <Float floatIntensity={0.5} rotationIntensity={0.1}>
               <mesh
                 castShadow
@@ -149,7 +176,15 @@ function BlockPortal({
           </group>
         </RigidBody>
       </group>
-      <group position={portal2Position} rotation={portal2Rotation}>
+      <group
+        position={[
+          portal2Position[0],
+          portal2Position[1] - coolScale + 1,
+          portal2Position[2],
+        ]}
+        rotation={portal2Rotation}
+        scale={coolScale}
+      >
         <RigidBody
           type='fixed'
           sensor
@@ -163,6 +198,7 @@ function BlockPortal({
             scale={[2.5 * scale.x, 2.5 * scale.y, 2.5 * scale.z]}
           >
             <mesh
+              visible={!onCooldown}
               castShadow
               geometry={nodes.Circle.geometry}
               position={[0.1, 1, -0.4]}
