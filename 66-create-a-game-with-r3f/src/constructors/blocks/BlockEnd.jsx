@@ -41,7 +41,7 @@ function BlockEnd({
   };
   return (
     <group position={position} rotation={rotation}>
-      {/*       <Text
+    <Text
         font='./bebas-neue-v9-latin-regular.woff'
         scale={textSizeSwitch()}
         position={[0, 3, 2]}
@@ -49,7 +49,7 @@ function BlockEnd({
       >
         FINISH
         <meshBasicMaterial toneMapped={false} />
-      </Text> */}
+      </Text>
       <Float rotationIntensity={0.5} floatIntensity={0}>
         <group ref={goalRef}>
           <RigidBody
