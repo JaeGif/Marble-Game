@@ -144,11 +144,10 @@ body,
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 16px;
-  padding: 16px;
+  padding: 10px;
   flex-wrap: wrap;
   justify-content: center;
   align-items: start;
-  gap: 64px;
 }
 .select-page-container {
   max-height: 100vh;
@@ -162,14 +161,19 @@ body,
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  height: 50px;
+  border-radius: 5px;
+  padding: 2px;
 }
 .level-container:hover {
   border-radius: 6px;
-  opacity: 90%;
+  opacity: 85%;
 }
 .level-select-number {
   font-weight: normal;
+  font-size: xx-large;
+}
+.level-title {
+  font-size: larger;
 }
 .level-select-title-container {
   font-family: 'Bebas Neue', cursive;
@@ -178,10 +182,6 @@ body,
   flex-direction: column;
   justify-content: start;
   align-items: center;
-}
-.level-select-thumbnail {
-  height: fit-content;
-  border: solid 1px red;
 }
 
 .home-button {

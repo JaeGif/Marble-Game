@@ -29,15 +29,14 @@ function LevelSelection({ renderHome, renderGame }) {
                 className='level-container'
                 onClick={() => handleLevelSelection(entry[0])}
                 key={uniqid()}
+                style={{
+                  backgroundImage: `url(${entry[1].thumbnail})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
               >
                 <h2 className='level-select-number'>Level {entry[0]}</h2>
                 <p className='level-title'>{entry[1].title}</p>
-                <div className='level-select-thumbnail'>
-                  <img
-                    alt={`level ${entry[0]} thumbnail`}
-                    src={entry[1].thumbnail}
-                  />
-                </div>
               </div>
             )
         )}
