@@ -32,8 +32,12 @@ function LevelSelection({ renderHome, renderGame }) {
               >
                 <h2 className='level-select-number'>Level {entry[0]}</h2>
                 <p className='level-title'>{entry[1].title}</p>
-                {/*           <img className='level-select-thumbnail' alt={`level ${entry[0]} thumbnail`} />
-                 */}{' '}
+                <div className='level-select-thumbnail'>
+                  <img
+                    alt={`level ${entry[0]} thumbnail`}
+                    src={entry[1].thumbnail}
+                  />
+                </div>
               </div>
             )
         )}

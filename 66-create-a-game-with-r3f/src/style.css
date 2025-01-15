@@ -162,10 +162,11 @@ body,
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  height: 50px;
 }
 .level-container:hover {
-  background-color: lightgrey;
   border-radius: 6px;
+  opacity: 90%;
 }
 .level-select-number {
   font-weight: normal;
@@ -178,6 +179,11 @@ body,
   justify-content: start;
   align-items: center;
 }
+.level-select-thumbnail {
+  height: fit-content;
+  border: solid 1px red;
+}
+
 .home-button {
   cursor: pointer;
 }

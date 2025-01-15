@@ -34,7 +34,7 @@ import Level29 from './levels/Level29';
 import Level30 from './levels/Level30';
 
 export const levelMap = {
-  1: { level: Level1, title: 'The Beginning', thumbnail: '' },
+  1: { level: Level1, title: 'The Beginning', thumbnail: 'thumbnails/1.png' },
   2: { level: Level2, title: 'Easy Does It', thumbnail: '' },
   3: { level: Level3, title: 'Man This Game Is Easy', thumbnail: '' },
   4: { level: Level4, title: 'WHEEEE!!!', thumbnail: '' },
