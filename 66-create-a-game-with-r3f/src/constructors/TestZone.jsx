@@ -11,13 +11,8 @@ function TestZone() {
       <Camera modality='locked' />
       <Platform type={'start'} position={[0, 0, 0]} />
       <Platform type={'floor'} position={[0, 0, 1]} />
-      <Platform
-        type={'portal'}
-        position={[
-          [0, 0, 2],
-          [1, 0, 2],
-        ]}
-      />
+      <Platform type={'passThrough'} position={[0, 0, 2]} />
+
       <Platform type={'end'} position={[0, 0, 4]} />
     </>
   );
