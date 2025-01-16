@@ -109,7 +109,7 @@ export const levelMap = {
   },
   26: {
     level: Level26,
-    title: 'Directionally Challenged',
+    title: 'Challenged',
     thumbnail: 'thumbnails/26.png',
   },
   27: { level: Level27, title: 'Backtrack', thumbnail: 'thumbnails/27.png' },
@@ -120,7 +120,7 @@ export const levelMap = {
     thumbnail: 'thumbnails/29.png',
   },
   30: { level: Level30, title: 'One Chance', thumbnail: 'thumbnails/30.png' },
-  TestZone: { level: TestZone, title: 'Test Zone', thumbnail: '' },
+  // TestZone: { level: TestZone, title: 'Test Zone', thumbnail: '' },
 };
 
 function Level({ level = 1 }) {

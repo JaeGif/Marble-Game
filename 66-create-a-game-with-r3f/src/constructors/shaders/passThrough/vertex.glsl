@@ -10,7 +10,7 @@ varying vec3 vNormal;
 void main() {
 
   vec3 pos = position;
-  pos.z += sin(uTime + pos.y * 2.0) * 0.5; // Uniform movement
+  pos.z += sin(uTime + pos.y * 2.0) * 0.15; // Uniform movement
   // pos.x += sin(uTime + pos.y * 2.0) * 0.5; // Uniform movement
   pos.y += sin(uTime + pos.x * 3.0) * 0.1; // Uniform movement
 
