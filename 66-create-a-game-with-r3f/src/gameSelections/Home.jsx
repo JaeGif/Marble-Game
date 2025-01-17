@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import useGame from '../stores/useGame';
+import Background from '../effects/Background';
 
 function Home({ renderGame, renderLevelSelection, renderHighscores }) {
   const setMode = useGame((state) => state.setMode);
@@ -8,7 +9,7 @@ function Home({ renderGame, renderLevelSelection, renderHighscores }) {
     mode === 'casual' ? 'Casual' : mode === 'hardcore' && 'Hardcore'
   );
   const phase = useGame((state) => state.phase);
-  const startGameFresh = useGame((state) => state.startGameFresh);
+
   const startOver = useGame((state) => state.startOver);
   const handleModeSet = (e) => {
     // set mode to hardcore or casual
@@ -20,18 +21,11 @@ function Home({ renderGame, renderLevelSelection, renderHighscores }) {
     }
   };
 
-  useEffect(() => {
-    if (phase !== 'ready') {
-      startOver();
-      console.log('starting over');
-    }
-  }, [phase]);
-
   return (
     <div className='home-page'>
+      <Background />
       <h1>Marble Run</h1>
-
-      <div>
+      <div className='home-page-under'>
         <h2
           className='hover-blue play'
           onClick={() => {

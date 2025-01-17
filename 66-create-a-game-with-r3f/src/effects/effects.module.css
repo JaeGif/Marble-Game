@@ -1,0 +1,56 @@
+.colorimg {
+  -webkit-mask-image: url('/assets/home/inkmask_bottom.png');
+  -webkit-mask-size: cover;
+  -webkit-mask-position: 0% 0%;
+
+  mask-image: url('/assets/home/inkmask_bottom.png');
+  mask-size: cover;
+  mask-position: 0% 0%;
+}
+
+@keyframes addColor {
+  0% {
+    mask-position: 0% 0%;
+    -webkit-mask-position: 0% 0%;
+  }
+  100% {
+    mask-position: 100% 0%;
+    -webkit-mask-position: 100% 0%;
+  }
+}
+.animation {
+  animation: addColor 2500ms steps(48) forwards;
+}
+.registerImg {
+  -webkit-mask-image: url('/assets/home/inkmask_right.png');
+  -webkit-mask-size: cover;
+  -webkit-mask-position: 0% 0%;
+
+  mask-image: url('/assets/home/inkmask_right.png');
+  mask-size: cover;
+  mask-position: 0% 0%;
+}
+.registerAnimation {
+  animation: addColor 2500ms steps(44) forwards;
+}
+.greyscale {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+.color {
+  display: block;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.effectContainer {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 1;
+}

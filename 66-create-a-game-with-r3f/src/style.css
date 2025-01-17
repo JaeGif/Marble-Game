@@ -196,15 +196,19 @@ body,
   justify-content: center;
   align-items: center;
   font-family: 'Bebas Neue', cursive;
+  overflow: hidden;
 }
 .home-page > h1 {
+  position: fixed;
   font-size: 52px;
 }
-.home-page > div {
+.home-page-under {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: fixed;
+  z-index: 100;
 }
 .mode-select-container {
   display: flex;
